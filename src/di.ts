@@ -1,4 +1,5 @@
-import { createContainer, asClass, InjectionMode, Lifetime } from 'awilix'
+import { createContainer, asClass, asFunction, InjectionMode } from 'awilix'
+import express from 'express'
 import { App } from './app'
 
 const container = createContainer({
@@ -7,6 +8,7 @@ const container = createContainer({
 
 container.register({
   app: asClass(App).singleton(),
+  expressApp: asFunction(express).singleton(),
 })
 
 export default container

@@ -1,5 +1,12 @@
+import http from 'http'
 import container from './di'
 
-const app = container.resolve('app')
+container.resolve('app')
 
-export { app }
+const server = http.createServer(container.resolve('expressApp'))
+
+const port = process.env.PORT || 7577
+
+export default server.listen(port, () => {
+  // TODO: log message
+})
