@@ -1,6 +1,11 @@
 # Használt függőségek
 
+## Kiadási
+
+- [awilix](https://www.npmjs.com/package/awilix)
+
 ## Fejlesztési
+
 - [Typescript](https://www.npmjs.com/package/typescript)
 - [Jest](https://www.npmjs.com/package/jest)
 - [Nodemon](https://www.npmjs.com/package/nodemon)
