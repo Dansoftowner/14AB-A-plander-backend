@@ -4,6 +4,7 @@
         "eamodio.gitlens",
         "Orta.vscode-jest",
         "seatonjiang.gitmoji-vscode",
-        "teledemic.branch-warnings"
+        "teledemic.branch-warnings",
+        "wayou.vscode-todo-highlight"
     ]
 }
