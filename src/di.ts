@@ -1,18 +1,12 @@
 import { createContainer, asClass, InjectionMode, Lifetime } from 'awilix'
+import { App } from './app'
 
 const container = createContainer({
   injectionMode: InjectionMode.PROXY,
 })
 
-export const setupContainer = () => {
-  container.loadModules(['app.ts'], {
-    formatName: 'camelCase',
-
-    resolverOptions: {
-      lifetime: Lifetime.TRANSIENT,
-      register: asClass,
-    },
-  })
-}
+container.register({
+  app: asClass(App).singleton(),
+})
 
 export default container

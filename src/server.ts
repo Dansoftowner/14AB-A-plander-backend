@@ -1,6 +1,4 @@
-import container, {  setupContainer } from './di'
-
-setupContainer()
+import container from './di'
 
 const app = container.resolve('app')
 
