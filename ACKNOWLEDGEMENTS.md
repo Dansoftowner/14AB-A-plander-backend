@@ -3,6 +3,7 @@
 ## Kiadási
 
 - [awilix](https://www.npmjs.com/package/awilix)
+- [express](https://www.npmjs.com/package/express)
 
 ## Fejlesztési
 
