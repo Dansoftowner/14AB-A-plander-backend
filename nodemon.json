@@ -7,5 +7,5 @@
   ],
   "ext": "ts, js, json",
   "delay": 0,
-  "exec": "npx ts-node-transpile-only src/app.ts || exit 1"
+  "exec": "npx ts-node-transpile-only src/server.ts || exit 1"
 }
