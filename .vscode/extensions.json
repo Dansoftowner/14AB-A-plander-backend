@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens",
+        "Orta.vscode-jest",
+        "seatonjiang.gitmoji-vscode",
+        "teledemic.branch-warnings"
+    ]
+}
