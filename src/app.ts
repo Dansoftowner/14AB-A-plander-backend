@@ -1,5 +1,7 @@
 import { Express } from 'express'
+import config from 'config'
 import helmet from 'helmet'
+import morgan from 'morgan'
 import errorMiddleware from './middleware/error-middleware'
 
 /**
@@ -17,6 +19,7 @@ export class App {
 
   private initializeMiddlewares() {
     this.expressApp.use(helmet())
+    if (config.get('logging.isEnabled')) this.expressApp.use(morgan('tiny'))
   }
 
   private initializeControllers(opts) {}
