@@ -4,6 +4,9 @@
 
 - [awilix](https://www.npmjs.com/package/awilix)
 - [express](https://www.npmjs.com/package/express)
+- [winston](https://www.npmjs.com/package/winston)
+- [winston-daily-rotate-file](https://www.npmjs.com/package/winston-daily-rotate-file)
+- [config](https://www.npmjs.com/package/config)
 
 ## Fejlesztési
 

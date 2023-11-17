@@ -1,0 +1,6 @@
+{
+    "logging": {
+        "dir": "logs",
+        "isFileEnabled": true
+    }
+}
