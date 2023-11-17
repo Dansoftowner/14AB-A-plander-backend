@@ -7,6 +7,7 @@
 - [winston](https://www.npmjs.com/package/winston)
 - [winston-daily-rotate-file](https://www.npmjs.com/package/winston-daily-rotate-file)
 - [config](https://www.npmjs.com/package/config)
+- [config](https://www.npmjs.com/package/helmet)
 
 ## Fejlesztési
 

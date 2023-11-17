@@ -1,4 +1,5 @@
 import { Express } from 'express'
+import helmet from 'helmet'
 import errorMiddleware from './middleware/error-middleware'
 
 /**
@@ -14,7 +15,9 @@ export class App {
     this.initializeErrorMiddleware()
   }
 
-  private initializeMiddlewares() {}
+  private initializeMiddlewares() {
+    this.expressApp.use(helmet())
+  }
 
   private initializeControllers(opts) {}
 
