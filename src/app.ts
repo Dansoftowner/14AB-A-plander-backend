@@ -1,4 +1,5 @@
 import { Express } from 'express'
+import errorMiddleware from './middleware/error-middleware'
 
 /**
  * Responsible for assembling the express application.
@@ -17,5 +18,7 @@ export class App {
 
   private initializeControllers(opts) {}
 
-  private initializeErrorMiddleware() {}
+  private initializeErrorMiddleware() {
+    this.expressApp.use(errorMiddleware)
+  }
 }
