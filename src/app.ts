@@ -3,7 +3,7 @@ import config from 'config'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import errorMiddleware from './middleware/error-middleware'
-import { RoutesProvider } from './routes/routes-provider'
+import { RoutesProvider } from './base/routes-provider'
 
 /**
  * Responsible for assembling the express application.
