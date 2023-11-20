@@ -70,5 +70,13 @@ describe('/api/associations', () => {
 
       expect(res.body.items[0]).toMatchObject(associations[offset])
     })
+
+    it('should apply the given limit', async () => {
+      limit = 1
+
+      const res = await sendRequest()
+
+      expect(res.body.items.length).toBe(Math.min(associations.length, limit))
+    })
   })
 })
