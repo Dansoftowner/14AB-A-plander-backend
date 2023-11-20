@@ -17,6 +17,12 @@ describe('/api/associations', () => {
 
   describe('GET /api/associations', () => {
     describe('/', () => {
+      const associations = [
+        { name: 'Assoc', certificate: '07/0001', location: 'mama hotel' },
+        { name: 'Assoc2', certificate: '07/0002', location: 'mama hotel2' },
+        { name: 'Assoc3', certificate: '07/0003', location: 'mama hotel3' },
+      ]
+
       let offset: number
       let limit: number
       let projection: string
@@ -33,33 +39,28 @@ describe('/api/associations', () => {
         })
       }
 
-      it('should contain metadata', async () => {
-        await associationModel.insertMany([
-          { name: 'Assoc', certificate: '07/0001', location: 'mama hotel' },
-          { name: 'Assoc2', certificate: '07/0002', location: 'mama hotel2' },
-        ])
+      beforeEach(async () => {
+        associationModel.insertMany(associations)
+      })
 
+      it('should contain metadata', async () => {
         offset = limit = 1
 
         const res = await sendRequest()
 
         expect(res.body.metadata).toBeDefined()
-        expect(res.body.metadata).toHaveProperty('total', 2)
+        expect(res.body.metadata).toHaveProperty('total', associations.length)
         expect(res.body.metadata).toHaveProperty('offset', 1)
         expect(res.body.metadata).toHaveProperty('limit', 1)
       })
 
       it('should return all associations', async () => {
-        await associationModel.insertMany([
-          { name: 'Assoc', certificate: '07/0001', location: 'mama hotel' },
-          { name: 'Assoc2', certificate: '07/0002', location: 'mama hotel2' },
-        ])
-
         const res = await sendRequest()
 
-        expect(res.body.items.length).toBe(2)
-        expect(res.body.items.some((it) => it.name === 'Assoc')).toBe(true)
-        expect(res.body.items.some((it) => it.name === 'Assoc2')).toBe(true)
+        expect(res.body.items.length).toBe(associations.length)
+        expect(res.body.items.map((it) => it.name)).toEqual(
+          expect.arrayContaining(associations.map((it) => it.name)),
+        )
       })
     })
   })
