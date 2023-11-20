@@ -9,6 +9,7 @@
 - [config](https://www.npmjs.com/package/config)
 - [helmet](https://www.npmjs.com/package/helmet)
 - [mongoose](https://www.npmjs.com/package/mongoose)
+- [dotenv](https://www.npmjs.com/package/dotenv)
 
 ## Fejlesztési
 
@@ -18,3 +19,4 @@
 - [Prettier](https://www.npmjs.com/package/prettier)
 - [ts-node](https://www.npmjs.com/package/ts-node)
 - [ts-jest](https://www.npmjs.com/package/ts-jest)
+- [supertest](https://www.npmjs.com/package/supertest)
