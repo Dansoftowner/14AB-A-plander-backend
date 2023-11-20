@@ -11,11 +11,7 @@ export default class AssociationController implements Controller {
   }
 
   async getAssociations(req: Request, res: Response) {
-    const offset = req.query.offset ?? 0
-    const limit = req.query.limit ?? 10
-    const projection = req.query.projection
-    const orderBy = req.query.orderBy
-    const q = req.query.q
+    const { offset, limit, projection, orderBy, q } = this.getPaginationData(req)
 
     const associations = await associationModel.find({})
 
@@ -27,5 +23,16 @@ export default class AssociationController implements Controller {
       },
       items: associations,
     })
+  }
+
+  private getPaginationData(req: Request) {
+    const { offset, limit, projection, orderBy, q } = req.query
+    return {
+      offset: Number.parseInt((offset as string) ?? 0),
+      limit: Number.parseInt((limit as string) ?? 10),
+      projection,
+      orderBy,
+      q,
+    }
   }
 }

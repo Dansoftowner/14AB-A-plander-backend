@@ -1,10 +1,10 @@
-import { Server } from 'http'
+import { Express } from 'express'
 import request from 'supertest'
 import associationModel from '../../../../src/api/association/association-model'
 import container from '../../../../src/di'
 
 describe('/api/associations', () => {
-  let app: Server
+  let app: Express
 
   beforeEach(() => {
     container.resolve('app')
@@ -39,12 +39,14 @@ describe('/api/associations', () => {
           { name: 'Assoc2', certificate: '07/0002', location: 'mama hotel2' },
         ])
 
+        offset = limit = 1
+
         const res = await sendRequest()
 
         expect(res.body.metadata).toBeDefined()
         expect(res.body.metadata).toHaveProperty('total', 2)
-        expect(res.body.metadata).toHaveProperty('offset')
-        expect(res.body.metadata).toHaveProperty('limit')
+        expect(res.body.metadata).toHaveProperty('offset', 1)
+        expect(res.body.metadata).toHaveProperty('limit', 1)
       })
 
       it('should return all associations', async () => {

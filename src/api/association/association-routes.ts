@@ -1,5 +1,5 @@
 import { RoutesProvider } from '../../base/routes-provider'
-import asyncHandler from '../../middleware/async-handler'
+import asyncErrorHandler from '../../middleware/async-error-handler'
 import AssociationController from './association-controller'
 
 export default class AssocationRoutes extends RoutesProvider {
@@ -8,6 +8,9 @@ export default class AssocationRoutes extends RoutesProvider {
   }
 
   protected initializeRoutes(controller: AssociationController) {
-    this.router.get('/api/associations', asyncHandler(controller.getAssociations))
+    this.router.get(
+      '/api/associations',
+      asyncErrorHandler((req, res) => controller.getAssociations(req, res)),
+    )
   }
 }
