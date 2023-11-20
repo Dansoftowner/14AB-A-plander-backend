@@ -11,8 +11,8 @@ export default class AssociationController implements Controller {
   }
 
   async getAssociations(req: Request, res: Response) {
-    const offset = req.query.offset
-    const limit = req.query.limit
+    const offset = req.query.offset ?? 0
+    const limit = req.query.limit ?? 10
     const projection = req.query.projection
     const orderBy = req.query.orderBy
     const q = req.query.q
@@ -20,6 +20,11 @@ export default class AssociationController implements Controller {
     const associations = await associationModel.find({})
 
     res.json({
+      metadata: {
+        total: await associationModel.countDocuments(),
+        offset,
+        limit,
+      },
       items: associations,
     })
   }
