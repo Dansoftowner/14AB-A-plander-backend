@@ -4,6 +4,8 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import errorMiddleware from './middleware/error-middleware'
 import { RoutesProvider } from './base/routes-provider'
+import mongoose from 'mongoose'
+import logger from './logging/logger'
 
 /**
  * Responsible for assembling the express application.
@@ -13,9 +15,17 @@ export class App {
 
   constructor(opts) {
     this.expressApp = opts.expressApp
+    this.connectToMongo()
     this.initializeMiddlewares()
     this.initializeRoutes(opts)
     this.initializeErrorMiddleware()
+  }
+
+  private connectToMongo() {
+    mongoose
+      .connect(config.get('mongo.uri'))
+      .then(() => logger.info('Connection with MongoDB established.'))
+      .catch(() => logger.error('Connection with MongoDB failed!'))
   }
 
   private initializeMiddlewares() {
