@@ -23,11 +23,11 @@ describe('/api/associations', () => {
         { name: 'Assoc3', certificate: '07/0003', location: 'mama hotel3' },
       ]
 
-      let offset: number
-      let limit: number
-      let projection: string
-      let orderBy: string
-      let q: string
+      let offset: number | undefined
+      let limit: number | undefined
+      let projection: string | undefined
+      let orderBy: string | undefined
+      let q: string | undefined
 
       const sendRequest = () => {
         return request(app).get('/api/associations').query({
@@ -41,6 +41,10 @@ describe('/api/associations', () => {
 
       beforeEach(async () => {
         associationModel.insertMany(associations)
+      })
+
+      afterEach(async () => {
+        offset = limit = projection = orderBy = q = undefined
       })
 
       it('should contain metadata', async () => {
@@ -61,6 +65,14 @@ describe('/api/associations', () => {
         expect(res.body.items.map((it) => it.name)).toEqual(
           expect.arrayContaining(associations.map((it) => it.name)),
         )
+      })
+
+      it('should apply the given offset', async () => {
+        offset = 1
+
+        const res = await sendRequest()
+
+        expect(res.body.items[0]).toMatchObject(associations[offset])
       })
     })
   })
