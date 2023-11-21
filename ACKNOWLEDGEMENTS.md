@@ -10,6 +10,7 @@
 - [helmet](https://www.npmjs.com/package/helmet)
 - [mongoose](https://www.npmjs.com/package/mongoose)
 - [dotenv](https://www.npmjs.com/package/dotenv)
+- [lodash](https://www.npmjs.com/package/lodash)
 
 ## Fejlesztési
 
