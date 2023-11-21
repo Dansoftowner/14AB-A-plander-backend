@@ -50,16 +50,20 @@ describe('/api/associations', () => {
 
       expect(res.body.metadata).toBeDefined()
       expect(res.body.metadata).toHaveProperty('total', associations.length)
-      expect(res.body.metadata).toHaveProperty('offset', 1)
-      expect(res.body.metadata).toHaveProperty('limit', 1)
+      expect(res.body.metadata).toHaveProperty('offset', offset)
+      expect(res.body.metadata).toHaveProperty('limit', limit)
     })
 
     it('should return all associations', async () => {
+      limit = 40
+
       const res = await sendRequest()
 
-      expect(res.body.items.length).toBe(associations.length)
+      const itemsCount = Math.min(associations.length, limit)
+
+      expect(res.body.items.length).toBe(itemsCount)
       expect(res.body.items.map((it) => it.name)).toEqual(
-        expect.arrayContaining(associations.map((it) => it.name)),
+        expect.arrayContaining(associations.slice(0, itemsCount).map((it) => it.name)),
       )
     })
 
