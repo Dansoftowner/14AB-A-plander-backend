@@ -14,7 +14,15 @@ export default class AssociationController implements Controller {
     const { offset, limit, projection, orderBy, q } = this.getPaginationData(req)
 
     const associations = await associationModel
-      .find({})
+      .find(
+        q
+          ? {
+              name: {
+                $regex: new RegExp(`.*${q}.*`, 'i'),
+              },
+            }
+          : {},
+      )
       .skip(offset)
       .limit(limit)
       .sort(orderBy?.toString() ?? 'name')

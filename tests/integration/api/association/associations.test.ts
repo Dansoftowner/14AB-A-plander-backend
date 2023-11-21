@@ -134,5 +134,21 @@ describe('/api/associations', () => {
         associations.map((it) => it.location).sort(),
       )
     })
+
+    it.each([['blue'], ['pha'], ['as'], ['a']])(
+      'should perform search query on associations',
+      async (searchQuery) => {
+        q = searchQuery
+
+        const res = await sendRequest()
+
+        expect(res.body.items.map((it) => it.name)).toEqual(
+          associations
+            .map((it) => it.name)
+            .filter((it) => new RegExp(`.*${searchQuery}.*`, 'i').test(it))
+            .sort(),
+        )
+      },
+    )
   })
 })
