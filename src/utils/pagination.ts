@@ -35,7 +35,7 @@ function extractLimit(req: Request): number {
   let limitNumber = parseInt(raw)
 
   if (!isNaN(limitNumber)) {
-    limitNumber = Math.max(limitNumber, DEFAULT_LIMIT)
+    limitNumber = limitNumber < 0 ? DEFAULT_LIMIT : limitNumber
     limitNumber = Math.min(limitNumber, MAX_LIMIT)
   }
 
