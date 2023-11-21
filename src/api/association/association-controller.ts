@@ -13,7 +13,11 @@ export default class AssociationController implements Controller {
   async getAssociations(req: Request, res: Response) {
     const { offset, limit, projection, orderBy, q } = this.getPaginationData(req)
 
-    const associations = await associationModel.find({}).skip(offset).limit(limit)
+    const associations = await associationModel
+      .find({})
+      .skip(offset)
+      .limit(limit)
+      .projection(projection === 'full' ? '-__v' : '_id name')
 
     res.json({
       metadata: {

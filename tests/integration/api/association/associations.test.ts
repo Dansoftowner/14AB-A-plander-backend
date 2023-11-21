@@ -1,5 +1,7 @@
 import { Express } from 'express'
 import request from 'supertest'
+import config from 'config'
+import _ from 'lodash'
 import associationModel from '../../../../src/api/association/association-model'
 import container from '../../../../src/di'
 
@@ -72,7 +74,7 @@ describe('/api/associations', () => {
 
       const res = await sendRequest()
 
-      expect(res.body.items[0]).toMatchObject(associations[offset])
+      expect(res.body.items[0].name).toBe(associations[offset].name)
     })
 
     it('should apply the given limit', async () => {
@@ -81,6 +83,27 @@ describe('/api/associations', () => {
       const res = await sendRequest()
 
       expect(res.body.items.length).toBe(Math.min(associations.length, limit))
+    })
+
+    it('should project only the _id and name fields in "lite" projection mode', async () => {
+      projection = 'lite'
+
+      const res = await sendRequest()
+
+      expect(_.keys(res.body.items[0]).sort()).toEqual(['_id', 'name'])
+    })
+
+    it('should project all the fields in "full" projection mode', async () => {
+      projection = 'full'
+
+      const res = await sendRequest()
+
+      expect(_.keys(res.body.items[0]).sort()).toEqual([
+        'certificate',
+        '_id',
+        'name',
+        'location',
+      ])
     })
   })
 })
