@@ -36,9 +36,9 @@ describe('pagination data extractor utility', () => {
     ['23fga', 23],
     ['3a8', 3],
   ])('should return limit as number', (raw, number) => {
-    offset = raw
+    limit = raw
 
-    expect(execute().offset).toBe(number)
+    expect(execute().limit).toBe(number)
   })
 
   it.each([['asdf'], ['ewe12'], ['-120']])(
