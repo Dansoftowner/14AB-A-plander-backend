@@ -8,9 +8,9 @@ describe('/api/associations', () => {
   let app: Express
 
   const associations = [
-    { name: 'Assoc', certificate: '07/0001', location: 'mama hotel' },
-    { name: 'Assoc2', certificate: '07/0002', location: 'mama hotel2' },
-    { name: 'Assoc3', certificate: '07/0003', location: 'mama hotel3' },
+    { name: 'BlueTeam', certificate: '07/0002', location: 'Coymond' },
+    { name: 'Alphas', certificate: '07/0001', location: 'Blow Place' },
+    { name: 'Ceasers', certificate: '07/0003', location: 'mama hotel' },
   ]
 
   beforeEach(async () => {
@@ -72,7 +72,9 @@ describe('/api/associations', () => {
 
       const res = await sendRequest()
 
-      expect(res.body.items[0].name).toBe(associations[offset].name)
+      expect(res.body.items[0].name).toBe(
+        associations.map((it) => it.name).sort()[offset],
+      )
     })
 
     it('should apply the given limit', async () => {
@@ -98,6 +100,38 @@ describe('/api/associations', () => {
 
       expect(_.keys(res.body.items[0]).sort()).toEqual(
         ['_id', ..._.keys(associations[0])].sort(),
+      )
+    })
+
+    it('should order the associations by name', async () => {
+      const res = await sendRequest()
+
+      expect(res.body.items.map((it) => it.name)).toEqual(
+        associations.map((it) => it.name).sort(),
+      )
+    })
+
+    it('should order the associations by name descendingly', async () => {
+      orderBy = '-name'
+
+      const res = await sendRequest()
+
+      expect(res.body.items.map((it) => it.name)).toEqual(
+        associations
+          .map((it) => it.name)
+          .sort()
+          .reverse(),
+      )
+    })
+
+    it('should order the associations by location', async () => {
+      projection = 'full'
+      orderBy = 'location'
+
+      const res = await sendRequest()
+
+      expect(res.body.items.map((it) => it.location)).toEqual(
+        associations.map((it) => it.location).sort(),
       )
     })
   })

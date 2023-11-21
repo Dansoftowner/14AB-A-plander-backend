@@ -17,6 +17,7 @@ export default class AssociationController implements Controller {
       .find({})
       .skip(offset)
       .limit(limit)
+      .sort(orderBy?.toString() ?? 'name')
       .select(projection === 'full' ? '-__v' : '_id name')
 
     res.json({
