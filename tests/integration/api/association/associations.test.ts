@@ -1,6 +1,5 @@
 import { Express } from 'express'
 import request from 'supertest'
-import config from 'config'
 import _ from 'lodash'
 import associationModel from '../../../../src/api/association/association-model'
 import container from '../../../../src/di'
@@ -15,8 +14,7 @@ describe('/api/associations', () => {
   ]
 
   beforeEach(async () => {
-    container.resolve('app')
-    app = container.resolve('expressApp')
+    app = container.resolve('app').expressApp
     await associationModel.insertMany(associations)
   })
 
@@ -98,12 +96,9 @@ describe('/api/associations', () => {
 
       const res = await sendRequest()
 
-      expect(_.keys(res.body.items[0]).sort()).toEqual([
-        'certificate',
-        '_id',
-        'name',
-        'location',
-      ])
+      expect(_.keys(res.body.items[0]).sort()).toEqual(
+        ['_id', ..._.keys(associations[0])].sort(),
+      )
     })
   })
 })
