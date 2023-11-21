@@ -4,21 +4,23 @@ import { Association } from './association'
 import associationModel from './association-model'
 
 export default class AssociationService implements Service {
-  async getAssociations({
+  getCount(): Promise<number> {
+    return associationModel.countDocuments()
+  }
+
+  getAll({
     offset,
     limit,
     projection,
     sort,
     searchTerm,
   }): Promise<Association[]> {
-    const associations = await associationModel
+    return associationModel
       .find(this.getFilter(searchTerm))
       .skip(offset)
       .limit(limit)
       .sort(sort)
       .select(projection)
-
-    return associations
   }
 
   private getFilter(searchTerm: string): FilterQuery<Association> {
