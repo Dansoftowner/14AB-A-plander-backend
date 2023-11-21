@@ -11,7 +11,6 @@ const container = createContainer({
 
 container.register({
   app: asClass(App).singleton(),
-  expressApp: asFunction(express).singleton(),
 
   associationService: asClass(AssociationService),
   associationController: asClass(AssociationController),

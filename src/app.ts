@@ -1,4 +1,4 @@
-import { Express } from 'express'
+import express, { Express } from 'express'
 import config from 'config'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -11,10 +11,9 @@ import logger from './logging/logger'
  * Responsible for assembling the express application.
  */
 export class App {
-  private expressApp: Express
+  readonly expressApp: Express = express()
 
   constructor(opts) {
-    this.expressApp = opts.expressApp
     this.connectToMongo()
     this.initializeMiddlewares()
     this.initializeRoutes(opts)
