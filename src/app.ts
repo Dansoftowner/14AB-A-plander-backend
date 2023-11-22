@@ -7,6 +7,8 @@ import errorMiddleware from './middleware/error-middleware'
 import { RoutesProvider } from './base/routes-provider'
 import mongoose from 'mongoose'
 import logger from './logging/logger'
+import swaggerUi from 'swagger-ui-express'
+import swaggerSpec from './swagger'
 
 /**
  * Responsible for assembling the express application.
@@ -18,6 +20,7 @@ export class App {
     this.connectToMongo()
     this.initializeMiddlewares()
     this.initializeRoutes(opts)
+    this.initializeSwaggerDocs()
     this.initializeErrorMiddleware()
   }
 
@@ -40,6 +43,11 @@ export class App {
         this.expressApp.use('/api', routes.router)
       }
     }
+  }
+
+  private initializeSwaggerDocs() {
+    this.expressApp.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+    this.expressApp.use('/docs.json', (req, res) => res.json(swaggerSpec))
   }
 
   private initializeErrorMiddleware() {
