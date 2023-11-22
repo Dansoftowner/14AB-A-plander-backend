@@ -9,7 +9,7 @@ import {
   PROJECTION_PARAM_NAME,
   SEARCH_PARAM_NAME,
   SORT_PARAM_NAME,
-  getPaginationData,
+  getPaginationInfo,
   getProjection,
   getSearchQuery,
   getSort,
@@ -26,7 +26,7 @@ describe('api common utils', () => {
       req.query[OFFSET_PARAM_NAME] = offset
       req.query[LIMIT_PARAM_NAME] = limit
 
-      return getPaginationData(req as Request)
+      return getPaginationInfo(req as Request)
     }
 
     it.each([

@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import express, { Express } from 'express'
 import config from 'config'
 import helmet from 'helmet'

@@ -1,30 +1,36 @@
 import { FilterQuery } from 'mongoose'
 import { Service } from '../../base/service'
 import { Association } from './association'
-import associationModel from './association-model'
-import { sanitizeForRegex as s } from '../../utils/sanitize'
+
+import { AssociationItemsDto } from './association-items-dto'
+import { plainToInstance } from 'class-transformer'
+import { PaginationInfoDto } from '../pagination-info-dto'
+import { AssociationRepository } from './association-repository'
 
 export default class AssociationService implements Service {
-  count(): Promise<number> {
-    return associationModel.countDocuments()
+  private repository: AssociationRepository
+
+  constructor({ associationRepository }) {
+    this.repository = associationRepository
   }
 
-  get({ offset, limit, projection, sort, searchTerm }): Promise<Association[]> {
-    return associationModel
-      .find(this.getFilter(searchTerm))
-      .skip(offset)
-      .limit(limit)
-      .sort(sort)
-      .select(projection)
-  }
+  async get(options: {
+    paginationInfo: PaginationInfoDto
+    projection: string
+    sort: string
+    searchTerm: string | undefined
+  }): Promise<AssociationItemsDto> {
+    const items = await this.repository.get(options)
+    const total = await this.repository.count()
+    const metadata = { ...options.paginationInfo, total }
 
-  private getFilter(searchTerm: string): FilterQuery<Association> {
-    return searchTerm
-      ? {
-          name: {
-            $regex: new RegExp(`.*${s(searchTerm)}.*`, 'i'),
-          },
-        }
-      : {}
+    return plainToInstance(
+      AssociationItemsDto,
+      { metadata, items },
+      {
+        excludeExtraneousValues: true,
+        enableImplicitConversion: true,
+      },
+    )
   }
 }

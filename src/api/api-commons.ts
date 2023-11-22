@@ -1,5 +1,6 @@
 import { Request } from 'express'
 import _ from 'lodash'
+import { PaginationInfoDto } from './pagination-info-dto'
 
 export const OFFSET_PARAM_NAME = 'offset'
 export const LIMIT_PARAM_NAME = 'limit'
@@ -12,12 +13,7 @@ export const DEFAULT_LIMIT = 10
 export const DEFAULT_PROJECTION = 'lite'
 export const MAX_LIMIT = 40
 
-export interface PaginationData {
-  offset: number
-  limit: number
-}
-
-export function getPaginationData(req: Request): PaginationData {
+export function getPaginationInfo(req: Request): PaginationInfoDto {
   return {
     offset: extractOffset(req),
     limit: extractLimit(req),

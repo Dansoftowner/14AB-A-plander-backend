@@ -11,6 +11,7 @@
 - [mongoose](https://www.npmjs.com/package/mongoose)
 - [dotenv](https://www.npmjs.com/package/dotenv)
 - [lodash](https://www.npmjs.com/package/lodash)
+- [class-transformer](https://www.npmjs.com/package/class-transformer)
 
 ## Fejlesztési
 

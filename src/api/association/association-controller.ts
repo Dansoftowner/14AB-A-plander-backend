@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { Controller } from '../../base/controller'
 import AssociationService from './association-service'
 import {
-  getPaginationData,
+  getPaginationInfo,
   getProjection,
   getSearchQuery,
   getSort,
@@ -17,25 +17,18 @@ export default class AssociationController implements Controller {
   }
 
   async getAssociations(req: Request, res: Response) {
-    const paginationData = getPaginationData(req)
+    const paginationInfo = getPaginationInfo(req)
     const projection = getProjection(req, { lite: '_id name', full: '-__v' })
     const sort = getSort(req, 'name')
     const searchTerm = getSearchQuery(req)
 
-    const total = await this.associationService.count()
     const items = await this.associationService.get({
-      ...paginationData,
+      paginationInfo,
       projection,
       sort,
       searchTerm,
     })
 
-    res.json({
-      metadata: {
-        total,
-        ...paginationData,
-      },
-      items,
-    })
+    res.json(items)
   }
 }
