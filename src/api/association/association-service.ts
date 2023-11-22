@@ -5,11 +5,11 @@ import associationModel from './association-model'
 import { sanitizeForRegex as s } from '../../utils/sanitize'
 
 export default class AssociationService implements Service {
-  getCount(): Promise<number> {
+  count(): Promise<number> {
     return associationModel.countDocuments()
   }
 
-  getAll({ offset, limit, projection, sort, searchTerm }): Promise<Association[]> {
+  get({ offset, limit, projection, sort, searchTerm }): Promise<Association[]> {
     return associationModel
       .find(this.getFilter(searchTerm))
       .skip(offset)

@@ -22,8 +22,8 @@ export default class AssociationController implements Controller {
     const sort = getSort(req, 'name')
     const searchTerm = getSearchQuery(req)
 
-    const total = await this.associationService.getCount()
-    const items = await this.associationService.getAll({
+    const total = await this.associationService.count()
+    const items = await this.associationService.get({
       ...paginationData,
       projection,
       sort,
