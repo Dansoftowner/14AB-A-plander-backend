@@ -36,7 +36,9 @@ describe('api common utils', () => {
     ])('should return offset as number', (raw, number) => {
       offset = raw
 
-      expect(execute().offset).toBe(number)
+      const result = execute()
+
+      expect(result.offset).toBe(number)
     })
 
     it.each([
@@ -46,7 +48,9 @@ describe('api common utils', () => {
     ])('should return limit as number', (raw, number) => {
       limit = raw
 
-      expect(execute().limit).toBe(number)
+      const result = execute()
+
+      expect(result.limit).toBe(number)
     })
 
     it.each([['asdf'], ['ewe12'], ['-120']])(
@@ -54,15 +58,19 @@ describe('api common utils', () => {
       (raw) => {
         limit = offset = raw
 
-        expect(execute().offset).toBe(DEFAULT_OFFSET)
-        expect(execute().limit).toBe(DEFAULT_LIMIT)
+        const result = execute()
+
+        expect(result.offset).toBe(DEFAULT_OFFSET)
+        expect(result.limit).toBe(DEFAULT_LIMIT)
       },
     )
 
     it('should not return limit larger than the maximum', () => {
       limit = (MAX_LIMIT + 123).toString()
 
-      expect(execute().limit).toBe(MAX_LIMIT)
+      const result = execute()
+
+      expect(result.limit).toBe(MAX_LIMIT)
     })
   })
 
@@ -85,7 +93,9 @@ describe('api common utils', () => {
     it.each(['lite', 'full'])('should return the projection', (input) => {
       projection = input
 
-      expect(execute()).toBe(input)
+      const result = execute()
+
+      expect(result).toBe(input)
     })
 
     it('should return the projection mapped to "lite"', () => {
@@ -93,7 +103,9 @@ describe('api common utils', () => {
 
       projectionMap = { full: '', lite: 'abc' }
 
-      expect(execute()).toBe(projectionMap.lite)
+      const result = execute()
+
+      expect(result).toBe(projectionMap.lite)
     })
 
     it('should return the projection mapped to "full"', () => {
@@ -101,13 +113,17 @@ describe('api common utils', () => {
 
       projectionMap = { full: 'abc', lite: '' }
 
-      expect(execute()).toBe(projectionMap.full)
+      const result = execute()
+
+      expect(result).toBe(projectionMap.full)
     })
 
     it('should return the default projection if the input is unknown', () => {
       projection = 'sgfw'
 
-      expect(execute()).toBe(DEFAULT_PROJECTION)
+      const result = execute()
+
+      expect(result).toBe(DEFAULT_PROJECTION)
     })
   })
 
