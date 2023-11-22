@@ -36,7 +36,7 @@ export class App {
     for (const prop in opts) {
       if (prop.endsWith('Routes')) {
         const routes: RoutesProvider = opts[prop]
-        this.expressApp.use(routes.router)
+        this.expressApp.use('/api', routes.router)
       }
     }
   }

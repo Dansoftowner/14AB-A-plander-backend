@@ -9,7 +9,7 @@ export default class AssocationRoutes extends RoutesProvider {
 
   protected initializeRoutes(controller: AssociationController) {
     this.router.get(
-      '/api/associations',
+      '/associations',
       asyncErrorHandler((req, res) => controller.getAssociations(req, res)),
     )
   }
