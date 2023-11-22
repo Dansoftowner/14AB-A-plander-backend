@@ -18,7 +18,7 @@ export default class AssociationController implements Controller {
 
   async getAssociations(req: Request, res: Response) {
     const paginationInfo = getPaginationInfo(req)
-    const projection = getProjection(req, { lite: '_id name', full: '-__v' })
+    const projection = getProjection(req, { lite: '_id name', full: '' })
     const sort = getSort(req, 'name')
     const searchTerm = getSearchQuery(req)
 
