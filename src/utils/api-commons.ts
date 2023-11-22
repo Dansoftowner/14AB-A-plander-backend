@@ -33,7 +33,7 @@ export function getProjection(
 ): string {
   const raw = req.query[PROJECTION_PARAM_NAME] as string
   if (_.keys(projectionMap).includes(raw)) return projectionMap[raw]
-  return DEFAULT_PROJECTION
+  return projectionMap[DEFAULT_PROJECTION]
 }
 
 export function getSort(req: Request, defaultSort: string): string {

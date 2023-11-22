@@ -121,9 +121,11 @@ describe('api common utils', () => {
     it('should return the default projection if the input is unknown', () => {
       projection = 'sgfw'
 
+      projectionMap = { full: 'abc', lite: 'cba' }
+
       const result = execute()
 
-      expect(result).toBe(DEFAULT_PROJECTION)
+      expect(result).toBe(projectionMap[DEFAULT_PROJECTION])
     })
   })
 
