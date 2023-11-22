@@ -13,7 +13,7 @@ import {
   getProjection,
   getSearchQuery,
   getSort,
-} from '../../../src/utils/api-commons'
+} from '../../../src/api/api-commons'
 
 describe('api common utils', () => {
   describe('pagination data extractor utility', () => {

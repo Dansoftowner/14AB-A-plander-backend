@@ -7,7 +7,7 @@ import {
   getProjection,
   getSearchQuery,
   getSort,
-} from '../../utils/api-commons'
+} from '../api-commons'
 
 export default class AssociationController implements Controller {
   private associationService: AssociationService
