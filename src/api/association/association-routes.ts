@@ -16,36 +16,11 @@ export default class AssocationRoutes extends RoutesProvider {
      *      - Associations
      *    description: Fetches the registered associations.
      *    parameters:
-     *      - in: query
-     *        name: offset
-     *        schema:
-     *          type: integer
-     *          minimum: 0
-     *          default: 0
-     *        description: The number of items to skip before starting to collect the result set.
-     *      - in: query
-     *        name: limit
-     *        schema:
-     *          type: integer
-     *          minimum: 0
-     *          default: 10
-     *        description: The maximum number of items to return.
-     *      - in: query
-     *        name: projection
-     *        schema:
-     *          type: string
-     *          enum: ['lite', 'full']
-     *          default: 'lite'
-     *        description: Specifies the projection mode.
-     *      - in: query
-     *        name: orderBy
-     *        type: string
-     *        default: name
-     *        description: Specifies the attribute used to sort the items.
-     *      - in: query
-     *        name: q
-     *        type: string
-     *        description: Performs a search based on the given value (searches in the assocation names).
+     *      - $ref: '#/components/parameters/offsetParam'
+     *      - $ref: '#/components/parameters/limitParam'
+     *      - $ref: '#/components/parameters/projectionParam'
+     *      - $ref: '#/components/parameters/sortParam'
+     *      - $ref: '#/components/parameters/searchQueryParam'
      *    responses:
      *      200:
      *        description: Associations fetched successfully.
