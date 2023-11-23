@@ -7,6 +7,12 @@ const options: swaggerJsdoc.Options = {
       title: 'Plander API docs',
       version: '0.0.1',
     },
+    tags: [
+      {
+        name: 'Associations',
+        description: 'Endpoints related to the associations.',
+      },
+    ],
     components: {
       securitySchemas: {
         bearerAuth: {
