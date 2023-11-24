@@ -1,6 +1,6 @@
 import { RoutesProvider } from '../../base/routes-provider'
-import asyncErrorHandler from '../../middleware/async-error-handler'
-import validateObjectId from '../../middleware/validate-object-id'
+import asyncErrorHandler from '../../middlewares/async-error-handler'
+import validateObjectId from '../../middlewares/validate-objectid'
 import AssociationController from '../controllers/association'
 
 export default class AssocationRoutes extends RoutesProvider {

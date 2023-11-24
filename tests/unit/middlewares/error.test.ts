@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import errorMiddleware from '../../../src/middleware/error-middleware'
+import errorMiddleware from '../../../src/middlewares/error'
 import { ApiError } from '../../../src/exception/api-error'
 import { ApiErrorCode } from '../../../src/exception/api-error-codes'
 
