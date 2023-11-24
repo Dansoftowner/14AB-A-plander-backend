@@ -1,7 +1,7 @@
 import { Repository } from '../../base/repository'
-import associationModel from './association-model'
+import associationModel from './association.model'
 import { sanitizeForRegex as s } from '../../utils/sanitize'
-import { Association } from './association'
+import { Association } from './association.interface'
 
 export class AssociationRepository implements Repository {
   count(): Promise<number> {

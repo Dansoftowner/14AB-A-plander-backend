@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose'
-import { Association } from './association'
+import { Association } from './association.interface'
 import { Expose } from 'class-transformer'
 
 /**

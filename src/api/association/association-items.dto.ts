@@ -1,7 +1,7 @@
 import { Expose, Type } from 'class-transformer'
-import { PaginationInfoDto } from '../pagination-info-dto'
-import { Association } from './association'
-import { AssociationDto } from './association-dto'
+import { PaginationInfoDto } from '../pagination-info.dto'
+import { Association } from './association.interface'
+import { AssociationDto } from './association.dto'
 
 /**
  * @openapi

@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import _ from 'lodash'
-import { PaginationInfoDto } from './pagination-info-dto'
+import { PaginationInfoDto } from './pagination-info.dto'
 
 export const OFFSET_PARAM_NAME = 'offset'
 export const LIMIT_PARAM_NAME = 'limit'

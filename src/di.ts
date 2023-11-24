@@ -1,10 +1,10 @@
 import { createContainer, asClass, asFunction, InjectionMode } from 'awilix'
 import express from 'express'
 import { App } from './app'
-import AssociationService from './api/association/association-service'
-import AssociationController from './api/association/association-controller'
-import AssocationRoutes from './api/association/association-routes'
-import { AssociationRepository } from './api/association/association-repository'
+import AssociationService from './api/association/association.service'
+import AssociationController from './api/association/association.controller'
+import AssocationRoutes from './api/association/association.routes'
+import { AssociationRepository } from './api/association/association.repository'
 
 const container = createContainer({
   injectionMode: InjectionMode.PROXY,

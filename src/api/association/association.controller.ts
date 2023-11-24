@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Request, Response } from 'express'
 import { Controller } from '../../base/controller'
-import AssociationService from './association-service'
+import AssociationService from './association.service'
 import {
   getPaginationInfo,
   getProjection,
