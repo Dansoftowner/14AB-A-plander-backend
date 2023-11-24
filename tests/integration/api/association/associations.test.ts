@@ -3,6 +3,7 @@ import request from 'supertest'
 import _ from 'lodash'
 import associationModel from '../../../../src/api/association/association.model'
 import container from '../../../../src/di'
+import mongoose from 'mongoose'
 
 describe('/api/associations', () => {
   let app: Express
@@ -150,5 +151,67 @@ describe('/api/associations', () => {
         )
       },
     )
+  })
+
+  describe('GET /:id', () => {
+    let id: string
+    let projection: string
+
+    const sendRequest = () => {
+      return request(app).get(`/api/associations/${id}`).query({
+        projection,
+      })
+    }
+
+    it('should return 400 response if the id is not a valid ObjectId', async () => {
+      id = '123'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 404 response if no association found with the given id', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return the association if the id is valid', async () => {
+      const association = await associationModel.findOne()
+
+      id = association!._id.toHexString()
+
+      const res = sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(res.body).toMatchObject(association!)
+    })
+
+    it('should project only the _id and name fields in "lite" projection mode', async () => {
+      const association = await associationModel.findOne()
+
+      id = association!._id.toHexString()
+
+      projection = 'lite'
+
+      const res = await sendRequest()
+
+      expect(_.keys(res.body).sort()).toEqual(['_id', 'name'])
+    })
+
+    it('should project all the fields in "full" projection mode', async () => {
+      const association = await associationModel.findOne()
+
+      id = association!._id.toHexString()
+
+      projection = 'full'
+
+      const res = await sendRequest()
+
+      expect(_.keys(res.body).sort()).toEqual(_.keys(association).sort())
+    })
   })
 })

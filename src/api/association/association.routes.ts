@@ -1,5 +1,6 @@
 import { RoutesProvider } from '../../base/routes-provider'
 import asyncErrorHandler from '../../middleware/async-error-handler'
+import validateObjectId from '../../middleware/validate-object-id'
 import AssociationController from './association.controller'
 
 export default class AssocationRoutes extends RoutesProvider {
@@ -32,6 +33,35 @@ export default class AssocationRoutes extends RoutesProvider {
     this.router.get(
       '/associations',
       asyncErrorHandler((req, res) => controller.getAssociations(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/associations/{id}:
+     *  get:
+     *    tags:
+     *      - Associations
+     *    description: Fetches the association based on the given id.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the association.
+     *      - $ref: '#/components/parameters/projectionParam'
+     *    responses:
+     *      200:
+     *        description: The association is fetched.
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/Association'
+     */
+    this.router.get(
+      '/associations/:id',
+      validateObjectId,
+      asyncErrorHandler((req, res) => controller.getAssociationById(req, res)),
     )
   }
 }

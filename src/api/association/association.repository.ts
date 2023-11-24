@@ -26,4 +26,8 @@ export class AssociationRepository implements Repository {
         }
       : {}
   }
+
+  findById(id: string) {
+    return associationModel.findById(id)
+  }
 }

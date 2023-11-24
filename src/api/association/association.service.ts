@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose'
+import { Types } from 'mongoose'
 import { Service } from '../../base/service'
 import { Association } from './association.interface'
 
@@ -6,6 +6,7 @@ import { AssociationItemsDto } from './association-items.dto'
 import { plainToInstance } from 'class-transformer'
 import { PaginationInfoDto } from '../pagination-info.dto'
 import { AssociationRepository } from './association.repository'
+import { AssociationDto } from './association.dto'
 
 export default class AssociationService implements Service {
   private repository: AssociationRepository
@@ -32,5 +33,10 @@ export default class AssociationService implements Service {
         enableImplicitConversion: true,
       },
     )
+  }
+
+  async getById(id: string): Promise<AssociationDto | null> {
+    const item = await this.repository.findById(id)
+    return plainToInstance(AssociationDto, item, { excludeExtraneousValues: true })
   }
 }

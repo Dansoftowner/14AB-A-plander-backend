@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose'
+import { Types } from 'mongoose'
 import { Association } from './association.interface'
 import { Expose } from 'class-transformer'
 
@@ -28,7 +28,7 @@ import { Expose } from 'class-transformer'
  */
 export class AssociationDto implements Association {
   @Expose()
-  _id!: Schema.Types.ObjectId
+  _id!: Types.ObjectId
 
   @Expose()
   name!: string

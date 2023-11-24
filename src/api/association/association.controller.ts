@@ -8,12 +8,14 @@ import {
   getSearchQuery,
   getSort,
 } from '../api-commons'
+import { ApiError } from '../../exception/api-error'
+import { ApiErrorCode } from '../../exception/api-error-codes'
 
 export default class AssociationController implements Controller {
-  private associationService: AssociationService
+  private service: AssociationService
 
   constructor({ associationService }) {
-    this.associationService = associationService
+    this.service = associationService
   }
 
   async getAssociations(req: Request, res: Response) {
@@ -22,7 +24,7 @@ export default class AssociationController implements Controller {
     const sort = getSort(req, 'name')
     const searchTerm = getSearchQuery(req)
 
-    const items = await this.associationService.get({
+    const items = await this.service.get({
       paginationInfo,
       projection,
       sort,
@@ -30,5 +32,16 @@ export default class AssociationController implements Controller {
     })
 
     res.json(items)
+  }
+
+  async getAssociationById(req: Request, res: Response) {
+    const id = req.params.id
+
+    const item = await this.service.getById(id)
+
+    if (!item)
+      throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE, 'Resource not found!') // TODO: i18n
+
+    res.json(item)
   }
 }
