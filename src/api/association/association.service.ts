@@ -35,8 +35,8 @@ export default class AssociationService implements Service {
     )
   }
 
-  async getById(id: string): Promise<AssociationDto | null> {
-    const item = await this.repository.findById(id)
+  async getById(id: string, projection: string): Promise<AssociationDto | null> {
+    const item = await this.repository.findById(id, projection)
     return plainToInstance(AssociationDto, item, { excludeExtraneousValues: true })
   }
 }

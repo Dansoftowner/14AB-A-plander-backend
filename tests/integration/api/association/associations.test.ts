@@ -156,12 +156,19 @@ describe('/api/associations', () => {
   describe('GET /:id', () => {
     let id: string
     let projection: string
+    let association: object
 
     const sendRequest = () => {
       return request(app).get(`/api/associations/${id}`).query({
         projection,
       })
     }
+
+    beforeEach(async () => {
+      projection = 'full'
+      association = associations[0]
+      id = (await associationModel.findOne(association))!._id.toHexString()
+    })
 
     it('should return 400 response if the id is not a valid ObjectId', async () => {
       id = '123'
@@ -180,21 +187,13 @@ describe('/api/associations', () => {
     })
 
     it('should return the association if the id is valid', async () => {
-      const association = await associationModel.findOne()
-
-      id = association!._id.toHexString()
-
-      const res = sendRequest()
+      const res = await sendRequest()
 
       expect(res.status).toBe(200)
-      expect(res.body).toMatchObject(association!)
+      expect(res.body).toMatchObject(association)
     })
 
     it('should project only the _id and name fields in "lite" projection mode', async () => {
-      const association = await associationModel.findOne()
-
-      id = association!._id.toHexString()
-
       projection = 'lite'
 
       const res = await sendRequest()
@@ -203,15 +202,11 @@ describe('/api/associations', () => {
     })
 
     it('should project all the fields in "full" projection mode', async () => {
-      const association = await associationModel.findOne()
-
-      id = association!._id.toHexString()
-
       projection = 'full'
 
       const res = await sendRequest()
 
-      expect(_.keys(res.body).sort()).toEqual(_.keys(association).sort())
+      expect(_.keys(res.body).sort()).toEqual(['_id', ..._.keys(association)].sort())
     })
   })
 })

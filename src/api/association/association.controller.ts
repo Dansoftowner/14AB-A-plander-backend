@@ -20,7 +20,7 @@ export default class AssociationController implements Controller {
 
   async getAssociations(req: Request, res: Response) {
     const paginationInfo = getPaginationInfo(req)
-    const projection = getProjection(req, { lite: '_id name', full: '' })
+    const projection = this.resolveProjection(req)
     const sort = getSort(req, 'name')
     const searchTerm = getSearchQuery(req)
 
@@ -36,12 +36,17 @@ export default class AssociationController implements Controller {
 
   async getAssociationById(req: Request, res: Response) {
     const id = req.params.id
+    const projection = this.resolveProjection(req)
 
-    const item = await this.service.getById(id)
+    const item = await this.service.getById(id, projection)
 
     if (!item)
       throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE, 'Resource not found!') // TODO: i18n
 
     res.json(item)
+  }
+
+  private resolveProjection(req: Request) {
+    return getProjection(req, { lite: '_id name', full: '' })
   }
 }
