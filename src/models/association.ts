@@ -1,5 +1,11 @@
-import mongoose, { Schema } from 'mongoose'
-import { Association } from './association.interface'
+import mongoose, { Schema, Types } from 'mongoose'
+
+export interface Association {
+  _id: Types.ObjectId
+  name: string
+  location: string
+  certificate: string
+}
 
 const associationSchema = new Schema<Association>({
   name: {

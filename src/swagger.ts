@@ -28,7 +28,7 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
-  apis: [`${__dirname}/api/**/*.{ts,js}`],
+  apis: [`${__dirname}/api/**/*.{ts,js}`, `${__dirname}/dto/*.{ts,js}`],
 }
 
 export default swaggerJsdoc(options)

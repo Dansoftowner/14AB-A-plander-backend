@@ -1,5 +1,4 @@
 import { Types } from 'mongoose'
-import { Association } from './association.interface'
 import { Expose } from 'class-transformer'
 
 /**
@@ -26,7 +25,7 @@ import { Expose } from 'class-transformer'
  *          description: 'The official identifer of the association'
  *          example: '08/0019'
  */
-export class AssociationDto implements Association {
+export class AssociationDto {
   @Expose()
   _id!: Types.ObjectId
 

@@ -1,12 +1,9 @@
-import { Types } from 'mongoose'
-import { Service } from '../../base/service'
-import { Association } from './association.interface'
-
-import { AssociationItemsDto } from './association-items.dto'
+import { Service } from '../base/service'
+import { AssociationItemsDto } from '../dto/association-items'
 import { plainToInstance } from 'class-transformer'
-import { PaginationInfoDto } from '../pagination-info.dto'
-import { AssociationRepository } from './association.repository'
-import { AssociationDto } from './association.dto'
+import { PaginationInfoDto } from '../dto/pagination-info'
+import { AssociationRepository } from '../repositories/association'
+import { AssociationDto } from '../dto/association'
 
 export default class AssociationService implements Service {
   private repository: AssociationRepository
