@@ -1,7 +1,7 @@
 import { Express } from 'express'
 import request from 'supertest'
 import _ from 'lodash'
-import associationModel from '../../../../src/api/association/association-model'
+import associationModel from '../../../../src/api/association/association.model'
 import container from '../../../../src/di'
 
 describe('/api/associations', () => {
