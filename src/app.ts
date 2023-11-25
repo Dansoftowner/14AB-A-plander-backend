@@ -9,6 +9,7 @@ import mongoose from 'mongoose'
 import logger from './logging/logger'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './swagger'
+import i18n from './middlewares/i18n'
 
 /**
  * Responsible for assembling the express application.
@@ -34,6 +35,7 @@ export class App {
   private initializeMiddlewares() {
     this.expressApp.use(helmet())
     if (config.get('logging.isEnabled')) this.expressApp.use(morgan('tiny'))
+    this.expressApp.use('/api', i18n)
   }
 
   private initializeRoutes(opts) {

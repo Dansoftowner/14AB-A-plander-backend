@@ -1,0 +1,5 @@
+{
+    "internal-server-error": "Internal server error",
+    "invalid-object-id": "The given id has an invalid format!",
+    "missing-resource": "Resource with the given id not found!"
+}

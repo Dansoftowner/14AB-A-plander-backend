@@ -4,7 +4,7 @@ export class ApiError extends Error {
   constructor(
     public status: number,
     public errorCode: ApiErrorCode,
-    public message: string,
+    message?: string,
   ) {
     super(message)
   }

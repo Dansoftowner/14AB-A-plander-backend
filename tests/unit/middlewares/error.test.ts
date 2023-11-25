@@ -9,7 +9,9 @@ describe('error middleware', () => {
   let next
 
   beforeEach(() => {
-    req = {}
+    req = {
+      t: jest.fn().mockReturnValue('i18n'),
+    }
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
@@ -30,5 +32,14 @@ describe('error middleware', () => {
 
     expect(res.status).toHaveBeenCalledWith(400)
     expect(res.json).toHaveBeenCalledWith(apiError)
+  })
+
+  it('should internationalize message if ApiError with no custom message is passed', () => {
+    const apiError = new ApiError(400, 'e' as unknown as ApiErrorCode)
+
+    errorMiddleware(apiError, req, res, next)
+
+    expect(req.t.mock.calls[0][0]).toBe(apiError.errorCode)
+    expect(res.json.mock.calls[0][0]).toHaveProperty('message', 'i18n')
   })
 })

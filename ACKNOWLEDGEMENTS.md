@@ -12,6 +12,9 @@
 - [dotenv](https://www.npmjs.com/package/dotenv)
 - [lodash](https://www.npmjs.com/package/lodash)
 - [class-transformer](https://www.npmjs.com/package/class-transformer)
+- [i18next](https://www.npmjs.com/package/i18next)
+- [i18next-fs-backend](https://www.npmjs.com/package/i18next-fs-backend)
+- [i18next-http-middleware](https://www.npmjs.com/package/i18next-http-middleware)
 
 ## Fejlesztési
 

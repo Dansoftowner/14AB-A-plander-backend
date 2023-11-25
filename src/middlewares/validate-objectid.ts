@@ -5,12 +5,6 @@ import { ApiErrorCode } from '../exception/api-error-codes'
 
 export default (req: Request, res: Response, next: NextFunction) => {
   if (!Types.ObjectId.isValid(req.params.id))
-    return res.status(400).json(
-      new ApiError(
-        400,
-        ApiErrorCode.INVALID_OBJECT_ID,
-        'The id has invalid format!', // TODO: internationalization
-      ),
-    )
+    throw new ApiError(400, ApiErrorCode.INVALID_OBJECT_ID)
   next()
 }

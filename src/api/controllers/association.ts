@@ -41,8 +41,7 @@ export default class AssociationController implements Controller {
 
     const item = await this.service.getById(id, projection)
 
-    if (!item)
-      throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE, 'Resource not found!') // TODO: i18n
+    if (!item) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
     res.json(instanceToPlain(item))
   }
