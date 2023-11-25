@@ -10,6 +10,7 @@ import {
 } from '../api-commons'
 import { ApiError } from '../../exception/api-error'
 import { ApiErrorCode } from '../../exception/api-error-codes'
+import { instanceToPlain } from 'class-transformer'
 
 export default class AssociationController implements Controller {
   private service: AssociationService
@@ -43,7 +44,7 @@ export default class AssociationController implements Controller {
     if (!item)
       throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE, 'Resource not found!') // TODO: i18n
 
-    res.json(item)
+    res.json(instanceToPlain(item))
   }
 
   private resolveProjection(req: Request) {

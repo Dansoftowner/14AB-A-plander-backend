@@ -1,7 +1,6 @@
-import mongoose, { Schema, Types } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 
 export interface Association {
-  _id: Types.ObjectId
   name: string
   location: string
   certificate: string

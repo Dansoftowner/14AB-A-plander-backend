@@ -1,5 +1,4 @@
-import { Types } from 'mongoose'
-import { Expose } from 'class-transformer'
+import { Expose, Type } from 'class-transformer'
 
 /**
  * @openapi
@@ -26,8 +25,9 @@ import { Expose } from 'class-transformer'
  *          example: '08/0019'
  */
 export class AssociationDto {
-  @Expose()
-  _id!: Types.ObjectId
+  @Expose({ name: '_id' })
+  @Type(() => String)
+  id!: string
 
   @Expose()
   name!: string
