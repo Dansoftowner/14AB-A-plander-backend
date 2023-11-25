@@ -29,6 +29,8 @@ export default class AssocationRoutes extends RoutesProvider {
      *          application/json:
      *            schema:
      *                $ref: '#/components/schemas/AssociationItems'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
       '/associations',
@@ -57,6 +59,12 @@ export default class AssocationRoutes extends RoutesProvider {
      *          application/json:
      *            schema:
      *                $ref: '#/components/schemas/Association'
+     *      400:
+     *        $ref: '#/components/responses/InvalidObjectId'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
       '/associations/:id',
