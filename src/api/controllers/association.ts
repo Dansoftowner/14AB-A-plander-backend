@@ -7,7 +7,7 @@ import {
   getProjection,
   getSearchQuery,
   getSort,
-} from '../api-commons'
+} from '../common-query-params'
 import { ApiError } from '../../exception/api-error'
 import { ApiErrorCode } from '../../exception/api-error-codes'
 import { instanceToPlain } from 'class-transformer'

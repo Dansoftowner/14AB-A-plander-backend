@@ -1,3 +1,7 @@
+/**
+ * @file Provides utility funcitons for resolving common query parameters from http requests
+ */
+
 import { Request } from 'express'
 import _ from 'lodash'
 import { PaginationInfoDto } from '../dto/pagination-info'
