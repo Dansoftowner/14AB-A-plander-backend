@@ -32,7 +32,7 @@ export default class AssociationController implements Controller {
       searchTerm,
     })
 
-    res.json(items)
+    res.json(instanceToPlain(items))
   }
 
   async getAssociationById(req: Request, res: Response) {
