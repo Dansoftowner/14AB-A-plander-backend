@@ -49,19 +49,56 @@ const memberSchema = new Schema<Member>({
   name: {
     type: String,
     minlength: 5,
-    validate: (v) => {
+    validate: (v: string) => {
       return (
         /^[^\d]+\s[^\d]+(\s[^\d]+)*$/g.test(v) &&
         !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(v)
       )
+    },
+    required: function () {
+      return this.isRegistered
     },
   },
   address: {
     type: String,
     minlength: 5,
     validate: /[0-9]/,
+    required: function () {
+      return this.isRegistered
+    },
+  },
+  idNumber: {
+    type: String,
+    index: true,
+    required: function () {
+      return this.isRegistered
+    },
+  },
+  phoneNumber: {
+    type: String,
+    minlength: 1,
+    required: function () {
+      return this.isRegistered
+    },
+  },
+  guardNumber: {
+    type: String,
+    validate: /\d{2}\/\d{4}\/\d{5}/,
+  },
+  roles: {
+    type: [String],
+    required: true,
+    default: ['member'],
+    validate: (v) => ['member', 'president'].includes(v),
+    transform: (v) => [...new Set(['member', v])],
+  },
+  preferences: {
+    type: Object,
   },
 })
 
 memberSchema.index({ association: 1, email: 1 }, { unique: true })
 memberSchema.index({ association: 1, username: 1 }, { unique: true })
+memberSchema.index({ association: 1, idNumber: 1 }, { unique: true })
+
+export default mongoose.model('Member', memberSchema, 'members')
