@@ -1,0 +1,5 @@
+{
+    "mongo": {
+        "uri": "PLANDER_MONGO_URI"
+    }
+}

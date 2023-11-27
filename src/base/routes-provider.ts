@@ -1,4 +1,5 @@
 import express, { Router } from 'express'
+import { Controller } from './controller'
 
 /**
  * Represents an entity that registers http routes into an express router.
@@ -6,11 +7,11 @@ import express, { Router } from 'express'
 export abstract class RoutesProvider {
   private _router: Router = express.Router()
 
-  protected constructor() {
-    this.initializeRoutes()
+  protected constructor(controller: Controller) {
+    this.initializeRoutes(controller)
   }
 
-  protected abstract initializeRoutes()
+  protected abstract initializeRoutes(controller: Controller): void
 
   public get router() {
     return this._router

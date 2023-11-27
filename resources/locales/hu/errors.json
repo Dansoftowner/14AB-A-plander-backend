@@ -1,0 +1,6 @@
+{
+    "internal-server-error": "Szerver oldali hiba",
+    "invalid-object-id": "A megadott azonosító rossz formátumban van megadva!",
+    "missing-resource": "Az elem a megadott azonosítóval nem található!",
+    "surpassed-rate-limit": "Túl sok lekérdezés rövid idő alatt!"
+}
