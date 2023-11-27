@@ -3,7 +3,12 @@ import { ApiError } from '../exception/api-error'
 import { ApiErrorCode } from '../exception/api-error-codes'
 import logger from '../logging/logger'
 
-export default (err: Error, req: Request, res: Response, next: NextFunction) => {
+const errorMiddleware = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   if (err instanceof ApiError) {
     if (!err.message) err.message = req.t(err.errorCode, { ns: 'errors' })
     return res.status(err.status).json(err)
@@ -11,9 +16,7 @@ export default (err: Error, req: Request, res: Response, next: NextFunction) => 
 
   logger.error('Internal server error occured', err)
 
-  res
-    .status(500)
-    .json(
-      new ApiError(500, ApiErrorCode.INTERNAL_SERVER_ERROR, 'Internal server error'),
-    )
+  errorMiddleware(new ApiError(500, ApiErrorCode.INTERNAL_SERVER_ERROR), req, res, next)
 }
+
+export default errorMiddleware
