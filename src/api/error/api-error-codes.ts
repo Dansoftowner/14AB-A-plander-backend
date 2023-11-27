@@ -38,5 +38,16 @@ export enum ApiErrorCode {
    */
   MISSING_RESOURCE = 'missing-resource',
 
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      SurpassedRateLimit:
+   *        description: "Too many requests in short period of time (errorCode: 'surpassed-rate-limit')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
   SURPASSED_RATE_LIMIT = 'surpassed-rate-limit',
 }

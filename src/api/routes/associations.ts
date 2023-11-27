@@ -29,6 +29,8 @@ export default class AssocationRoutes extends RoutesProvider {
      *          application/json:
      *            schema:
      *                $ref: '#/components/schemas/AssociationItems'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:
      *        $ref: '#/components/responses/InternalServerError'
      */
@@ -63,6 +65,8 @@ export default class AssocationRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InvalidObjectId'
      *      404:
      *        $ref: '#/components/responses/NotFound'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:
      *        $ref: '#/components/responses/InternalServerError'
      */
