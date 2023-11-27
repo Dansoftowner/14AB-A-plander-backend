@@ -10,14 +10,14 @@ const associationSchema = new Schema<Association>({
   name: {
     type: String,
     required: true,
-    min: 5,
-    max: 255,
+    minlength: 5,
+    maxlength: 255,
   },
   location: {
     type: String,
     required: true,
-    min: 5,
-    max: 255,
+    minlength: 5,
+    maxlength: 255,
   },
   certificate: {
     type: String,
