@@ -4,6 +4,7 @@ import _ from 'lodash'
 import associationModel from '../../../../src/models/association'
 import container from '../../../../src/di'
 import mongoose from 'mongoose'
+import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 
 describe('/api/associations', () => {
   let app: Express
@@ -17,6 +18,7 @@ describe('/api/associations', () => {
   beforeEach(async () => {
     app = container.resolve('app').expressApp
     await associationModel.insertMany(associations)
+    rateLimiterStore.resetAll()
   })
 
   afterEach(async () => {

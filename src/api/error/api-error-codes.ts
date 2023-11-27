@@ -37,4 +37,6 @@ export enum ApiErrorCode {
    *             $ref: '#/components/schemas/Error'
    */
   MISSING_RESOURCE = 'missing-resource',
+
+  SURPASSED_RATE_LIMIT = 'surpassed-rate-limit',
 }

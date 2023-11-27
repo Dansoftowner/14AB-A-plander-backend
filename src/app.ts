@@ -10,6 +10,7 @@ import logger from './logging/logger'
 import swaggerUi from 'swagger-ui-express'
 import swaggerSpec from './swagger'
 import i18n from './middlewares/i18n'
+import rateLimiter from './middlewares/rate-limiter'
 
 /**
  * Responsible for assembling the express application.
@@ -42,7 +43,7 @@ export class App {
     for (const prop in opts) {
       if (prop.endsWith('Routes')) {
         const routes: RoutesProvider = opts[prop]
-        this.expressApp.use('/api', routes.router)
+        this.expressApp.use('/api', rateLimiter, routes.router)
       }
     }
   }

@@ -15,6 +15,7 @@
 - [i18next](https://www.npmjs.com/package/i18next)
 - [i18next-fs-backend](https://www.npmjs.com/package/i18next-fs-backend)
 - [i18next-http-middleware](https://www.npmjs.com/package/i18next-http-middleware)
+- [express-rate-limit](https://www.npmjs.com/package/express-rate-limit)
 
 ## Fejlesztési
 
