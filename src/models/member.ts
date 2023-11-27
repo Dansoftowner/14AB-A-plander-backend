@@ -2,6 +2,7 @@ import mongoose, { Schema, Types } from 'mongoose'
 import { Association } from './association'
 
 export interface Member {
+  _id: Types.ObjectId
   isRegistered: boolean
   association: Association | Types.ObjectId
   email: string
