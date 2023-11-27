@@ -6,15 +6,15 @@ export interface Member {
   isRegistered: boolean
   association: Association | Types.ObjectId
   email: string
-  username: string
-  password: string
-  name: string
-  address: string
-  idNumber: string
-  phoneNumber: string
-  guardNumber: string
+  username?: string
+  password?: string
+  name?: string
+  address?: string
+  idNumber?: string
+  phoneNumber?: string
+  guardNumber?: string
   roles: string[]
-  preferences: object
+  preferences?: object
 }
 
 const memberSchema = new Schema<Member>({
@@ -32,7 +32,7 @@ const memberSchema = new Schema<Member>({
     type: String,
     required: true,
     index: true,
-    validate: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+    validate: (v) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(v),
   },
   username: {
     type: String,
@@ -84,14 +84,20 @@ const memberSchema = new Schema<Member>({
   },
   guardNumber: {
     type: String,
-    validate: /\d{2}\/\d{4}\/\d{5}/,
+    validate: [
+      /\d{2}\/\d{4}\/\d{5}/,
+      'The guard number should follow this format: 00-0000-000000',
+    ],
   },
   roles: {
     type: [String],
     required: true,
     default: ['member'],
-    validate: (v) => ['member', 'president'].includes(v),
-    transform: (v) => [...new Set(['member', v])],
+    validate: [
+      (v: string[]) => v.every((it) => ['member', 'president'].includes(it)),
+      'The accepted role titles are: member, president!',
+    ],
+    transform: (v: string[]) => [...new Set(v)],
   },
   preferences: {
     type: Object,
