@@ -8,8 +8,8 @@ import {
   getSearchQuery,
   getSort,
 } from '../common-query-params'
-import { ApiError } from '../../exception/api-error'
-import { ApiErrorCode } from '../../exception/api-error-codes'
+import { ApiError } from '../../api/error/api-error'
+import { ApiErrorCode } from '../error/api-error-codes'
 import { instanceToPlain } from 'class-transformer'
 
 export default class AssociationController implements Controller {

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import { ApiError } from '../exception/api-error'
-import { ApiErrorCode } from '../exception/api-error-codes'
+import { ApiError } from '../api/error/api-error'
+import { ApiErrorCode } from '../api/error/api-error-codes'
 import logger from '../logging/logger'
 
 const errorMiddleware = (

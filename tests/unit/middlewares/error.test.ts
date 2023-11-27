@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import errorMiddleware from '../../../src/middlewares/error'
-import { ApiError } from '../../../src/exception/api-error'
-import { ApiErrorCode } from '../../../src/exception/api-error-codes'
+import { ApiError } from '../../../src/api/error/api-error'
+import { ApiErrorCode } from '../../../src/api/error/api-error-codes'
 
 describe('error middleware', () => {
   let req
