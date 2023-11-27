@@ -37,6 +37,7 @@ export class App {
     this.expressApp.use(helmet())
     if (config.get('logging.isEnabled')) this.expressApp.use(morgan('tiny'))
     this.expressApp.use('/api', i18n)
+    this.expressApp.use('/api', express.json())
   }
 
   private initializeRoutes(opts) {
