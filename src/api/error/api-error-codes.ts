@@ -50,4 +50,30 @@ export enum ApiErrorCode {
    *             $ref: '#/components/schemas/Error'
    */
   SURPASSED_RATE_LIMIT = 'surpassed-rate-limit',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      InvalidPayload:
+   *        description: "The given data does not meet the validation requirements (errorCode: 'invalid-payload')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  INVALID_PAYLOAD = 'invalid-payload', // TODO: internationalize
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      WrongCredentials:
+   *        description: "Invalid username or password (errorCode: 'wrong-credentials')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  WRONG_CREDENTIALS = 'wrong-credentials', // TODO: internationalize
 }

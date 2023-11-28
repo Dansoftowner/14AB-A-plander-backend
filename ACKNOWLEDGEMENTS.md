@@ -18,6 +18,7 @@
 - [express-rate-limit](https://www.npmjs.com/package/express-rate-limit)
 - [bcrypt](https://www.npmjs.com/package/bcrypt)
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+- [joi](https://www.npmjs.com/package/joi)
 
 ## Fejlesztési
 
