@@ -8,8 +8,8 @@ import associationModel, { Association } from '../../../../src/models/associatio
 import memberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import mongoose from 'mongoose'
-import cookie from 'cookie'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
+import { getAuthCookieInfo } from './utils'
 
 describe('Endpoints related to authentication', () => {
   let app: Express
@@ -130,20 +130,33 @@ describe('Endpoints related to authentication', () => {
     it('should return cookie if the credentials are correct', async () => {
       const res = await sendRequest()
 
-      const cookieName = 'plander_auth'
-
-      const rawCookies = res.headers['set-cookie'] as unknown as string[]
-      const cookie = rawCookies.find(it => it.startsWith(cookieName))
-
-      const isHttpOnly = cookie?.includes('HttpOnly;')
-      const isSameSiteLax = cookie?.includes('SameSite=Lax')
-
-      const token = cookie?.substring(cookie.indexOf(cookieName) + 12, cookie.indexOf(';'))
+      const { cookie, isHttpOnly, isSameSiteLax, maxAge, token } =
+        getAuthCookieInfo(res)
 
       expect(res.status).toBe(200)
+      expect(cookie).toBeDefined()
+      expect(isHttpOnly).toBe(true)
+      expect(isSameSiteLax).toBe(true)
+      expect(maxAge).toBeUndefined()
       expect(token).toBeDefined()
+      expect(() => jwt.verify(token!, config.get('jwt.privateKey'))).not.toThrow()
+    })
 
-      expect(() => jwt.verify(token, config.get('jwt.privateKey'))).not.toThrow()
+    it('should return permanent cookie if auto-login is turned on', async () => {
+      isAutoLogin = true
+
+      const res = await sendRequest()
+
+      const { cookie, isHttpOnly, isSameSiteLax, maxAge, token } =
+        getAuthCookieInfo(res)
+
+      expect(res.status).toBe(200)
+      expect(cookie).toBeDefined()
+      expect(isHttpOnly).toBe(true)
+      expect(isSameSiteLax).toBe(true)
+      expect(maxAge).toBeGreaterThan(0)
+      expect(token).toBeDefined()
+      expect(() => jwt.verify(token!, config.get('jwt.privateKey'))).not.toThrow()
     })
   })
 })

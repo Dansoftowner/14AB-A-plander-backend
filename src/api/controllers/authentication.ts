@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import config from 'config'
-import { Request, Response } from 'express'
+import { CookieOptions, Request, Response } from 'express'
 import { Controller } from '../../base/controller'
 import memberModel from '../../models/member'
 import bcrypt from 'bcrypt'
@@ -34,7 +34,10 @@ export class AuthenticationController implements Controller {
 
     const token = jwt.sign(_.pick(member, ['_id']), config.get('jwt.privateKey'))
 
-    res.cookie('plander_auth', token, { sameSite: 'lax', httpOnly: true })
+    const cookieOptions: CookieOptions = { sameSite: 'lax', httpOnly: true }
+    if (payload.isAutoLogin) cookieOptions.maxAge = 365 * 24 * 60 * 60 * 1000
+
+    res.cookie('plander_auth', token, cookieOptions)
     res.json(token)
   }
 }
