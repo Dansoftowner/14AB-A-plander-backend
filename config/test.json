@@ -4,5 +4,8 @@
     },
     "mongo": {
         "uri": "mongodb://127.0.0.1/plander_tests"
+    },
+    "jwt": {
+        "privateKey": "plander_test"
     }
 }

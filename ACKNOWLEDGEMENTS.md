@@ -17,6 +17,7 @@
 - [i18next-http-middleware](https://www.npmjs.com/package/i18next-http-middleware)
 - [express-rate-limit](https://www.npmjs.com/package/express-rate-limit)
 - [bcrypt](https://www.npmjs.com/package/bcrypt)
+- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 
 ## Fejlesztési
 

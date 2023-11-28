@@ -1,5 +1,8 @@
 {
     "mongo": {
         "uri": "PLANDER_MONGO_URI"
+    },
+    "jwt": {
+        "privateKey": "PLANDER_JWT_KEY"
     }
 }

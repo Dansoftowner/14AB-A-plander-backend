@@ -3,5 +3,8 @@
         "isEnabled": true,
         "dir": "logs",
         "isFileEnabled": true
+    },
+    "jwt": {
+        "privateKey": ""
     }
 }
