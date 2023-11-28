@@ -32,6 +32,9 @@ export class AuthenticationController implements Controller {
     const validPassword = await bcrypt.compare(payload.password, member.password)
     if (!validPassword) return res.status(401).send()
 
-    res.json(jwt.sign(_.pick(member, ['_id']), config.get('jwt.privateKey')))
+    const token = jwt.sign(_.pick(member, ['_id']), config.get('jwt.privateKey'))
+
+    res.cookie('plander_auth', token, { sameSite: 'lax', httpOnly: true })
+    res.json(token)
   }
 }

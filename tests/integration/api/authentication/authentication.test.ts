@@ -8,6 +8,7 @@ import associationModel, { Association } from '../../../../src/models/associatio
 import memberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import mongoose from 'mongoose'
+import cookie from 'cookie'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 
 describe('Endpoints related to authentication', () => {
@@ -129,9 +130,13 @@ describe('Endpoints related to authentication', () => {
     it('should return cookie if the credentials are correct', async () => {
       const res = await sendRequest()
 
+      const cookies = cookie.parse(res.headers['Set-Cookie'])
+
       expect(res.status).toBe(200)
-      
-      expect(() => jwt.verify(res.body, config.get('jwt.privateKey'))).not.toThrow()
+      expect(cookies.plander_auth).toBeDefined()
+      expect(() =>   
+        jwt.verify(cookies.plander_auth, config.get('jwt.privateKey')),
+      ).not.toThrow()
     })
   })
 })
