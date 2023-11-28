@@ -1,6 +1,8 @@
 {
     "logging": {
-        "isEnabled": false
+        "isEnabled": true,
+        "isFileEnabled": false,
+        "isHttpEnabled": false
     },
     "mongo": {
         "uri": "mongodb://127.0.0.1/plander_tests"

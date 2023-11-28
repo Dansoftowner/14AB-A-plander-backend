@@ -2,7 +2,9 @@
     "logging": {
         "isEnabled": true,
         "dir": "logs",
-        "isFileEnabled": true
+        "isFileEnabled": true,
+        "isHttpEnabled": true,
+        "level": "error"
     },
     "jwt": {
         "privateKey": ""
