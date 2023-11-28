@@ -1,12 +1,14 @@
 import { Express } from 'express'
 import request from 'supertest'
 import _ from 'lodash'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import config from 'config'
 import associationModel, { Association } from '../../../../src/models/association'
 import memberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import mongoose from 'mongoose'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
-import bcrypt from 'bcrypt'
 
 describe('Endpoints related to authentication', () => {
   let app: Express
@@ -115,6 +117,21 @@ describe('Endpoints related to authentication', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(401)
+    })
+
+    it('should return token if the credentials are correct', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(() => jwt.verify(res.body, config.get('jwt.privateKey'))).not.toThrow()
+    })
+
+    it('should return cookie if the credentials are correct', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      
+      expect(() => jwt.verify(res.body, config.get('jwt.privateKey'))).not.toThrow()
     })
   })
 })

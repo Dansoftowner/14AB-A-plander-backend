@@ -1,7 +1,10 @@
+import _ from 'lodash'
+import config from 'config'
 import { Request, Response } from 'express'
 import { Controller } from '../../base/controller'
 import memberModel from '../../models/member'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export class AuthenticationController implements Controller {
   async auth(req: Request, res: Response) {
@@ -28,5 +31,7 @@ export class AuthenticationController implements Controller {
 
     const validPassword = await bcrypt.compare(payload.password, member.password)
     if (!validPassword) return res.status(401).send()
+
+    res.json(jwt.sign(_.pick(member, ['_id']), config.get('jwt.privateKey')))
   }
 }
