@@ -130,13 +130,20 @@ describe('Endpoints related to authentication', () => {
     it('should return cookie if the credentials are correct', async () => {
       const res = await sendRequest()
 
-      const cookies = cookie.parse(res.headers['Set-Cookie'])
+      const cookieName = 'plander_auth'
+
+      const rawCookies = res.headers['set-cookie'] as unknown as string[]
+      const cookie = rawCookies.find(it => it.startsWith(cookieName))
+
+      const isHttpOnly = cookie?.includes('HttpOnly;')
+      const isSameSiteLax = cookie?.includes('SameSite=Lax')
+
+      const token = cookie?.substring(cookie.indexOf(cookieName) + 12, cookie.indexOf(';'))
 
       expect(res.status).toBe(200)
-      expect(cookies.plander_auth).toBeDefined()
-      expect(() =>   
-        jwt.verify(cookies.plander_auth, config.get('jwt.privateKey')),
-      ).not.toThrow()
+      expect(token).toBeDefined()
+
+      expect(() => jwt.verify(token, config.get('jwt.privateKey'))).not.toThrow()
     })
   })
 })
