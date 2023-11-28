@@ -32,6 +32,8 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@types/config": "^3.3.3",
+    "@types/jsonwebtoken": "^9.0.5",
     "awilix": "^9.0.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
