@@ -28,4 +28,3 @@
 - [ts-node](https://www.npmjs.com/package/ts-node)
 - [ts-jest](https://www.npmjs.com/package/ts-jest)
 - [supertest](https://www.npmjs.com/package/supertest)
-- [cookie](https://www.npmjs.com/package/cookie)
