@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import config from 'config'
 import { CookieOptions, Request, Response } from 'express'
 import { Controller } from '../../base/controller'
 import { plainToInstance } from 'class-transformer'
@@ -15,7 +16,7 @@ export class AuthenticationController implements Controller {
   }
 
   async auth(req: Request, res: Response) {
-    const payload = plainToInstance(CredentialsDto, req.body, {})
+    const payload = plainToInstance(CredentialsDto, req.body)
 
     const token = await this.service.auth(payload)
 
@@ -26,9 +27,14 @@ export class AuthenticationController implements Controller {
   }
 
   private addTokenCooie(res: Response, token: string, isAutoLogin: boolean) {
-    const cookieOptions: CookieOptions = { sameSite: 'lax', httpOnly: true }
+    const cookieOptions: CookieOptions = {
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: config.get('jwt.cookieSecure'),
+    }
+
     if (isAutoLogin) cookieOptions.maxAge = 365 * 24 * 60 * 60 * 1000
 
-    res.cookie('plander_auth', token, cookieOptions)
+    res.cookie(config.get('jwt.cookieName'), token, cookieOptions)
   }
 }

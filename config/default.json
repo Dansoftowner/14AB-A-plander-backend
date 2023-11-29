@@ -7,6 +7,8 @@
         "level": "info"
     },
     "jwt": {
-        "privateKey": ""
+        "privateKey": "",
+        "cookieName": "plander_jwt",
+        "cookieSecure": false
     }
 }
