@@ -25,6 +25,10 @@ describe('/api/associations', () => {
     await associationModel.deleteMany({})
   })
 
+  afterAll(async () => {
+    await mongoose.connection.close()
+  })
+
   describe('GET /', () => {
     let offset: number | undefined
     let limit: number | undefined

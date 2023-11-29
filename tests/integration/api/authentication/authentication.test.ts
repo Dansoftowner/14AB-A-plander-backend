@@ -50,6 +50,10 @@ describe('Endpoints related to authentication', () => {
     await memberModel.deleteMany({})
   })
 
+  afterAll(async () => {
+    await mongoose.connection.close()
+  })
+
   describe('POST /api/auth', () => {
     let associationId: string | undefined
     let user: string | undefined
