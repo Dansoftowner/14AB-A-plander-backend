@@ -8,7 +8,7 @@
     },
     "jwt": {
         "privateKey": "",
-        "cookieName": "plander_jwt",
+        "cookieName": "plander_auth",
         "cookieSecure": false
     }
 }
