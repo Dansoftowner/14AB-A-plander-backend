@@ -9,6 +9,10 @@ const options: swaggerJsdoc.Options = {
     },
     tags: [
       {
+        name: 'Authentication',
+        description: 'Endpoints related to the authentication.',
+      },
+      {
         name: 'Associations',
         description: 'Endpoints related to the associations.',
       },
