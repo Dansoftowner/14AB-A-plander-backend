@@ -26,6 +26,11 @@ export class AuthenticationController implements Controller {
     res.json(token)
   }
 
+  async logout(req: Request, res: Response) {
+    this.removeTokenCookie(res)
+    res.status(204).send()
+  }
+
   private addTokenCooie(res: Response, token: string, isAutoLogin: boolean) {
     const cookieOptions: CookieOptions = {
       sameSite: 'lax',
@@ -36,5 +41,9 @@ export class AuthenticationController implements Controller {
     if (isAutoLogin) cookieOptions.maxAge = 365 * 24 * 60 * 60 * 1000
 
     res.cookie(config.get('jwt.cookieName'), token, cookieOptions)
+  }
+
+  private removeTokenCookie(res: Response) {
+    res.clearCookie(config.get('jwt.cookieName'))
   }
 }

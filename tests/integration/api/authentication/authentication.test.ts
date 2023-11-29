@@ -176,4 +176,18 @@ describe('Endpoints related to authentication', () => {
       expect(() => jwt.verify(token!, config.get('jwt.privateKey'))).not.toThrow()
     })
   })
+
+  describe('POST /api/logout', () => {
+    const sendRequest = () => {
+      return request(app).post('/api/logout').send()
+    }
+
+    it('should remove the token cookie by setting an expiry date in the past', async () => {
+      const res = await sendRequest()
+
+      const { expires } = getAuthCookieInfo(res)
+
+      expect(expires).not.toContain(new Date().getFullYear().toString())
+    })
+  })
 })

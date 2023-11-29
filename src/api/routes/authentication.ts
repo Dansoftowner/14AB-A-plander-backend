@@ -49,5 +49,25 @@ export class AuthenticationRoutes extends RoutesProvider {
       validate(CredentialsDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.auth(req, res)),
     )
+
+    /**
+     * @openapi
+     * /api/logout:
+     *  post:
+     *    tags:
+     *      - Authentication
+     *    description: '**Only relevant for web applications:** removes the token cookie.'
+     *    responses:
+     *      204:
+     *        description: Successfully logged out. **Nothing is returned.**
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.post(
+      '/logout',
+      asyncErrorHandler((req, res) => controller.logout(req, res)),
+    )
   }
 }
