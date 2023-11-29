@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import { JoiObjectId } from '../utils/joi'
 
 export class CredentialsDto {
   associationId!: string
@@ -8,7 +9,7 @@ export class CredentialsDto {
 
   static validationSchema(): Joi.ObjectSchema<CredentialsDto> {
     return Joi.object({
-      associationId: Joi.string().required(),
+      associationId: JoiObjectId().required(),
       user: Joi.string().required(),
       password: Joi.string().required(),
       isAutoLogin: Joi.boolean().optional(),

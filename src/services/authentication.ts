@@ -1,10 +1,9 @@
-import { FilterQuery } from 'mongoose'
 import { Service } from '../base/service'
 import { CredentialsDto } from '../dto/credentials'
-import memberModel, { Member } from '../models/member'
 import bcrypt from 'bcrypt'
 import { generateToken } from '../utils/jwt'
 import { MemberRepository } from '../repositories/member'
+import { isEmail } from '../utils/common-regex'
 
 export class AuthenticationService implements Service {
   private repository: MemberRepository
@@ -25,7 +24,7 @@ export class AuthenticationService implements Service {
   }
 
   private async retrieveMember({ associationId, user }) {
-    if (user.includes('@')) return this.repository.getByEmail(associationId, user)
+    if (isEmail(user)) return this.repository.getByEmail(associationId, user)
     return this.repository.getByUsername(associationId, user)
   }
 }

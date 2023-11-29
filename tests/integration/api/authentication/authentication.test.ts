@@ -51,9 +51,9 @@ describe('Endpoints related to authentication', () => {
   })
 
   describe('POST /api/auth', () => {
-    let associationId: string
-    let user: string
-    let password: string
+    let associationId: string | undefined
+    let user: string | undefined
+    let password: string | undefined
     let isAutoLogin: boolean | undefined
 
     const sendRequest = () => {
@@ -73,7 +73,15 @@ describe('Endpoints related to authentication', () => {
     })
 
     it('should return 400 message if association not provided', async () => {
-      associationId = ''
+      associationId = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 message if associationId is not a valid ObjectId', async () => {
+      associationId = '213214'
 
       const res = await sendRequest()
 
@@ -81,7 +89,7 @@ describe('Endpoints related to authentication', () => {
     })
 
     it('should return 400 message if user is not provided', async () => {
-      user = ''
+      user = undefined
 
       const res = await sendRequest()
 
@@ -89,7 +97,7 @@ describe('Endpoints related to authentication', () => {
     })
 
     it('should return 400 message if password is not provided', async () => {
-      password = ''
+      password = undefined
 
       const res = await sendRequest()
 
@@ -121,6 +129,15 @@ describe('Endpoints related to authentication', () => {
     })
 
     it('should return token if the credentials are correct', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(() => jwt.verify(res.body, config.get('jwt.privateKey'))).not.toThrow()
+    })
+
+    it('should return token if the credentials are correct with the email', async () => {
+      user = member.email
+
       const res = await sendRequest()
 
       expect(res.status).toBe(200)

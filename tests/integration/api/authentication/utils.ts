@@ -1,4 +1,5 @@
 import supertest from 'supertest'
+import config from 'config'
 
 export interface CookieInfo {
   cookie: string | undefined
@@ -9,7 +10,7 @@ export interface CookieInfo {
 }
 
 export function getAuthCookieInfo(res: supertest.Response): CookieInfo {
-  const cookieName = 'plander_auth'
+  const cookieName: string = config.get('jwt.cookieName')
 
   const rawCookies = res.headers['set-cookie'] as unknown as string[]
   const cookie = rawCookies.find((it) => it.startsWith(cookieName))
