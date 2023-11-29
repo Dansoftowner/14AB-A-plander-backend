@@ -56,7 +56,7 @@ export enum ApiErrorCode {
    * components:
    *    responses:
    *      InvalidPayload:
-   *        description: "The given data does not meet the validation requirements (errorCode: 'invalid-payload')."
+   *        description: "Some of the required fields are missing or invalid (errorCode: 'invalid-payload')."
    *        content:
    *          application/json:
    *            schema:

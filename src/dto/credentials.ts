@@ -23,7 +23,7 @@ import { JoiObjectId } from '../utils/joi'
  *        isAutoLogin:
  *          type: boolean
  *          description: 'Whether the user should be automatically logged in (if true, a permanent cookie will be returned)'
- *          example: true
+ *          example: false
  *      required:
  *        - associationId
  *        - user
