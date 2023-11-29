@@ -62,18 +62,18 @@ export enum ApiErrorCode {
    *            schema:
    *             $ref: '#/components/schemas/Error'
    */
-  INVALID_PAYLOAD = 'invalid-payload', // TODO: internationalize
+  INVALID_PAYLOAD = 'invalid-payload',
 
   /**
    * @openapi
    * components:
    *    responses:
    *      WrongCredentials:
-   *        description: "Invalid username or password (errorCode: 'wrong-credentials')."
+   *        description: "Invalid username/password or maybe the association doesn't exist (errorCode: 'wrong-credentials')."
    *        content:
    *          application/json:
    *            schema:
    *             $ref: '#/components/schemas/Error'
    */
-  WRONG_CREDENTIALS = 'wrong-credentials', // TODO: internationalize
+  WRONG_CREDENTIALS = 'wrong-credentials',
 }

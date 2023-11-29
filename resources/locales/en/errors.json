@@ -2,5 +2,7 @@
     "internal-server-error": "Internal server error",
     "invalid-object-id": "The given id has an invalid format!",
     "missing-resource": "Resource with the given id not found!",
-    "surpassed-rate-limit": "Too many requests in a short period of time!"
+    "surpassed-rate-limit": "Too many requests in a short period of time!",
+    "invalid-payload": "Incorrect data format!",
+    "wrong-credentials": "Invalid username or password!"
 }
