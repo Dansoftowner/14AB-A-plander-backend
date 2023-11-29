@@ -1,5 +1,10 @@
 import mongoose, { Schema, Types } from 'mongoose'
 import { Association } from './association'
+import {
+  isEmail,
+  isFullName,
+  isGuardNumber,
+} from '../utils/common-regex'
 
 export interface Member {
   _id: Types.ObjectId
@@ -32,7 +37,7 @@ const memberSchema = new Schema<Member>({
     type: String,
     required: true,
     index: true,
-    validate: (v) => /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(v),
+    validate: [isEmail, 'The given string is not a valid email address'],
   },
   username: {
     type: String,
@@ -50,12 +55,7 @@ const memberSchema = new Schema<Member>({
   name: {
     type: String,
     minlength: 5,
-    validate: (v: string) => {
-      return (
-        /^[^\d]+\s[^\d]+(\s[^\d]+)*$/g.test(v) &&
-        !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(v)
-      )
-    },
+    validate: [isFullName, 'The given string is not a valid full name'],
     required: function () {
       return this.isRegistered
     },
@@ -85,7 +85,7 @@ const memberSchema = new Schema<Member>({
   guardNumber: {
     type: String,
     validate: [
-      /\d{2}\/\d{4}\/\d{5}/,
+      isGuardNumber,
       'The guard number should follow this format: 00-0000-000000',
     ],
   },
