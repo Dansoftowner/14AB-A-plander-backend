@@ -1,5 +1,6 @@
 import { RoutesProvider } from '../../base/routes-provider'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
+import auth from '../../middlewares/auth'
 import validateObjectId from '../../middlewares/validate-objectid'
 import AssociationController from '../controllers/association'
 
@@ -37,6 +38,12 @@ export default class AssocationRoutes extends RoutesProvider {
     this.router.get(
       '/associations',
       asyncErrorHandler((req, res) => controller.getAssociations(req, res)),
+    )
+
+    this.router.get(
+      '/associations/mine',
+      auth,
+      asyncErrorHandler((req, res) => controller.getMyAssociation(req, res)),
     )
 
     /**
