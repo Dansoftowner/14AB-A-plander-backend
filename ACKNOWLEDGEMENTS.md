@@ -19,6 +19,7 @@
 - [bcrypt](https://www.npmjs.com/package/bcrypt)
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 - [joi](https://www.npmjs.com/package/joi)
+- [cookie-parser](https://www.npmjs.com/package/cookie-parser)
 
 ## Fejlesztési
 
