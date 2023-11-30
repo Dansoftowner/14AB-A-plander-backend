@@ -10,16 +10,20 @@ export default (req: Request, res: Response, next: NextFunction) => {
   const token = retrieveToken(req)
   if (!token) throw new ApiError(401, ApiErrorCode.UNAUTHORIZED)
 
-  let memberInfo: MemberInfo
+  const jwtPayload = decodeJwt(token)
+
+  req.scope = container.createScope()
+  req.scope.register({ memberInfo: asValue(jwtPayload) })
+
+  next()
+}
+
+function decodeJwt(token: string): MemberInfo {
   try {
-    memberInfo = decodeMemberInfo(token)
+    return decodeMemberInfo(token)
   } catch (e) {
     throw new ApiError(400, ApiErrorCode.INVALID_TOKEN)
   }
-
-  req.scope = container.createScope()
-  req.scope.register({ memberInfo: asValue(memberInfo) })
-  next()
 }
 
 function retrieveToken(req: Request): string | undefined {
