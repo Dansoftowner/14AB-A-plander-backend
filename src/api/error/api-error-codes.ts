@@ -76,4 +76,30 @@ export enum ApiErrorCode {
    *             $ref: '#/components/schemas/Error'
    */
   WRONG_CREDENTIALS = 'wrong-credentials',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      Unauthorized:
+   *        description: "No token provided (errorCode: 'unauthorized')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  UNAUTHORIZED = 'unauthorized',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      InvalidToken:
+   *        description: "The provided token is invalid (errorCode: 'invalid-token')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  INVALID_TOKEN = 'invalid-token',
 }

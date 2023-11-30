@@ -9,6 +9,7 @@
     "jwt": {
         "privateKey": "",
         "cookieName": "plander_auth",
-        "cookieSecure": false
+        "cookieSecure": false,
+        "headerName": "x-plander-auth"
     }
 }
