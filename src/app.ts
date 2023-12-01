@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import express, { Express } from 'express'
+import express, { Express, RequestHandler } from 'express'
 import config from 'config'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -46,7 +46,11 @@ export class App {
     for (const prop in opts) {
       if (prop.endsWith('Routes')) {
         const routes: RoutesProvider = opts[prop]
-        this.expressApp.use('/api', rateLimiter, routes.router)
+        
+        const routeMiddlewares: RequestHandler[] = []
+        if (!routes.isRateLimited) routeMiddlewares.push(rateLimiter)
+        
+        this.expressApp.use('/api', routeMiddlewares, routes.router)
       }
     }
   }

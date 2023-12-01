@@ -3,10 +3,15 @@ import { AuthenticationController } from '../controllers/authentication'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import validate from '../../middlewares/validate'
 import { CredentialsDto } from '../../dto/credentials'
+import rateLimiter, { loginRateLimiter } from '../../middlewares/rate-limiter'
 
 export class AuthenticationRoutes extends RoutesProvider {
   constructor({ authenticationController }) {
     super(authenticationController)
+  }
+
+  public override get isRateLimited(): boolean {
+    return true
   }
 
   protected initializeRoutes(controller: AuthenticationController): void {
@@ -46,6 +51,7 @@ export class AuthenticationRoutes extends RoutesProvider {
      */
     this.router.post(
       '/auth',
+      loginRateLimiter,
       validate(CredentialsDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.auth(req, res)),
     )
@@ -67,6 +73,7 @@ export class AuthenticationRoutes extends RoutesProvider {
      */
     this.router.post(
       '/logout',
+      rateLimiter,
       asyncErrorHandler((req, res) => controller.logout(req, res)),
     )
   }
