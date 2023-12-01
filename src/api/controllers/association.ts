@@ -49,9 +49,9 @@ export default class AssociationController implements Controller {
 
   async getMyAssociation(req: Request, res: Response) {
     const memberInfo: MemberInfo = req.scope!.resolve('memberInfo')
-    req.params.id = memberInfo.associationId
-    
-    this.getAssociationById(req, res)
+    req.params.id = memberInfo.association
+
+    await this.getAssociationById(req, res)
   }
 
   private resolveProjection(req: Request) {

@@ -5,14 +5,11 @@ import { Member } from '../models/member'
 
 export interface MemberInfo {
   _id: string
-  associationId: string
+  association: string
 }
 
 export function generateToken(member: Member): string {
-  return jwt.sign(
-    _.pick(member, ['_id', 'associationId']),
-    config.get('jwt.privateKey'),
-  )
+  return jwt.sign(_.pick(member, ['_id', 'association']), config.get('jwt.privateKey'))
 }
 
 export function decodeMemberInfo(token: string): MemberInfo {
