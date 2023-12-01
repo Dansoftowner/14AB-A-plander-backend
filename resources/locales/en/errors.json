@@ -4,5 +4,7 @@
     "missing-resource": "Resource with the given id not found!",
     "surpassed-rate-limit": "Too many requests in a short period of time!",
     "invalid-payload": "Incorrect data format!",
-    "wrong-credentials": "Invalid username or password!"
+    "wrong-credentials": "Invalid username or password!",
+    "unauthorized": "Not authorized!",
+    "invalid-token": "Invalid token!"
 }
