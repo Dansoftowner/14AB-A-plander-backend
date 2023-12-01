@@ -21,7 +21,11 @@ export class AuthenticationRoutes extends RoutesProvider {
      *  post:
      *    tags:
      *      - Authentication
-     *    description: Authenticates the user based on the given credentials.
+     *    description: |
+     *       Authenticates the user based on the given credentials.
+     *       - **Rate limit: 10 requests per hour.**
+     *       - Returns the JWT in an httpOnly _cookie_ named 'plander_auth'.
+     *       - In order to support native applications, **the token is included in the response body as well**.
      *    requestBody:
      *      required: true
      *      content:
@@ -30,10 +34,7 @@ export class AuthenticationRoutes extends RoutesProvider {
      *         $ref: '#/components/schemas/Credentials'
      *    responses:
      *      200:
-     *        description: |
-     *           Authentication successful.
-     *           - Returns the JWT in an httpOnly _cookie_ named 'plander_auth'.
-     *           - In order to support native applications, the response will include the token in the body as well.
+     *        description: Authentication successful.
      *        content:
      *          application/json:
      *            schema:

@@ -16,7 +16,10 @@ export default class AssocationRoutes extends RoutesProvider {
      *  get:
      *    tags:
      *      - Associations
-     *    description: Fetches the registered associations.
+     *    description: |
+     *      Fetches the registered associations.
+     *
+     *      **Authentication is not required** before using this endpoint.
      *    parameters:
      *      - $ref: '#/components/parameters/offsetParam'
      *      - $ref: '#/components/parameters/limitParam'
@@ -77,7 +80,10 @@ export default class AssocationRoutes extends RoutesProvider {
      *  get:
      *    tags:
      *      - Associations
-     *    description: Fetches the association based on the given id.
+     *    description: |
+     *      Fetches the association based on the given id.
+     *
+     *      **Authentication is not required** before using this endpoint.
      *    parameters:
      *      - in: path
      *        name: id
