@@ -40,6 +40,31 @@ export default class AssocationRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.getAssociations(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/associations/mine:
+     *  get:
+     *    tags:
+     *      - Associations
+     *    description: Fetches the currently logged in member's association.
+     *    parameters:
+     *      - $ref: '#/components/parameters/projectionParam'
+     *    responses:
+     *      200:
+     *        description: The association is fetched.
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/Association'
+     *      400:
+     *        $ref: '#/components/responses/InvalidToken'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.get(
       '/associations/mine',
       auth,
