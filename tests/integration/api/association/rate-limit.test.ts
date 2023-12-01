@@ -3,6 +3,7 @@ import request from 'supertest'
 import _ from 'lodash'
 import container from '../../../../src/di'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
+import mongoose from 'mongoose'
 
 describe('rate limiting: /api/associations', () => {
   let app: Express
@@ -15,6 +16,10 @@ describe('rate limiting: /api/associations', () => {
   const sendRequest = (url) => {
     return request(app).get(url)
   }
+
+  afterAll(async () => {
+    await mongoose.connection.close()
+  })
 
   it.each(['/api/associations', '/api/associations/123'])(
     'should return 429 message if too many requests are fired',

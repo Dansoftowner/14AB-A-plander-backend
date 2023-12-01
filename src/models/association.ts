@@ -1,6 +1,7 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose, { Schema, Types } from 'mongoose'
 
 export interface Association {
+  _id: Types.ObjectId
   name: string
   location: string
   certificate: string
@@ -10,14 +11,15 @@ const associationSchema = new Schema<Association>({
   name: {
     type: String,
     required: true,
-    min: 5,
-    max: 255,
+    minlength: 5,
+    maxlength: 255,
+    unique: true,
   },
   location: {
     type: String,
     required: true,
-    min: 5,
-    max: 255,
+    minlength: 5,
+    maxlength: 255,
   },
   certificate: {
     type: String,

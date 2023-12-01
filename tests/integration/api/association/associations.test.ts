@@ -1,7 +1,9 @@
 import { Express } from 'express'
 import request from 'supertest'
 import _ from 'lodash'
-import associationModel from '../../../../src/models/association'
+import config from 'config'
+import jwt from 'jsonwebtoken'
+import associationModel, { Association } from '../../../../src/models/association'
 import container from '../../../../src/di'
 import mongoose from 'mongoose'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
@@ -23,6 +25,10 @@ describe('/api/associations', () => {
 
   afterEach(async () => {
     await associationModel.deleteMany({})
+  })
+
+  afterAll(async () => {
+    await mongoose.connection.close()
   })
 
   describe('GET /', () => {
@@ -209,6 +215,45 @@ describe('/api/associations', () => {
       const res = await sendRequest()
 
       expect(_.keys(res.body).sort()).toEqual(['_id', ..._.keys(association)].sort())
+    })
+  })
+
+  describe('GET /mine', () => {
+    let association: object
+    let token: string | undefined
+
+    const sendRequest = () => {
+      const req = request(app)
+        .get('/api/associations/mine')
+        .query({ projection: 'full' })
+
+      if (token) req.set(config.get('jwt.headerName'), token)
+      return req
+    }
+
+    beforeEach(async () => {
+      association = associations[0]
+
+      const associationId = (await associationModel.findOne(
+        association,
+      ))!._id.toHexString()
+
+      token = jwt.sign({ association: associationId }, config.get('jwt.privateKey'))
+    })
+
+    it('should return 401 message if no token provided', async () => {
+      token = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return association if member is logged in', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(res.body).toMatchObject(association)
     })
   })
 })

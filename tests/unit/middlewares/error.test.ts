@@ -31,7 +31,9 @@ describe('error middleware', () => {
     errorMiddleware(apiError, req, res, next)
 
     expect(res.status).toHaveBeenCalledWith(400)
-    expect(res.json).toHaveBeenCalledWith(apiError)
+    expect(res.json.mock.calls[0][0]).toHaveProperty('status', apiError.status)
+    expect(res.json.mock.calls[0][0]).toHaveProperty('errorCode', apiError.errorCode)
+    expect(res.json.mock.calls[0][0]).toHaveProperty('message', apiError.message)
   })
 
   it('should internationalize message if ApiError with no custom message is passed', () => {

@@ -11,8 +11,17 @@ i18next
       addPath: 'resources/locales/{{lng}}/{{ns}}.missing.json',
     },
     fallbackLng: 'en',
-    ns: ['errors'],
+    ns: ['errors', 'validation'],
     preload: ['en', 'hu'],
   })
 
 export default i18next
+
+export function getResourceBundle(lng: string, ns: string) {
+  let rb = i18next.getResourceBundle(lng, ns)
+  if (!rb && lng.includes('-')) {
+    lng = lng.split('-')[0]
+    rb = i18next.getResourceBundle(lng, ns)
+  }
+  return rb
+}

@@ -16,6 +16,10 @@
 - [i18next-fs-backend](https://www.npmjs.com/package/i18next-fs-backend)
 - [i18next-http-middleware](https://www.npmjs.com/package/i18next-http-middleware)
 - [express-rate-limit](https://www.npmjs.com/package/express-rate-limit)
+- [bcrypt](https://www.npmjs.com/package/bcrypt)
+- [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+- [joi](https://www.npmjs.com/package/joi)
+- [cookie-parser](https://www.npmjs.com/package/cookie-parser)
 
 ## Fejlesztési
 

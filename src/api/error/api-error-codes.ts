@@ -50,4 +50,56 @@ export enum ApiErrorCode {
    *             $ref: '#/components/schemas/Error'
    */
   SURPASSED_RATE_LIMIT = 'surpassed-rate-limit',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      InvalidPayload:
+   *        description: "Some of the required fields are missing or invalid (errorCode: 'invalid-payload')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  INVALID_PAYLOAD = 'invalid-payload',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      WrongCredentials:
+   *        description: "Invalid username/password or maybe the association doesn't exist (errorCode: 'wrong-credentials')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  WRONG_CREDENTIALS = 'wrong-credentials',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      Unauthorized:
+   *        description: "No token provided (errorCode: 'unauthorized')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  UNAUTHORIZED = 'unauthorized',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      InvalidToken:
+   *        description: "The provided token is invalid (errorCode: 'invalid-token')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  INVALID_TOKEN = 'invalid-token',
 }

@@ -11,6 +11,7 @@ import {
 import { ApiError } from '../../api/error/api-error'
 import { ApiErrorCode } from '../error/api-error-codes'
 import { instanceToPlain } from 'class-transformer'
+import { MemberInfo } from '../../utils/jwt'
 
 export default class AssociationController implements Controller {
   private service: AssociationService
@@ -44,6 +45,13 @@ export default class AssociationController implements Controller {
     if (!item) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
     res.json(instanceToPlain(item))
+  }
+
+  async getMyAssociation(req: Request, res: Response) {
+    const memberInfo: MemberInfo = req.scope!.resolve('memberInfo')
+    req.params.id = memberInfo.association
+
+    await this.getAssociationById(req, res)
   }
 
   private resolveProjection(req: Request) {

@@ -16,4 +16,11 @@ export abstract class RoutesProvider {
   public get router() {
     return this._router
   }
+
+  /**
+   * Indicates whether rate limiting is handled by this entity.
+   */
+  public get isRateLimited() {
+    return false
+  }
 }

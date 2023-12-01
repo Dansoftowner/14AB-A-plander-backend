@@ -26,6 +26,7 @@ function buildWinstonConfig(): winston.LoggerOptions {
   ]
 
   if (config.get('logging.isEnabled')) {
+    winstonConfig.level = config.get('logging.level')
     winstonConfig.transports = getTransports()
     winstonConfig.exceptionHandlers = getExceptionHandlerTransports()
     winstonConfig.rejectionHandlers = getRejectionHandlerTransports()

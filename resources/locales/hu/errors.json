@@ -2,5 +2,9 @@
     "internal-server-error": "Szerver oldali hiba",
     "invalid-object-id": "A megadott azonosító rossz formátumban van megadva!",
     "missing-resource": "Az elem a megadott azonosítóval nem található!",
-    "surpassed-rate-limit": "Túl sok lekérdezés rövid idő alatt!"
+    "surpassed-rate-limit": "Túl sok lekérdezés rövid idő alatt!",
+    "invalid-payload": "Érvénytelen formátum!",
+    "wrong-credentials": "Érvénytelen felhasználónév vagy jelszó!",
+    "unauthorized": "Nincs érvényes belépés!",
+    "invalid-token": "Hiteltelen azonosítás!"
 }

@@ -2,6 +2,14 @@
     "logging": {
         "isEnabled": true,
         "dir": "logs",
-        "isFileEnabled": true
+        "isFileEnabled": true,
+        "isHttpEnabled": true,
+        "level": "info"
+    },
+    "jwt": {
+        "privateKey": "",
+        "cookieName": "plander_auth",
+        "cookieSecure": false,
+        "headerName": "x-plander-auth"
     }
 }
