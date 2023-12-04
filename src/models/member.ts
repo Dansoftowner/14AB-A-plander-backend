@@ -82,7 +82,7 @@ const memberSchema = new Schema<Member>({
     type: String,
     validate: [
       isGuardNumber,
-      'The guard number should follow this format: 00-0000-000000',
+      'The guard number should follow this format: 00/0000/000000',
     ],
   },
   roles: {
