@@ -3,19 +3,19 @@ import { Service } from '../base/service'
 import { MemberItemsDto } from '../dto/member-items'
 import { PaginationInfoDto } from '../dto/pagination-info'
 import { MemberRepository } from '../repositories/member'
-import { MemberInfo } from '../utils/jwt'
+import { ClientInfo } from '../utils/jwt'
 
 export class MemberService implements Service {
-  private memberInfo: MemberInfo
+  private clientInfo: ClientInfo
   private repository: MemberRepository
 
   private get associationId(): string {
-    return this.memberInfo.association
+    return this.clientInfo.association
   }
 
-  constructor({ memberInfo, memberRepository }) {
+  constructor({ clientInfo, memberRepository }) {
     this.repository = memberRepository
-    this.memberInfo = memberInfo
+    this.clientInfo = clientInfo
   }
 
   async get(options: {

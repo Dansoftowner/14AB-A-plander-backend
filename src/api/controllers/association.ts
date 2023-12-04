@@ -11,7 +11,7 @@ import {
 import { ApiError } from '../../api/error/api-error'
 import { ApiErrorCode } from '../error/api-error-codes'
 import { instanceToPlain } from 'class-transformer'
-import { MemberInfo } from '../../utils/jwt'
+import { ClientInfo } from '../../utils/jwt'
 
 export default class AssociationController implements Controller {
   private service: AssociationService
@@ -48,8 +48,8 @@ export default class AssociationController implements Controller {
   }
 
   async getMyAssociation(req: Request, res: Response) {
-    const memberInfo: MemberInfo = req.scope!.resolve('memberInfo')
-    req.params.id = memberInfo.association
+    const clientInfo: ClientInfo = req.scope!.resolve('clientInfo')
+    req.params.id = clientInfo.association
 
     await this.getAssociationById(req, res)
   }
