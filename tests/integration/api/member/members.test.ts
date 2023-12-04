@@ -168,7 +168,7 @@ describe('/api/members', () => {
       ])
     })
 
-    it('should not project all properties to regular member', async () => {
+    it('should not project all properties to a regular member', async () => {
       projection = 'full'
       loggedInMember = regularMember
 
@@ -176,64 +176,78 @@ describe('/api/members', () => {
 
       const registeredMember = res.body.items.find((it) => it.isRegistered)
 
-      expect(_.keys(registeredMember).sort()).toEqual([
-        '_id',
-        'email',
-        'isRegistered',
-        'name',
-        'phoneNumber',
-        'roles',
-        'username',
+      expect(_.keys(registeredMember).sort()).not.toContain([
+        'guardNumber',
+        'address',
+        'idNumber',
       ])
     })
 
-    // it('should order the associations by name', async () => {
-    //   const res = await sendRequest()
+    it('should not show unregistered members to a regular member', async () => {
+      projection = 'full'
+      loggedInMember = regularMember
 
-    //   expect(res.body.items.map((it) => it.name)).toEqual(
-    //     associations.map((it) => it.name).sort(),
-    //   )
-    // })
+      const res = await sendRequest()
 
-    // it('should order the associations by name descendingly', async () => {
-    //   orderBy = '-name'
+      expect(res.body.items.find((it) => !it.isRegistered)).toBeFalsy()
+    })
 
-    //   const res = await sendRequest()
+    it('should show unregistered members to a president member', async () => {
+      projection = 'full'
+      loggedInMember = presidentMember
 
-    //   expect(res.body.items.map((it) => it.name)).toEqual(
-    //     associations
-    //       .map((it) => it.name)
-    //       .sort()
-    //       .reverse(),
-    //   )
-    // })
+      const res = await sendRequest()
 
-    // it('should order the associations by location', async () => {
-    //   projection = 'full'
-    //   orderBy = 'location'
+      expect(res.body.items.find((it) => !it.isRegistered)).toBeDefined()
+    })
 
-    //   const res = await sendRequest()
+    it('should order the members by name', async () => {
+      const res = await sendRequest()
 
-    //   expect(res.body.items.map((it) => it.location)).toEqual(
-    //     associations.map((it) => it.location).sort(),
-    //   )
-    // })
+      const recievedNames = res.body.items.map((it) => it.name)
 
-    // it.each([['blue'], ['pha'], ['as'], ['a']])(
-    //   'should perform search query on associations',
-    //   async (searchQuery) => {
-    //     q = searchQuery
+      expect(recievedNames).toEqual(recievedNames.sort())
+    })
 
-    //     const res = await sendRequest()
+    it('should order the associations by name descendingly', async () => {
+      orderBy = '-name'
 
-    //     expect(res.body.items.map((it) => it.name)).toEqual(
-    //       associations
-    //         .map((it) => it.name)
-    //         .filter((it) => new RegExp(`.*${searchQuery}.*`, 'i').test(it))
-    //         .sort(),
-    //     )
-    //   },
-    // )
+      const res = await sendRequest()
+
+      const recievedNames = res.body.items.map((it) => it.name)
+
+      expect(recievedNames).toEqual(recievedNames.sort())
+    })
+
+    it('should order the members by username', async () => {
+      projection = 'full'
+      orderBy = 'username'
+
+      const res = await sendRequest()
+
+      const recievedUsernames = res.body.items.map((it) => it.username)
+
+      expect(recievedUsernames).toEqual(recievedUsernames.sort())
+    })
+
+    it.each(['Farkas', 'Kriszti', 'Nagy'])(
+      'should perform search query on members',
+      async (searchQuery) => {
+        q = searchQuery
+
+        const res = await sendRequest()
+
+        const recievedNames = res.body.items.map((it) => it.name)
+
+        expect(recievedNames).toEqual(
+          members
+            .map((it) => it.name)
+            .filter((it) => it)
+            .filter((it) => new RegExp(searchQuery, 'i').test(it!))
+            .sort(),
+        )
+      },
+    )
   })
 
   //   describe('GET /:id', () => {

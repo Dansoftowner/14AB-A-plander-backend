@@ -17,6 +17,25 @@ export const DEFAULT_LIMIT = 10
 export const DEFAULT_PROJECTION = 'lite'
 export const MAX_LIMIT = 40
 
+export interface CommonQueryOptions {
+  offset: number;
+  limit: number;
+  projection: 'lite' | 'full';
+  sort: string | undefined;
+  searchTerm: string | undefined;
+}
+
+// TODO: only export this
+export function resolveOptions(req: Request): CommonQueryOptions {
+  return {
+    offset: extractOffset(req),
+    limit: extractLimit(req),
+    projection: getProjection(req) as ('lite' | 'full'),
+    sort: getSort(req, undefined!),
+    searchTerm: getSearchQuery(req),
+  }
+}
+
 export function getPaginationInfo(req: Request): PaginationInfoDto {
   return {
     offset: extractOffset(req),

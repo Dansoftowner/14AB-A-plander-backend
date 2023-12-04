@@ -4,6 +4,7 @@ import memberModel, { Member } from '../models/member'
 import { sanitizeForRegex as s } from '../utils/sanitize'
 
 export class MemberRepository implements Repository {
+
   count(associationId: string): Promise<number> {
     return memberModel.countDocuments({ association: associationId })
   }
@@ -18,27 +19,29 @@ export class MemberRepository implements Repository {
 
   get(
     associationId: string,
-    { paginationInfo, projection, sort, searchTerm },
+    { offset, limit, projection, sort, showUnregistered, searchTerm },
   ): Promise<Member[]> {
     return memberModel
-      .find(this.getFilter(associationId, searchTerm))
-      .skip(paginationInfo.offset)
-      .limit(paginationInfo.limit)
+      .find(this.getFilter(associationId, searchTerm, showUnregistered))
+      .skip(offset)
+      .limit(limit)
       .sort(sort)
       .select(projection)
   }
 
-  private getFilter(associationId: string, searchTerm: string) {
+  private getFilter(
+    associationId: string,
+    searchTerm: string,
+    showUnregistered: boolean,
+  ): FilterQuery<Member> {
     const filterObj: FilterQuery<Member> = {
       association: associationId,
+      isRegistered: true,
     }
 
-    if (searchTerm) {
-      filterObj.name = {
-        $regex: new RegExp(`.*${s(searchTerm)}.*`, 'i'),
-      }
-    }
-    
+    if (showUnregistered) delete filterObj.isRegistered
+    if (searchTerm) filterObj.$text = { $search: searchTerm }
+
     return filterObj
   }
 }

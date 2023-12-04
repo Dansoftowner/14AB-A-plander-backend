@@ -4,6 +4,7 @@ import { MemberItemsDto } from '../dto/member-items'
 import { PaginationInfoDto } from '../dto/pagination-info'
 import { MemberRepository } from '../repositories/member'
 import { ClientInfo } from '../utils/jwt'
+import { CommonQueryOptions } from '../api/common-query-params'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -18,15 +19,10 @@ export class MemberService implements Service {
     this.clientInfo = clientInfo
   }
 
-  async get(options: {
-    paginationInfo: PaginationInfoDto
-    projection: string
-    sort: string
-    searchTerm: string | undefined
-  }): Promise<MemberItemsDto> {
-    const items = await this.repository.get(this.associationId, options)
+  async get(options: CommonQueryOptions): Promise<MemberItemsDto> {
+    const items = await this.repository.get(this.associationId, this.dbOptions(options))
     const total = await this.repository.count(this.associationId)
-    const metadata = { ...options.paginationInfo, total }
+    const metadata = { offset: options.offset, limit: options.limit, total }
 
     return plainToInstance(
       MemberItemsDto,
@@ -36,5 +32,31 @@ export class MemberService implements Service {
         enableImplicitConversion: true,
       },
     )
+  }
+
+  private dbOptions(options: CommonQueryOptions) {
+    return {
+      ...options,
+      projection: this.adjustProjection(options.projection),
+      sort: options.sort || 'name',
+      showUnregistered: this.clientInfo.roles.includes('president'),
+    }
+  }
+
+  private adjustProjection(projection: 'lite' | 'full'): string {
+    const visibleFields = [
+      '_id',
+      'isRegistered',
+      'username',
+      'name',
+      'email',
+      'phoneNumber',
+      'roles',
+    ]
+
+    if (projection == 'full' && this.clientInfo.roles.includes('president'))
+      visibleFields.push('guardNumber', 'address', 'idNumber')
+
+    return visibleFields.join(' ')
   }
 }
