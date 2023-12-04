@@ -8,24 +8,36 @@ import memberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import mongoose from 'mongoose'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
-import { generateToken } from '../../../../src/utils/jwt'
 import members from './dummy-members.json'
 
 describe('/api/members', () => {
   let app: Express
 
-  const loggedInMember = members[0]
+  let loggedInMember
   let token: string
+
+  const presidentMember = members.find((it) => it.roles?.includes('president'))
+  const regularMember = members.find(
+    (it) =>
+      !it.roles?.includes('president') &&
+      it.association === presidentMember!.association,
+  )
 
   const companionMembers = () =>
     members
       .filter((it) => it.association === loggedInMember.association)
       .filter((it) => it.isRegistered || loggedInMember.roles?.includes('president'))
 
+  const generateToken = async () => {
+    if (!loggedInMember) return ''
+    const { generateToken: gen } = await import('../../../../src/utils/jwt')
+    return gen(loggedInMember as unknown as Member)
+  }
+
   beforeEach(async () => {
     app = container.resolve('app').expressApp
     await memberModel.insertMany(members)
-    token = generateToken(loggedInMember as unknown as Member)
+    loggedInMember = presidentMember
     rateLimiterStore.resetAll()
   })
 
@@ -44,10 +56,10 @@ describe('/api/members', () => {
     let orderBy: string | undefined
     let q: string | undefined
 
-    const sendRequest = () => {
+    const sendRequest = async () => {
       return request(app)
         .get('/api/members')
-        .set(config.get('jwt.headerName'), token)
+        .set(config.get('jwt.headerName'), await generateToken())
         .query({
           offset,
           limit,
@@ -62,7 +74,7 @@ describe('/api/members', () => {
     })
 
     it('should return 401 response if no token provided', async () => {
-      token = ''
+      loggedInMember = undefined
 
       const res = await sendRequest()
 
@@ -148,6 +160,25 @@ describe('/api/members', () => {
         'email',
         'guardNumber',
         'idNumber',
+        'isRegistered',
+        'name',
+        'phoneNumber',
+        'roles',
+        'username',
+      ])
+    })
+
+    it('should not project all properties to regular member', async () => {
+      projection = 'full'
+      loggedInMember = regularMember
+
+      const res = await sendRequest()
+
+      const registeredMember = res.body.items.find((it) => it.isRegistered)
+
+      expect(_.keys(registeredMember).sort()).toEqual([
+        '_id',
+        'email',
         'isRegistered',
         'name',
         'phoneNumber',
