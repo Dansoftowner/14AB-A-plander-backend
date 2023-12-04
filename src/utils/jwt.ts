@@ -10,7 +10,7 @@ const roleNumbers = new Map<string, number>([
 ])
 
 export class ClientInfo {
-  id!: string
+  _id!: string
   association!: string
   roles!: string[]
 }
@@ -25,7 +25,7 @@ export function verifyToken(token: string): ClientInfo {
 
 function assembleClientInfo(member: Member): object {
   return {
-    id: encodeId(member._id),
+    _id: encodeId(member._id),
     association: encodeId(member.association),
     roles: encodeRoles(member.roles),
   }
@@ -33,7 +33,7 @@ function assembleClientInfo(member: Member): object {
 
 function decodeClientInfo(raw: any): ClientInfo {
   const clientInfo = new ClientInfo()
-  clientInfo.id = raw.id
+  clientInfo._id = raw._id
   clientInfo.association = raw.association
   clientInfo.roles = decodeRoles(raw.roles)
   return clientInfo

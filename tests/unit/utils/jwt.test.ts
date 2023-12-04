@@ -18,14 +18,14 @@ describe('jwt token utility', () => {
     const token = execute()
 
     expect(_.keys(verifyToken(token))).toEqual(
-      expect.arrayContaining(['id', 'association', 'roles']),
+      expect.arrayContaining(['_id', 'association', 'roles']),
     )
   })
 
   it('should store id in token', () => {
     const token = execute()
 
-    expect(verifyToken(token)).toHaveProperty('id', member._id.toHexString())
+    expect(verifyToken(token)).toHaveProperty('_id', member._id.toHexString())
   })
 
   it('should store association in token', () => {
