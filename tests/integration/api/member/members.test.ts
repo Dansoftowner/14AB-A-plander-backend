@@ -17,6 +17,11 @@ describe('/api/members', () => {
   const loggedInMember = members[0]
   let token: string
 
+  const companionMembers = () =>
+    members
+      .filter((it) => it.association === loggedInMember.association)
+      .filter((it) => it.isRegistered || loggedInMember.roles?.includes('president'))
+
   beforeEach(async () => {
     app = container.resolve('app').expressApp
     await memberModel.insertMany(members)
@@ -78,54 +83,78 @@ describe('/api/members', () => {
       expect(res.body.metadata).toHaveProperty('limit', limit)
     })
 
-    // it('should return all associations', async () => {
-    //   limit = 40
+    it('should return all members', async () => {
+      limit = 40
 
-    //   const res = await sendRequest()
+      const res = await sendRequest()
 
-    //   const itemsCount = Math.min(associations.length, limit)
+      const members = companionMembers()
+      const itemsCount = Math.min(members.length, limit)
 
-    //   expect(res.body.items.length).toBe(itemsCount)
-    //   expect(res.body.items.map((it) => it.name)).toEqual(
-    //     expect.arrayContaining(associations.slice(0, itemsCount).map((it) => it.name)),
-    //   )
-    // })
+      expect(res.body.items.length).toBe(itemsCount)
+      expect(res.body.items.map((it) => it.name)).toEqual(
+        expect.arrayContaining(members.slice(0, itemsCount).map((it) => it.name)),
+      )
+    })
 
-    // it('should apply the given offset', async () => {
-    //   offset = 1
+    it('should apply the given offset', async () => {
+      offset = 1
 
-    //   const res = await sendRequest()
+      const res = await sendRequest()
 
-    //   expect(res.body.items[0].name).toBe(
-    //     associations.map((it) => it.name).sort()[offset],
-    //   )
-    // })
+      const members = companionMembers()
 
-    // it('should apply the given limit', async () => {
-    //   limit = 1
+      expect(res.body.items[0]._id).toBe(members.map((it) => it._id)[offset])
+    })
 
-    //   const res = await sendRequest()
+    it('should apply the given limit', async () => {
+      limit = 1
 
-    //   expect(res.body.items.length).toBe(Math.min(associations.length, limit))
-    // })
+      const res = await sendRequest()
 
-    // it('should project only the _id and name fields in "lite" projection mode', async () => {
-    //   projection = 'lite'
+      const members = companionMembers()
 
-    //   const res = await sendRequest()
+      expect(res.body.items.length).toBe(Math.min(members.length, limit))
+    })
 
-    //   expect(_.keys(res.body.items[0]).sort()).toEqual(['_id', 'name'])
-    // })
+    it('should project appropriately in "lite" projection mode', async () => {
+      projection = 'lite'
 
-    // it('should project all the fields in "full" projection mode', async () => {
-    //   projection = 'full'
+      const res = await sendRequest()
 
-    //   const res = await sendRequest()
+      const registeredMember = res.body.items.find((it) => it.isRegistered)
 
-    //   expect(_.keys(res.body.items[0]).sort()).toEqual(
-    //     ['_id', ..._.keys(associations[0])].sort(),
-    //   )
-    // })
+      expect(_.keys(registeredMember).sort()).toEqual([
+        '_id',
+        'email',
+        'isRegistered',
+        'name',
+        'phoneNumber',
+        'roles',
+        'username',
+      ])
+    })
+
+    it('should project appropriately in "full" projection mode', async () => {
+      projection = 'full'
+
+      const res = await sendRequest()
+
+      const registeredMember = res.body.items.find((it) => it.isRegistered)
+
+      expect(_.keys(registeredMember).sort()).toEqual([
+        '_id',
+        'address',
+        'email',
+        'guardNumber',
+        'idNumber',
+        'isRegistered',
+        'name',
+        'phoneNumber',
+        'roles',
+        'username',
+      ])
+    })
 
     // it('should order the associations by name', async () => {
     //   const res = await sendRequest()

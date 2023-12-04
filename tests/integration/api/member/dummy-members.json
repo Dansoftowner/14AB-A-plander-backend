@@ -731,22 +731,9 @@
     },
     {
         "_id": "652f85c4fc13ae3d596c7cfd",
-        "isRegistered": true,
+        "isRegistered": false,
         "association": "652f7b95fc13ae3ce86c7cdf",
-        "username": "cmogeru",
-        "password": "$2a$12$qK2uX5z5zffzdgDog0Wj6uAiRJuWTj/0CSR1itAjKnki3yasvI12a",
-        "name": "Mihály Szilágyi",
-        "address": "526 Autumn Leaf Plaza",
-        "idNumber": "671180DN",
-        "email": "splainu@skyrock.com",
-        "phoneNumber": "+381 (274) 887-9244",
-        "roles": [
-            "member"
-        ],
-        "preferences": {
-            "ui.theme": "dark",
-            "ui.language": "hu_HU"
-        }
+        "email": "splainu@skyrock.com"
     },
     {
         "_id": "652f85c4fc13ae3d596c7cfe",
