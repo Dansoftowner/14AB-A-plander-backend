@@ -230,7 +230,7 @@ describe('/api/members', () => {
       expect(recievedUsernames).toEqual(recievedUsernames.sort())
     })
 
-    it.each(['Farkas', 'Kriszti', 'Nagy'])(
+    it.each(['Papp', 'or', 'a'])(
       'should perform search query on members',
       async (searchQuery) => {
         q = searchQuery
@@ -241,6 +241,7 @@ describe('/api/members', () => {
 
         expect(recievedNames).toEqual(
           members
+            .filter((it) => it.association == loggedInMember.association)
             .map((it) => it.name)
             .filter((it) => it)
             .filter((it) => new RegExp(searchQuery, 'i').test(it!))
