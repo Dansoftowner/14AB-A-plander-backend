@@ -8,7 +8,10 @@ import associationModel, { Association } from '../../../../src/models/associatio
 import memberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import mongoose from 'mongoose'
-import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
+import {
+  loginRateLimiterStore,
+  rateLimiterStore,
+} from '../../../../src/middlewares/rate-limiter'
 import { getAuthCookieInfo } from './utils'
 
 describe('Endpoints related to authentication', () => {
@@ -43,6 +46,7 @@ describe('Endpoints related to authentication', () => {
     await associationModel.insertMany([association])
     await memberModel.insertMany([member])
     rateLimiterStore.resetAll()
+    loginRateLimiterStore.resetAll()
   })
 
   afterEach(async () => {
