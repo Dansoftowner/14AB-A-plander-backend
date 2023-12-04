@@ -42,7 +42,7 @@ describe('auth middleware', () => {
 
   beforeEach(() => {
     routeHandler.mockClear()
-    mockMember = { _id: '123' }
+    mockMember = { id: '123' }
     header = cookie = generateToken()
   })
 

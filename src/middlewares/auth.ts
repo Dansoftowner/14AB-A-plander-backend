@@ -4,7 +4,7 @@ import { asValue } from 'awilix'
 import { ApiError } from '../api/error/api-error'
 import { ApiErrorCode } from '../api/error/api-error-codes'
 import container from '../di'
-import { ClientInfo, decodeClientInfo } from '../utils/jwt'
+import { ClientInfo, verifyToken } from '../utils/jwt'
 
 export default (req: Request, res: Response, next: NextFunction) => {
   const token = retrieveToken(req)
@@ -20,7 +20,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
 function decodeJwt(token: string): ClientInfo {
   try {
-    return decodeClientInfo(token)
+    return verifyToken(token)
   } catch (e) {
     throw new ApiError(400, ApiErrorCode.INVALID_TOKEN)
   }

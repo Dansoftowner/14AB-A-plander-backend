@@ -1,15 +1,11 @@
 import mongoose, { Schema, Types } from 'mongoose'
 import { Association } from './association'
-import {
-  isEmail,
-  isFullName,
-  isGuardNumber,
-} from '../utils/common-regex'
+import { isEmail, isFullName, isGuardNumber } from '../utils/common-regex'
 
 export interface Member {
   _id: Types.ObjectId
   isRegistered: boolean
-  association: Association | Types.ObjectId
+  association: Types.ObjectId
   email: string
   username?: string
   password?: string
