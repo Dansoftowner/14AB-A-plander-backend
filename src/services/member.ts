@@ -31,25 +31,31 @@ export class MemberService implements Service {
     )
   }
 
-  async getById(options: CommonQueryOptions): Promise<MemberDto | null> {
-    const item = await this.repository.findById(this.dbOptions(options))
+  async getById(id: string, options: CommonQueryOptions): Promise<MemberDto | null> {
+    const item = await this.repository.findById(id, this.dbOptions(options, id))
 
     return plainToInstance(MemberDto, item, {
       excludeExtraneousValues: true,
     })
   }
 
-  private dbOptions(options: CommonQueryOptions): MemberQueryOptions {
+  private dbOptions(
+    options: CommonQueryOptions,
+    requestedId: string | undefined = undefined,
+  ): MemberQueryOptions {
     return {
       ...options,
       associationId: this.clientInfo.association,
-      projection: this.adjustProjection(options.projection),
+      projection: this.adjustProjection(options.projection, requestedId),
       sort: options.sort || 'name',
       showUnregistered: this.clientInfo.roles.includes('president'),
     }
   }
 
-  private adjustProjection(projection: 'lite' | 'full'): string {
+  private adjustProjection(
+    projection: 'lite' | 'full',
+    requestedId: string | undefined = undefined,
+  ): string {
     const visibleFields = [
       '_id',
       'isRegistered',
@@ -60,8 +66,11 @@ export class MemberService implements Service {
       'roles',
     ]
 
-    if (projection == 'full' && this.clientInfo.roles.includes('president'))
-      visibleFields.push('guardNumber', 'address', 'idNumber')
+    const isPermittedForMore =
+      projection == 'full' &&
+      (this.clientInfo.hasRole('president') || this.clientInfo._id == requestedId)
+
+    if (isPermittedForMore) visibleFields.push('guardNumber', 'address', 'idNumber')
 
     return visibleFields.join(' ')
   }

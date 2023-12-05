@@ -13,6 +13,10 @@ export class ClientInfo {
   _id!: string
   association!: string
   roles!: string[]
+
+  hasRole(role: string): boolean {
+    return this.roles.includes(role)
+  }
 }
 
 export function generateToken(member: Member): string {

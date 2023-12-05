@@ -37,9 +37,11 @@ export class MemberRepository implements Repository {
     return { count, items }
   }
 
-  async findById(options: MemberQueryOptions) {
+  async findById(id: string, options: MemberQueryOptions) {
     const filter = this.filterQuery(options)
-    return memberModel.findOne(filter)
+    filter._id = id
+
+    return memberModel.findOne(filter).select(options.projection!)
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
