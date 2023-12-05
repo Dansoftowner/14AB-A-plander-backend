@@ -20,6 +20,7 @@
 - [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 - [joi](https://www.npmjs.com/package/joi)
 - [cookie-parser](https://www.npmjs.com/package/cookie-parser)
+- [cors](https://www.npmjs.com/package/cors)
 
 ## Fejlesztési
 
