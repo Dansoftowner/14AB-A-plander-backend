@@ -4,8 +4,14 @@ import memberModel, { Member } from '../models/member'
 import { sanitizeForRegex as s } from '../utils/sanitize'
 
 export class MemberRepository implements Repository {
-  count(associationId: string): Promise<number> {
-    return memberModel.countDocuments({ association: associationId })
+  count(
+    associationId: string,
+    searchQuery?: string,
+    showUnregistered?: boolean,
+  ): Promise<number> {
+    return memberModel.countDocuments(
+      this.getFilter(associationId, searchQuery, showUnregistered),
+    )
   }
 
   getByEmail(associationId: string, email: string): Promise<Member | null> {
@@ -30,8 +36,8 @@ export class MemberRepository implements Repository {
 
   private getFilter(
     associationId: string,
-    searchTerm: string,
-    showUnregistered: boolean,
+    searchTerm?: string,
+    showUnregistered?: boolean,
   ): FilterQuery<Member> {
     const filterObj: FilterQuery<Member> = {
       association: associationId,

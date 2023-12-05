@@ -233,20 +233,22 @@ describe('/api/members', () => {
     it.each(['Papp', 'or', 'a'])(
       'should perform search query on members',
       async (searchQuery) => {
+        offset = 0
+        limit = 5
         q = searchQuery
 
         const res = await sendRequest()
 
         const recievedNames = res.body.items.map((it) => it.name)
+        const expected = members
+          .filter((it) => it.association == loggedInMember.association)
+          .map((it) => it.name)
+          .filter((it) => it)
+          .filter((it) => new RegExp(searchQuery, 'i').test(it!))
+          .sort()
 
-        expect(recievedNames).toEqual(
-          members
-            .filter((it) => it.association == loggedInMember.association)
-            .map((it) => it.name)
-            .filter((it) => it)
-            .filter((it) => new RegExp(searchQuery, 'i').test(it!))
-            .sort(),
-        )
+        expect(res.body.metadata.total).toBe(expected.length)
+        expect(recievedNames).toEqual(expected.slice(offset, offset + limit))
       },
     )
   })
