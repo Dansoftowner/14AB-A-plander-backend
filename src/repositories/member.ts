@@ -4,16 +4,6 @@ import memberModel, { Member } from '../models/member'
 import { sanitizeForRegex as s } from '../utils/sanitize'
 
 export class MemberRepository implements Repository {
-  count(
-    associationId: string,
-    searchQuery?: string,
-    showUnregistered?: boolean,
-  ): Promise<number> {
-    return memberModel.countDocuments(
-      this.getFilter(associationId, searchQuery, showUnregistered),
-    )
-  }
-
   getByEmail(associationId: string, email: string): Promise<Member | null> {
     return memberModel.findOne({ association: associationId, email })
   }
@@ -22,19 +12,24 @@ export class MemberRepository implements Repository {
     return memberModel.findOne({ association: associationId, username })
   }
 
-  get(
+  async get(
     associationId: string,
     { offset, limit, projection, sort, showUnregistered, searchTerm },
-  ): Promise<Member[]> {
-    return memberModel
-      .find(this.getFilter(associationId, searchTerm, showUnregistered))
+  ): Promise<{ count: number; items: Member[] }> {
+    const filter = this.filterQuery(associationId, searchTerm, showUnregistered)
+
+    const count = await memberModel.countDocuments(filter)
+    const items = await memberModel
+      .find(filter)
       .skip(offset)
       .limit(limit)
       .sort(sort)
       .select(projection)
+
+    return { count, items }
   }
 
-  private getFilter(
+  private filterQuery(
     associationId: string,
     searchTerm?: string,
     showUnregistered?: boolean,

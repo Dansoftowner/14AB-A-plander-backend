@@ -20,9 +20,12 @@ export class MemberService implements Service {
   }
 
   async get(options: CommonQueryOptions): Promise<MemberItemsDto> {
-    const items = await this.repository.get(this.associationId, this.dbOptions(options))
-    const total = await this.repository.count(this.associationId)
-    const metadata = { offset: options.offset, limit: options.limit, total }
+    const { count, items } = await this.repository.get(
+      this.associationId,
+      this.dbOptions(options),
+    )
+
+    const metadata = { offset: options.offset, limit: options.limit, total: count }
 
     return plainToInstance(
       MemberItemsDto,
