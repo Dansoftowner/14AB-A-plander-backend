@@ -1,6 +1,7 @@
 import { RoutesProvider } from '../../base/routes-provider'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
+import validateObjectid from '../../middlewares/validate-objectid'
 import { MemberController } from '../controllers/member'
 
 export class MemberRoutes extends RoutesProvider {
@@ -47,6 +48,13 @@ export class MemberRoutes extends RoutesProvider {
       '/members',
       auth,
       asyncErrorHandler((req, res) => controller.getMembers(req, res)),
+    )
+
+    this.router.get(
+      '/members/:id',
+      auth,
+      validateObjectid,
+      asyncErrorHandler((req, res) => controller.getMemberById(req, res)),
     )
   }
 }

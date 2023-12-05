@@ -2,17 +2,14 @@ import { plainToInstance } from 'class-transformer'
 import { Service } from '../base/service'
 import { MemberItemsDto } from '../dto/member-items'
 import { PaginationInfoDto } from '../dto/pagination-info'
-import { MemberRepository } from '../repositories/member'
+import { MemberQueryOptions, MemberRepository } from '../repositories/member'
 import { ClientInfo } from '../utils/jwt'
 import { CommonQueryOptions } from '../api/common-query-params'
+import { MemberDto } from '../dto/member'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
   private repository: MemberRepository
-
-  private get associationId(): string {
-    return this.clientInfo.association
-  }
 
   constructor({ clientInfo, memberRepository }) {
     this.repository = memberRepository
@@ -20,10 +17,7 @@ export class MemberService implements Service {
   }
 
   async get(options: CommonQueryOptions): Promise<MemberItemsDto> {
-    const { count, items } = await this.repository.get(
-      this.associationId,
-      this.dbOptions(options),
-    )
+    const { count, items } = await this.repository.get(this.dbOptions(options))
 
     const metadata = { offset: options.offset, limit: options.limit, total: count }
 
@@ -37,9 +31,18 @@ export class MemberService implements Service {
     )
   }
 
-  private dbOptions(options: CommonQueryOptions) {
+  async getById(options: CommonQueryOptions): Promise<MemberDto | null> {
+    const item = await this.repository.findById(this.dbOptions(options))
+
+    return plainToInstance(MemberDto, item, {
+      excludeExtraneousValues: true,
+    })
+  }
+
+  private dbOptions(options: CommonQueryOptions): MemberQueryOptions {
     return {
       ...options,
+      associationId: this.clientInfo.association,
       projection: this.adjustProjection(options.projection),
       sort: options.sort || 'name',
       showUnregistered: this.clientInfo.roles.includes('president'),

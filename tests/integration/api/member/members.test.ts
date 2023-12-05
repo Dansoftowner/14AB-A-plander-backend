@@ -14,7 +14,6 @@ describe('/api/members', () => {
   let app: Express
 
   let loggedInMember
-  let token: string
 
   const presidentMember = members.find((it) => it.roles?.includes('president'))
   const regularMember = members.find(
@@ -253,99 +252,112 @@ describe('/api/members', () => {
     )
   })
 
-  //   describe('GET /:id', () => {
-  //     let id: string
-  //     let projection: string
-  //     let association: object
+  describe('GET /:id', () => {
+    let id: string
+    let projection: string
+    let member
 
-  //     const sendRequest = () => {
-  //       return request(app).get(`/api/associations/${id}`).query({
-  //         projection,
-  //       })
-  //     }
+    const sendRequest = async () => {
+      return request(app)
+        .get(`/api/members/${id}`)
+        .set(config.get('jwt.headerName'), await generateToken())
+        .query({
+          projection,
+        })
+    }
 
-  //     beforeEach(async () => {
-  //       projection = 'full'
-  //       association = associations[0]
-  //       id = (await associationModel.findOne(association))!._id.toHexString()
-  //     })
+    beforeEach(async () => {
+      projection = 'full'
+      member = members.find(
+        (it) => it !== loggedInMember && it.association === loggedInMember.association,
+      )
+      id = member._id
+    })
 
-  //     it('should return 400 response if the id is not a valid ObjectId', async () => {
-  //       id = '123'
+    it('should return 401 response if client is not logged in', async () => {
+      loggedInMember = undefined
 
-  //       const res = await sendRequest()
+      const res = await sendRequest()
 
-  //       expect(res.status).toBe(400)
-  //     })
+      expect(res.status).toBe(401)
+    })
 
-  //     it('should return 404 response if no association found with the given id', async () => {
-  //       id = new mongoose.Types.ObjectId().toHexString()
+    it('should return 400 response if the id is not a valid ObjectId', async () => {
+      id = '123'
 
-  //       const res = await sendRequest()
+      const res = await sendRequest()
 
-  //       expect(res.status).toBe(404)
-  //     })
+      expect(res.status).toBe(400)
+    })
 
-  //     it('should return the association if the id is valid', async () => {
-  //       const res = await sendRequest()
+    //     it('should return 404 response if no association found with the given id', async () => {
+    //       id = new mongoose.Types.ObjectId().toHexString()
 
-  //       expect(res.status).toBe(200)
-  //       expect(res.body).toMatchObject(association)
-  //     })
+    //       const res = await sendRequest()
 
-  //     it('should project only the _id and name fields in "lite" projection mode', async () => {
-  //       projection = 'lite'
+    //       expect(res.status).toBe(404)
+    //     })
 
-  //       const res = await sendRequest()
+    //     it('should return the association if the id is valid', async () => {
+    //       const res = await sendRequest()
 
-  //       expect(_.keys(res.body).sort()).toEqual(['_id', 'name'])
-  //     })
+    //       expect(res.status).toBe(200)
+    //       expect(res.body).toMatchObject(association)
+    //     })
 
-  //     it('should project all the fields in "full" projection mode', async () => {
-  //       projection = 'full'
+    //     it('should project only the _id and name fields in "lite" projection mode', async () => {
+    //       projection = 'lite'
 
-  //       const res = await sendRequest()
+    //       const res = await sendRequest()
 
-  //       expect(_.keys(res.body).sort()).toEqual(['_id', ..._.keys(association)].sort())
-  //     })
-  //   })
+    //       expect(_.keys(res.body).sort()).toEqual(['_id', 'name'])
+    //     })
 
-  //   describe('GET /mine', () => {
-  //     let association: object
-  //     let token: string | undefined
+    //     it('should project all the fields in "full" projection mode', async () => {
+    //       projection = 'full'
 
-  //     const sendRequest = () => {
-  //       const req = request(app)
-  //         .get('/api/associations/mine')
-  //         .query({ projection: 'full' })
+    //       const res = await sendRequest()
 
-  //       if (token) req.set(config.get('jwt.headerName'), token)
-  //       return req
-  //     }
+    //       expect(_.keys(res.body).sort()).toEqual(['_id', ..._.keys(association)].sort())
+    //     })
+    //   })
 
-  //     beforeEach(async () => {
-  //       association = associations[0]
+    //   describe('GET /mine', () => {
+    //     let association: object
+    //     let token: string | undefined
 
-  //       const associationId = (await associationModel.findOne(
-  //         association,
-  //       ))!._id.toHexString()
+    //     const sendRequest = () => {
+    //       const req = request(app)
+    //         .get('/api/associations/mine')
+    //         .query({ projection: 'full' })
 
-  //       token = jwt.sign({ association: associationId }, config.get('jwt.privateKey'))
-  //     })
+    //       if (token) req.set(config.get('jwt.headerName'), token)
+    //       return req
+    //     }
 
-  //     it('should return 401 message if no token provided', async () => {
-  //       token = undefined
+    //     beforeEach(async () => {
+    //       association = associations[0]
 
-  //       const res = await sendRequest()
+    //       const associationId = (await associationModel.findOne(
+    //         association,
+    //       ))!._id.toHexString()
 
-  //       expect(res.status).toBe(401)
-  //     })
+    //       token = jwt.sign({ association: associationId }, config.get('jwt.privateKey'))
+    //     })
 
-  //     it('should return association if member is logged in', async () => {
-  //       const res = await sendRequest()
+    //     it('should return 401 message if no token provided', async () => {
+    //       token = undefined
 
-  //       expect(res.status).toBe(200)
-  //       expect(res.body).toMatchObject(association)
-  //     })
-  //   })
+    //       const res = await sendRequest()
+
+    //       expect(res.status).toBe(401)
+    //     })
+
+    //     it('should return association if member is logged in', async () => {
+    //       const res = await sendRequest()
+
+    //       expect(res.status).toBe(200)
+    //       expect(res.body).toMatchObject(association)
+    //     })
+  })
 })

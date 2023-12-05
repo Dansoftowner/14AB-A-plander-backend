@@ -3,6 +3,16 @@ import { Repository } from '../base/repository'
 import memberModel, { Member } from '../models/member'
 import { sanitizeForRegex as s } from '../utils/sanitize'
 
+export interface MemberQueryOptions {
+  associationId: string
+  offset?: number
+  limit?: number
+  sort?: string
+  searchTerm?: string
+  projection?: string
+  showUnregistered?: boolean
+}
+
 export class MemberRepository implements Repository {
   getByEmail(associationId: string, email: string): Promise<Member | null> {
     return memberModel.findOne({ association: associationId, email })
@@ -12,35 +22,34 @@ export class MemberRepository implements Repository {
     return memberModel.findOne({ association: associationId, username })
   }
 
-  async get(
-    associationId: string,
-    { offset, limit, projection, sort, showUnregistered, searchTerm },
-  ): Promise<{ count: number; items: Member[] }> {
-    const filter = this.filterQuery(associationId, searchTerm, showUnregistered)
+  async get(options: MemberQueryOptions): Promise<{ count: number; items: Member[] }> {
+    const { offset, limit, sort, projection } = options
+    const filter = this.filterQuery(options)
 
     const count = await memberModel.countDocuments(filter)
     const items = await memberModel
       .find(filter)
-      .skip(offset)
-      .limit(limit)
+      .skip(offset!)
+      .limit(limit!)
       .sort(sort)
-      .select(projection)
+      .select(projection!)
 
     return { count, items }
   }
 
-  private filterQuery(
-    associationId: string,
-    searchTerm?: string,
-    showUnregistered?: boolean,
-  ): FilterQuery<Member> {
+  async findById(options: MemberQueryOptions) {
+    const filter = this.filterQuery(options)
+    return memberModel.findOne(filter)
+  }
+
+  private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
     const filterObj: FilterQuery<Member> = {
-      association: associationId,
+      association: options.associationId,
       isRegistered: true,
     }
 
-    if (showUnregistered) delete filterObj.isRegistered
-    if (searchTerm) filterObj.name = new RegExp(s(searchTerm), 'i')
+    if (options.showUnregistered) delete filterObj.isRegistered
+    if (options.searchTerm) filterObj.name = new RegExp(s(options.searchTerm), 'i')
 
     return filterObj
   }
