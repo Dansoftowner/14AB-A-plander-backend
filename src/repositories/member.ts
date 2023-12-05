@@ -1,7 +1,7 @@
 import { FilterQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import memberModel, { Member } from '../models/member'
-import { sanitizeForRegex as s, sanitizeForRegex as s } from '../utils/sanitize'
+import { sanitizeForRegex as s } from '../utils/sanitize'
 
 export class MemberRepository implements Repository {
   count(associationId: string): Promise<number> {
