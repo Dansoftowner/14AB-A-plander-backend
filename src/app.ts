@@ -12,6 +12,7 @@ import logger from './logging/logger'
 import swaggerSpec from './swagger'
 import i18n from './middlewares/i18n'
 import rateLimiter from './middlewares/rate-limiter'
+import cors from 'cors'
 
 /**
  * Responsible for assembling the express application.
@@ -35,6 +36,7 @@ export class App {
   }
 
   private initializeMiddlewares() {
+    this.expressApp.use(cors())
     this.expressApp.use(helmet())
     if (config.get('logging.isHttpEnabled')) this.expressApp.use(morgan('tiny'))
     this.expressApp.use(cookieParser())
@@ -46,10 +48,10 @@ export class App {
     for (const prop in opts) {
       if (prop.endsWith('Routes')) {
         const routes: RoutesProvider = opts[prop]
-        
+
         const routeMiddlewares: RequestHandler[] = []
         if (!routes.isRateLimited) routeMiddlewares.push(rateLimiter)
-        
+
         this.expressApp.use('/api', routeMiddlewares, routes.router)
       }
     }
