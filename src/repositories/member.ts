@@ -1,10 +1,9 @@
 import { FilterQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import memberModel, { Member } from '../models/member'
-import { sanitizeForRegex as s } from '../utils/sanitize'
+import { sanitizeForRegex as s, sanitizeForRegex as s } from '../utils/sanitize'
 
 export class MemberRepository implements Repository {
-
   count(associationId: string): Promise<number> {
     return memberModel.countDocuments({ association: associationId })
   }
@@ -40,7 +39,7 @@ export class MemberRepository implements Repository {
     }
 
     if (showUnregistered) delete filterObj.isRegistered
-    if (searchTerm) filterObj.$text = { $search: searchTerm }
+    if (searchTerm) filterObj.name = new RegExp(s(searchTerm), 'i')
 
     return filterObj
   }

@@ -100,7 +100,6 @@ const memberSchema = new Schema<Member>({
   },
 })
 
-memberSchema.index({ name: 'text' })
 memberSchema.index({ association: 1, email: 1 }, { unique: true })
 memberSchema.index({ association: 1, username: 1 }, { unique: true })
 memberSchema.index({ association: 1, idNumber: 1 }, { unique: true })
