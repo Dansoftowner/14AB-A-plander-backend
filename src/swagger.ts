@@ -16,6 +16,10 @@ const options: swaggerJsdoc.Options = {
         name: 'Associations',
         description: 'Endpoints related to the associations.',
       },
+      {
+        name: 'Members',
+        description: 'Endpoints related to members.',
+      },
     ],
     components: {
       securitySchemas: {
