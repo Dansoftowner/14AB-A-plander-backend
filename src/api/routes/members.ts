@@ -18,7 +18,7 @@ export class MemberRoutes extends RoutesProvider {
      *    description: |
      *      Fetches the members who are in the same association as the currently logged in member.
      *
-     *      The attributes can be seen depend on the role of the currently logged in member.
+     *      The visibility of certain attributes depends on the role of the currently logged in member.
      *
      *      **Authentication is required** before using this endpoint.
      *    parameters:
@@ -34,6 +34,10 @@ export class MemberRoutes extends RoutesProvider {
      *          application/json:
      *            schema:
      *                $ref: '#/components/schemas/MemberItems'
+     *      400:
+     *        $ref: '#/components/responses/InvalidToken'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:

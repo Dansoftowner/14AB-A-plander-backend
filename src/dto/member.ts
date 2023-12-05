@@ -30,7 +30,7 @@ import { Expose, Type } from 'class-transformer'
  *      address:
  *        type: string
  *        description: 'The geographical address of the member (only visible to president members)'
- *        example: 'Magyarország, 7300 PillaFalva Maniel utca 12.'
+ *        example: 'Hungary, 7300 PillaFalva Maniel utca 12.'
  *      idNumber:
  *        type: string
  *        description: 'The Identity Card number of the member'
@@ -44,8 +44,14 @@ import { Expose, Type } from 'class-transformer'
  *        description: 'The Guard Card number of the member'
  *        example: '08/0019/161373'
  *      roles:
- *        type: string
- *        description:
+ *        type: array
+ *        description: 'Indicates what roles the member has (member, president)'
+ *        items:
+ *          type: string
+ *        minItems: 1
+ *        maxItems: 2
+ *        uniqueItems: true
+ *        example: ['member', 'president']
  *
  */
 export class MemberDto {
