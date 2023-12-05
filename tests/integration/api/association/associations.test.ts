@@ -17,8 +17,12 @@ describe('/api/associations', () => {
     { name: 'Ceasers', certificate: '07/0003', location: 'mama hotel' },
   ]
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = container.resolve('app').expressApp
+    await associationModel.deleteMany({})
+  })
+
+  beforeEach(async () => {
     await associationModel.insertMany(associations)
     rateLimiterStore.resetAll()
   })

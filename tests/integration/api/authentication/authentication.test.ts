@@ -41,8 +41,13 @@ describe('Endpoints related to authentication', () => {
     roles: ['member', 'president'],
   }
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = container.resolve('app').expressApp
+    await associationModel.deleteMany({})
+    await memberModel.deleteMany({})
+  })
+
+  beforeEach(async () => {
     await associationModel.insertMany([association])
     await memberModel.insertMany([member])
     rateLimiterStore.resetAll()
