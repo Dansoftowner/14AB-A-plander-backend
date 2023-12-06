@@ -19,7 +19,7 @@ export class MemberRoutes extends RoutesProvider {
      *    description: |
      *      Fetches the members who are in the same association as the currently logged in member.
      *
-     *      The visibility of certain attributes depends on the role of the currently logged in member.
+     *      - The visibility of certain attributes depends on the role of the currently logged in member.
      *
      *      **Authentication is required** before using this endpoint.
      *    parameters:
@@ -50,6 +50,52 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.getMembers(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/members/{id}:
+     *  get:
+     *    tags:
+     *      - Members
+     *    description: |
+     *      Fetches the member based on the given *id* from the currently logged in member's association.
+     *
+     *      - The visibility of certain attributes depends on the role of the currently logged in member.
+     *      - But if the member requested **is the same** as the currently logged in one, then the even sensitive attributes can be viewed.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the member.
+     *      - $ref: '#/components/parameters/projectionParam'
+     *    responses:
+     *      200:
+     *        description: The member is fetched.
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/Member'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      400:
+     *        description: |
+     *          Either:
+     *          - The given id has invalid format (errorCode: 'invalid-object-id').
+     *          - The provided token is invalid (errorCode: 'invalid-token').
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/Error'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.get(
       '/members/:id',
       auth,
