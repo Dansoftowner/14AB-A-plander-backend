@@ -400,42 +400,32 @@ describe('/api/members', () => {
       expect(_.keys(res.body)).toContain('guardNumber')
     })
   })
-  //   describe('GET /mine', () => {
-  //     let association: object
-  //     let token: string | undefined
 
-  //     const sendRequest = () => {
-  //       const req = request(app)
-  //         .get('/api/associations/mine')
-  //         .query({ projection: 'full' })
+  describe('GET /me', () => {
+    const sendRequest = async () => {
+      return request(app)
+        .get('/api/members/me')
+        .set(config.get('jwt.headerName'), await generateToken())
+        .query({ projection: 'full' })
+    }
 
-  //       if (token) req.set(config.get('jwt.headerName'), token)
-  //       return req
-  //     }
+    beforeEach(async () => {})
 
-  //     beforeEach(async () => {
-  //       association = associations[0]
+    it('should return 401 message if no token provided', async () => {
+      client = undefined
 
-  //       const associationId = (await associationModel.findOne(
-  //         association,
-  //       ))!._id.toHexString()
+      const res = await sendRequest()
 
-  //       token = jwt.sign({ association: associationId }, config.get('jwt.privateKey'))
-  //     })
+      expect(res.status).toBe(401)
+    })
 
-  //     it('should return 401 message if no token provided', async () => {
-  //       token = undefined
+    it('should return client information logged in', async () => {
+      const res = await sendRequest()
 
-  //       const res = await sendRequest()
-
-  //       expect(res.status).toBe(401)
-  //     })
-
-  //     it('should return association if member is logged in', async () => {
-  //       const res = await sendRequest()
-
-  //       expect(res.status).toBe(200)
-  //       expect(res.body).toMatchObject(association)
-  //     })
-  //})
+      expect(res.status).toBe(200)
+      expect(res.body).toMatchObject(
+        _.omit(client, ['association', 'preferences', 'password']),
+      )
+    })
+  })
 })

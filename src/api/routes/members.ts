@@ -52,6 +52,40 @@ export class MemberRoutes extends RoutesProvider {
 
     /**
      * @openapi
+     * /api/members/me:
+     *  get:
+     *    tags:
+     *      - Members
+     *    description: |
+     *      Fetches the member who is currently logged in.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - $ref: '#/components/parameters/projectionParam'
+     *    responses:
+     *      200:
+     *        description: The member is fetched.
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/Member'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      400:
+     *        $ref: '#/components/responses/InvalidToken'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.get(
+      '/members/me',
+      auth,
+      asyncErrorHandler((req, res) => controller.getMe(req, res)),
+    )
+
+    /**
+     * @openapi
      * /api/members/{id}:
      *  get:
      *    tags:
