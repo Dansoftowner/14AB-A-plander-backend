@@ -14,14 +14,6 @@ export interface MemberQueryOptions {
 }
 
 export class MemberRepository implements Repository {
-  getByEmail(associationId: string, email: string): Promise<Member | null> {
-    return memberModel.findOne({ association: associationId, email })
-  }
-
-  getByUsername(associationId: string, username: string): Promise<Member | null> {
-    return memberModel.findOne({ association: associationId, username })
-  }
-
   async get(options: MemberQueryOptions): Promise<{ count: number; items: Member[] }> {
     const { offset, limit, sort, projection } = options
     const filter = this.filterQuery(options)
@@ -42,6 +34,26 @@ export class MemberRepository implements Repository {
     filter._id = id
 
     return memberModel.findOne(filter).select(options.projection!)
+  }
+
+  async findByEmail(
+    email: string,
+    options: MemberQueryOptions,
+  ): Promise<Member | null> {
+    const filter = this.filterQuery(options)
+    filter.email = email
+
+    return (await memberModel.findOne(filter).select(options.projection!)) as Member
+  }
+
+  async findByUsername(
+    username: string,
+    options: MemberQueryOptions,
+  ): Promise<Member | null> {
+    const filter = this.filterQuery(options)
+    filter.username = username
+
+    return (await memberModel.findOne(filter).select(options.projection!)) as Member
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
