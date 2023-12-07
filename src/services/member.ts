@@ -6,6 +6,7 @@ import { MemberQueryOptions, MemberRepository } from '../repositories/member'
 import { ClientInfo } from '../utils/jwt'
 import { CommonQueryOptions } from '../api/common-query-params'
 import { MemberDto } from '../dto/member'
+import _ from 'lodash'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -39,6 +40,24 @@ export class MemberService implements Service {
     })
   }
 
+  async getByUsername(
+    username: string,
+    options: CommonQueryOptions,
+  ): Promise<MemberDto | null> {
+    const dbOptions = {
+      ...options,
+      associationId: this.clientInfo.association,
+      projection: '-preferences',
+    }
+
+    let item = await this.repository.findByUsername(username, dbOptions)
+    if (item) item = _.pick(item, this.adjustProjection(options.projection, item._id.toHexString()))
+
+    return plainToInstance(MemberDto, item, {
+      excludeExtraneousValues: true,
+    })
+  }
+
   private dbOptions(
     options: CommonQueryOptions,
     requestedId: string | undefined = undefined,
@@ -46,7 +65,7 @@ export class MemberService implements Service {
     return {
       ...options,
       associationId: this.clientInfo.association,
-      projection: this.adjustProjection(options.projection, requestedId),
+      projection: this.adjustProjection(options.projection, requestedId).join(' '),
       sort: options.sort || 'name',
       showUnregistered: this.clientInfo.roles.includes('president'),
     }
@@ -55,7 +74,7 @@ export class MemberService implements Service {
   private adjustProjection(
     projection: 'lite' | 'full',
     requestedId: string | undefined = undefined,
-  ): string {
+  ): string[] {
     const visibleFields = [
       '_id',
       'isRegistered',
@@ -72,6 +91,6 @@ export class MemberService implements Service {
 
     if (isPermittedForMore) visibleFields.push('guardNumber', 'address', 'idNumber')
 
-    return visibleFields.join(' ')
+    return visibleFields
   }
 }

@@ -32,4 +32,15 @@ export class MemberController implements Controller {
 
     await this.getMemberById(req, res)
   }
+
+  async getMemberByUsername(req: Request, res: Response) {
+    const member = await this.service(req).getByUsername(
+      req.params.username,
+      resolveOptions(req),
+    )
+
+    if (!member) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+    res.send(instanceToPlain(member))
+  }
 }

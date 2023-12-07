@@ -136,5 +136,50 @@ export class MemberRoutes extends RoutesProvider {
       validateObjectid,
       asyncErrorHandler((req, res) => controller.getMemberById(req, res)),
     )
+
+    /**
+     * @openapi
+     * /api/members/username/{username}:
+     *  get:
+     *    tags:
+     *      - Members
+     *    description: |
+     *      Fetches the member based on the given *username* from the currently logged in member's association.
+     *
+     *      - The visibility of certain attributes depends on the role of the currently logged in member.
+     *      - But if the member requested **is the same** as the currently logged in one, then the even sensitive attributes can be viewed.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: username
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The username of the member.
+     *      - $ref: '#/components/parameters/projectionParam'
+     *    responses:
+     *      200:
+     *        description: The member is fetched.
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/Member'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      400:
+     *        $ref: '#/components/responses/InvalidToken'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.get(
+      '/members/username/:username',
+      auth,
+      asyncErrorHandler((req, res) => controller.getMemberByUsername(req, res)),
+    )
   }
 }

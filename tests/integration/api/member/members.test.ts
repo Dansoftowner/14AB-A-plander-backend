@@ -428,4 +428,116 @@ describe('/api/members', () => {
       )
     })
   })
+
+  describe('GET /username/:username', () => {
+    let username: string
+    let projection: string
+    let member
+
+    const sendRequest = async () => {
+      return request(app)
+        .get(`/api/members/username/${username}`)
+        .set(config.get('jwt.headerName'), await generateToken())
+        .query({
+          projection,
+        })
+    }
+
+    beforeEach(async () => {
+      projection = 'full'
+      member = members.find(
+        (it) => it !== client && it.association === client.association,
+      )
+      username = member.username
+    })
+
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 404 response if no member found with the given username', async () => {
+      username = Math.random().toString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if no member found with the given username in the association', async () => {
+      username = members.find((it) => it.association !== client.association)!._id
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return the member if the username is valid', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(res.body).toMatchObject(
+        _.omit(member, ['association', 'password', 'preferences']),
+      )
+    })
+
+    it('should project appropriately in "lite" projection mode', async () => {
+      projection = 'lite'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(_.keys(res.body).sort()).toEqual([
+        '_id',
+        'email',
+        'isRegistered',
+        'name',
+        'phoneNumber',
+        'roles',
+        'username',
+      ])
+    })
+
+    it('should project appropriately in "full" projection mode', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(_.keys(res.body).sort()).toEqual([
+        '_id',
+        'address',
+        'email',
+        'guardNumber',
+        'idNumber',
+        'isRegistered',
+        'name',
+        'phoneNumber',
+        'roles',
+        'username',
+      ])
+    })
+
+    it('should not project all properties to a regular member', async () => {
+      client = regularMember
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(_.keys(res.body)).not.toContain(['guardNumber', 'address', 'idNumber'])
+    })
+
+    it('should show all properties if the client is the same as the requested one', async () => {
+      client = regularMember
+      username = client.username
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(_.keys(res.body)).toContain('idNumber')
+      expect(_.keys(res.body)).toContain('address')
+      expect(_.keys(res.body)).toContain('guardNumber')
+    })
+  })
 })
