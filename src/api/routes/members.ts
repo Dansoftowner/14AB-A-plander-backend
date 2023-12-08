@@ -1,6 +1,9 @@
 import { RoutesProvider } from '../../base/routes-provider'
+import { MemberInvite } from '../../dto/member-invite'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
+import president from '../../middlewares/president'
+import validate from '../../middlewares/validate'
 import validateObjectid from '../../middlewares/validate-objectid'
 import { MemberController } from '../controllers/member'
 
@@ -180,6 +183,14 @@ export class MemberRoutes extends RoutesProvider {
       '/members/username/:username',
       auth,
       asyncErrorHandler((req, res) => controller.getMemberByUsername(req, res)),
+    )
+
+    this.router.post(
+      '/members',
+      auth,
+      president,
+      validate(MemberInvite.validationSchema()),
+      asyncErrorHandler((req, res) => controller.inviteMember(req, res)),
     )
   }
 }

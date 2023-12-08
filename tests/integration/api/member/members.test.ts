@@ -540,4 +540,48 @@ describe('/api/members', () => {
       expect(_.keys(res.body)).toContain('guardNumber')
     })
   })
+
+  describe('POST /api/members/', () => {
+    let email: string | undefined
+    let guardNumber: number | undefined
+    let name: string | undefined
+    let address: string | undefined
+    let idNumber: string | undefined
+    let phoneNumber: string | undefined
+
+    const sendRequest = async () => {
+      return request(app)
+        .post('/api/members')
+        .set(config.get('jwt.headerName'), await generateToken())
+        .send({ email, guardNumber, name, address, idNumber, phoneNumber })
+    }
+
+    beforeEach(async () => {
+      email = 'member@example.com'
+    })
+
+    it('should return 401 response if no token provided', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 403 response if the client is not a president', async () => {
+      client = regularMember
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should return 400 response if email is not valid', async () => {
+      email = Math.random().toString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+  })
 })

@@ -14,3 +14,7 @@ export function isEmail(email: string): boolean {
 export function isGuardNumber(guardNumber: string): boolean {
   return guardNumberPattern().test(guardNumber)
 }
+
+export function removeFlags(pattern: RegExp): RegExp {
+  return new RegExp(pattern.source)
+}

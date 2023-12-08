@@ -102,4 +102,17 @@ export enum ApiErrorCode {
    *             $ref: '#/components/schemas/Error'
    */
   INVALID_TOKEN = 'invalid-token',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      NotPresident:
+   *        description: "The given action is only permitted for presidents (errorCode: 'not-president')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  NOT_PRESIDENT = 'not-president',
 }

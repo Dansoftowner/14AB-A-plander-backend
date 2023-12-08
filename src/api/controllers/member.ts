@@ -43,4 +43,7 @@ export class MemberController implements Controller {
 
     res.send(instanceToPlain(member))
   }
+
+  async inviteMember(req: Request, res: Response) {
+  }
 }
