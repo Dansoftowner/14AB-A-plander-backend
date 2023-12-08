@@ -115,4 +115,17 @@ export enum ApiErrorCode {
    *             $ref: '#/components/schemas/Error'
    */
   NOT_PRESIDENT = 'not-president',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      EmailReserved:
+   *        description: "The given email is already in use."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  EMAIL_RESERVED = 'email-reserved',
 }

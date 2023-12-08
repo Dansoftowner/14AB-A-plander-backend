@@ -592,13 +592,24 @@ describe('/api/members', () => {
       expect(res.status).toBe(400)
     })
 
+    it('should return 422 response if the email is already used by someone', async () => {
+      email = companionMembers().find((it) => it._id != client._id)!.email
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
+    })
+
     it('should save invited member to the database', async () => {
       await sendRequest()
 
-      const member = await memberModel.findOne({ email })
+      const invitedMember = await memberModel.findOne({
+        association: client.association,
+        email,
+      })
 
-      expect(member).not.toBeNull()
-      expect(member!.isRegistered).toBe(false)
+      expect(invitedMember).not.toBeNull()
+      expect(invitedMember!.isRegistered).toBe(false)
     })
   })
 })

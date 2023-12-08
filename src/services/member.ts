@@ -63,8 +63,21 @@ export class MemberService implements Service {
     })
   }
 
-  async inviteMember(invitationRequest: MemberInviteDto) {
-    
+  async invite(invitation: MemberInviteDto): Promise<MemberDto | null> {
+    const alreadyRegisteredOne = await this.repository.findByEmail(invitation.email, {
+      associationId: this.clientInfo.association,
+    })
+
+    if (alreadyRegisteredOne != null) return null
+
+    const invitedMember = await this.repository.insert(
+      invitation,
+      this.clientInfo.association,
+    )
+
+    return plainToInstance(MemberDto, invitedMember, {
+      excludeExtraneousValues: true,
+    })
   }
 
   private dbOptions(

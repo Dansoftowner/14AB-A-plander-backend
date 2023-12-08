@@ -2,6 +2,8 @@ import { FilterQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import memberModel, { Member } from '../models/member'
 import { sanitizeForRegex as s } from '../utils/sanitize'
+import { MemberInviteDto } from '../dto/member-invite'
+import _ from 'lodash'
 
 export interface MemberQueryOptions {
   associationId: string
@@ -54,6 +56,17 @@ export class MemberRepository implements Repository {
     filter.username = username
 
     return (await memberModel.findOne(filter).select(options.projection!)) as Member
+  }
+
+  async insert(member: object, associationId: string): Promise<Member> {
+    member['association'] = associationId
+    member['isRegistered'] = false
+
+    member = _.pickBy(member, (it) => it !== undefined)
+
+    const inserted = await memberModel.insertMany([member])
+
+    return inserted[0]
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {

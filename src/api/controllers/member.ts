@@ -2,10 +2,11 @@ import { Request, Response } from 'express'
 import { Controller } from '../../base/controller'
 import { resolveOptions } from '../common-query-params'
 import { MemberService } from '../../services/member'
-import { instanceToPlain } from 'class-transformer'
+import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { ApiError } from '../error/api-error'
 import { ApiErrorCode } from '../error/api-error-codes'
 import { ClientInfo } from '../../utils/jwt'
+import { MemberInviteDto } from '../../dto/member-invite'
 
 export class MemberController implements Controller {
   private service(req: Request): MemberService {
@@ -45,5 +46,11 @@ export class MemberController implements Controller {
   }
 
   async inviteMember(req: Request, res: Response) {
+    const payload = plainToInstance(MemberInviteDto, req.body)
+
+    const invitedMember = await this.service(req).invite(payload)
+    if (!invitedMember) throw new ApiError(422, ApiErrorCode.EMAIL_RESERVED)
+
+    res.send(instanceToPlain(invitedMember))
   }
 }
