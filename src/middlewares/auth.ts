@@ -4,7 +4,7 @@ import { asValue } from 'awilix'
 import { ApiError } from '../api/error/api-error'
 import { ApiErrorCode } from '../api/error/api-error-codes'
 import container from '../di'
-import { MemberInfo, decodeMemberInfo } from '../utils/jwt'
+import { ClientInfo, verifyToken } from '../utils/jwt'
 
 export default (req: Request, res: Response, next: NextFunction) => {
   const token = retrieveToken(req)
@@ -13,14 +13,14 @@ export default (req: Request, res: Response, next: NextFunction) => {
   const jwtPayload = decodeJwt(token)
 
   req.scope = container.createScope()
-  req.scope.register({ memberInfo: asValue(jwtPayload) })
+  req.scope.register({ clientInfo: asValue(jwtPayload) })
 
   next()
 }
 
-function decodeJwt(token: string): MemberInfo {
+function decodeJwt(token: string): ClientInfo {
   try {
-    return decodeMemberInfo(token)
+    return verifyToken(token)
   } catch (e) {
     throw new ApiError(400, ApiErrorCode.INVALID_TOKEN)
   }

@@ -8,9 +8,9 @@
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "format": "prettier --write ./src",
-    "test": "jest",
-    "test:watch": "jest --watchAll ",
-    "test:coverage": "jest --coverage"
+    "test": "jest --runInBand",
+    "test:watch": "jest --runInBand --watchAll ",
+    "test:coverage": "jest --runInBand --coverage"
   },
   "author": "Daniel Gyoerffy",
   "repository": {

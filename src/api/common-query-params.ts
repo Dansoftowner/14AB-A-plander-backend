@@ -17,6 +17,25 @@ export const DEFAULT_LIMIT = 10
 export const DEFAULT_PROJECTION = 'lite'
 export const MAX_LIMIT = 40
 
+export interface CommonQueryOptions {
+  offset: number
+  limit: number
+  projection: 'lite' | 'full'
+  sort: string | undefined
+  searchTerm: string | undefined
+}
+
+// TODO: only export this
+export function resolveOptions(req: Request): CommonQueryOptions {
+  return {
+    offset: extractOffset(req),
+    limit: extractLimit(req),
+    projection: getProjection(req) as 'lite' | 'full',
+    sort: getSort(req, undefined!),
+    searchTerm: getSearchQuery(req),
+  }
+}
+
 export function getPaginationInfo(req: Request): PaginationInfoDto {
   return {
     offset: extractOffset(req),
@@ -74,7 +93,7 @@ export function getSort(req: Request, defaultSort: string): string {
  *      name: q
  *      schema:
  *        type: string
- *      description: Performs a search based on the given value (searches in the assocation names).
+ *      description: Performs a search based on the given value.
  */
 export function getSearchQuery(req: Request): string | undefined {
   return req.query[SEARCH_PARAM_NAME]?.toString()

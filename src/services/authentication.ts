@@ -24,7 +24,7 @@ export class AuthenticationService implements Service {
   }
 
   private async retrieveMember({ associationId, user }) {
-    if (isEmail(user)) return this.repository.getByEmail(associationId, user)
-    return this.repository.getByUsername(associationId, user)
+    if (isEmail(user)) return this.repository.findByEmail(user, { associationId })
+    return this.repository.findByUsername(user, { associationId })
   }
 }

@@ -101,6 +101,6 @@ describe('auth middleware', () => {
     expect(res.status).toBe(200)
     expect(routeHandler).toHaveBeenCalled()
     expect(diScope).toBeDefined()
-    expect(diScope.resolve('memberInfo')).toMatchObject(mockMember)
+    expect(diScope.resolve('clientInfo')).toMatchObject(mockMember)
   })
 })
