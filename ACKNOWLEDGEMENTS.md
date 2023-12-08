@@ -21,6 +21,8 @@
 - [joi](https://www.npmjs.com/package/joi)
 - [cookie-parser](https://www.npmjs.com/package/cookie-parser)
 - [cors](https://www.npmjs.com/package/cors)
+- [nodemailer](https://www.npmjs.com/package/nodemailer)
+- [nodemailer-express-handlebars](https://www.npmjs.com/package/nodemailer-express-handlebars)
 
 ## Fejlesztési
 
@@ -31,3 +33,4 @@
 - [ts-node](https://www.npmjs.com/package/ts-node)
 - [ts-jest](https://www.npmjs.com/package/ts-jest)
 - [supertest](https://www.npmjs.com/package/supertest)
+- [nodemailer-mock](https://www.npmjs.com/package/nodemailer-mock)

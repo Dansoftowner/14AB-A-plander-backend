@@ -11,5 +11,14 @@
         "cookieName": "plander_auth",
         "cookieSecure": false,
         "headerName": "x-plander-auth"
+    },
+    "smtp": {
+        "host": "",
+        "port": 25,
+        "secure": false,
+        "auth": {
+            "user": "",
+            "pass": ""
+        }
     }
 }
