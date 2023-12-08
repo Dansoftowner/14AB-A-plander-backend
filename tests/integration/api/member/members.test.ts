@@ -576,12 +576,29 @@ describe('/api/members', () => {
       expect(res.status).toBe(403)
     })
 
+    it('should return 400 response if email is not specified', async () => {
+      email = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
     it('should return 400 response if email is not valid', async () => {
       email = Math.random().toString()
 
       const res = await sendRequest()
 
       expect(res.status).toBe(400)
+    })
+
+    it('should save invited member to the database', async () => {
+      await sendRequest()
+
+      const member = await memberModel.findOne({ email })
+
+      expect(member).not.toBeNull()
+      expect(member!.isRegistered).toBe(false)
     })
   })
 })

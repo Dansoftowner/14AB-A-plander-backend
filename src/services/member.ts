@@ -7,6 +7,7 @@ import { ClientInfo } from '../utils/jwt'
 import { CommonQueryOptions } from '../api/common-query-params'
 import { MemberDto } from '../dto/member'
 import _ from 'lodash'
+import { MemberInviteDto } from '../dto/member-invite'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -51,11 +52,19 @@ export class MemberService implements Service {
     }
 
     let item = await this.repository.findByUsername(username, dbOptions)
-    if (item) item = _.pick(item, this.adjustProjection(options.projection, item._id.toHexString()))
+    if (item)
+      item = _.pick(
+        item,
+        this.adjustProjection(options.projection, item._id.toHexString()),
+      )
 
     return plainToInstance(MemberDto, item, {
       excludeExtraneousValues: true,
     })
+  }
+
+  async inviteMember(invitationRequest: MemberInviteDto) {
+    
   }
 
   private dbOptions(
