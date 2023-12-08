@@ -5,7 +5,7 @@ import {
   removeFlags as rf,
 } from '../utils/common-regex'
 
-export class MemberInvite {
+export class MemberInviteDto {
   email!: string
   guardNumber?: string
   name?: string
@@ -13,7 +13,7 @@ export class MemberInvite {
   idNumber?: string
   phoneNumber?: string
 
-  static validationSchema(): Joi.ObjectSchema<MemberInvite> {
+  static validationSchema(): Joi.ObjectSchema<MemberInviteDto> {
     return Joi.object({
       email: Joi.string().email().required(),
       guardNumber: Joi.string().pattern(rf(guardNumberPattern())).optional(),
