@@ -51,6 +51,6 @@ export class MemberController implements Controller {
     const invitedMember = await this.service(req).invite(payload)
     if (!invitedMember) throw new ApiError(422, ApiErrorCode.EMAIL_RESERVED)
 
-    res.send(instanceToPlain(invitedMember))
+    res.status(201).send(instanceToPlain(invitedMember))
   }
 }

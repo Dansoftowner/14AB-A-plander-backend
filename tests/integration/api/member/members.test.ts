@@ -542,22 +542,31 @@ describe('/api/members', () => {
   })
 
   describe('POST /api/members/', () => {
-    let email: string | undefined
-    let guardNumber: number | undefined
-    let name: string | undefined
-    let address: string | undefined
-    let idNumber: string | undefined
-    let phoneNumber: string | undefined
+    let payload: {
+      email: string | undefined
+      guardNUmber: string | undefined
+      name: string | undefined
+      address: string | undefined
+      idNumber: string | undefined
+      phoneNumber: string | undefined
+    }
 
     const sendRequest = async () => {
       return request(app)
         .post('/api/members')
         .set(config.get('jwt.headerName'), await generateToken())
-        .send({ email, guardNumber, name, address, idNumber, phoneNumber })
+        .send(payload)
     }
 
     beforeEach(async () => {
-      email = 'member@example.com'
+      payload = {
+        email: 'member@example.com',
+        guardNUmber: undefined,
+        name: undefined,
+        address: undefined,
+        idNumber: undefined,
+        phoneNumber: undefined,
+      }
     })
 
     it('should return 401 response if no token provided', async () => {
@@ -577,7 +586,7 @@ describe('/api/members', () => {
     })
 
     it('should return 400 response if email is not specified', async () => {
-      email = undefined
+      payload.email = undefined
 
       const res = await sendRequest()
 
@@ -585,7 +594,7 @@ describe('/api/members', () => {
     })
 
     it('should return 400 response if email is not valid', async () => {
-      email = Math.random().toString()
+      payload.email = Math.random().toString()
 
       const res = await sendRequest()
 
@@ -593,7 +602,7 @@ describe('/api/members', () => {
     })
 
     it('should return 422 response if the email is already used by someone', async () => {
-      email = companionMembers().find((it) => it._id != client._id)!.email
+      payload.email = companionMembers().find((it) => it._id != client._id)!.email
 
       const res = await sendRequest()
 
@@ -601,15 +610,36 @@ describe('/api/members', () => {
     })
 
     it('should save invited member to the database', async () => {
-      await sendRequest()
+      const res = await sendRequest()
 
       const invitedMember = await memberModel.findOne({
         association: client.association,
-        email,
+        email: payload.email,
       })
 
+      expect(res.status).toBe(201)
       expect(invitedMember).not.toBeNull()
       expect(invitedMember!.isRegistered).toBe(false)
+    })
+
+    it('should save invited member to the database', async () => {
+      const res = await sendRequest()
+
+      const invitedMember = await memberModel.findOne({
+        association: client.association,
+        email: payload.email,
+      })
+
+      expect(res.status).toBe(201)
+      expect(invitedMember).not.toBeNull()
+      expect(invitedMember!.isRegistered).toBe(false)
+    })
+
+    it('should return the invited member', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(201)
+      expect(res.body).toMatchObject(_.pickBy(payload, (it) => it !== undefined))
     })
   })
 })

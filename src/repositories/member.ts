@@ -58,12 +58,11 @@ export class MemberRepository implements Repository {
     return (await memberModel.findOne(filter).select(options.projection!)) as Member
   }
 
-  async insert(member: object, associationId: string): Promise<Member> {
-    member['association'] = associationId
-    member['isRegistered'] = false
+  async existsWithEmail(email: string, associationId: string): Promise<boolean> {
+    return await memberModel.exists({ email, association: associationId }) != null
+  }
 
-    member = _.pickBy(member, (it) => it !== undefined)
-
+  async insert(member: object): Promise<Member> {
     const inserted = await memberModel.insertMany([member])
 
     return inserted[0]
