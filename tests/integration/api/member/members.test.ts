@@ -9,6 +9,7 @@ import container from '../../../../src/di'
 import mongoose from 'mongoose'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import members from './dummy-members.json'
+import registrationTokenModel from '../../../../src/models/registration-token'
 
 describe('/api/members', () => {
   let app: Express
@@ -640,6 +641,17 @@ describe('/api/members', () => {
 
       expect(res.status).toBe(201)
       expect(res.body).toMatchObject(_.pickBy(payload, (it) => it !== undefined))
+    })
+
+    it('should generate a registration token for the invited member', async () => {
+      const res = await sendRequest()
+
+      const registrationToken = await registrationTokenModel.findOne({
+        memberId: res.body._id,
+      })
+
+      expect(registrationToken).not.toBeNull()
+      expect(registrationToken!.token).toMatch(/[a-f0-9]{40}/)
     })
   })
 })

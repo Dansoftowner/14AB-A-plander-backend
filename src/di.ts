@@ -11,6 +11,8 @@ import { MemberRepository } from './repositories/member'
 import { MemberController } from './api/controllers/member'
 import { MemberRoutes } from './api/routes/members'
 import { MemberService } from './services/member'
+import { TokenRepository } from './repositories/token'
+import { TokenService } from './services/token'
 
 const container = createContainer({
   injectionMode: InjectionMode.PROXY,
@@ -32,6 +34,9 @@ container.register({
   authenticationService: asClass(AuthenticationService),
   authenticationController: asClass(AuthenticationController),
   authenticationRoutes: asClass(AuthenticationRoutes),
+
+  tokenRepository: asClass(TokenRepository),
+  tokenService: asClass(TokenService),
 })
 
 export default container

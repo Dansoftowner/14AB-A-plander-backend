@@ -8,14 +8,18 @@ import { CommonQueryOptions } from '../api/common-query-params'
 import { MemberDto } from '../dto/member'
 import _ from 'lodash'
 import { MemberInviteDto } from '../dto/member-invite'
+import { TokenService } from './token'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
   private repository: MemberRepository
 
-  constructor({ clientInfo, memberRepository }) {
+  private tokenService: TokenService
+
+  constructor({ clientInfo, memberRepository, tokenService }) {
     this.repository = memberRepository
     this.clientInfo = clientInfo
+    this.tokenService = tokenService
   }
 
   async get(options: CommonQueryOptions): Promise<MemberItemsDto> {
@@ -69,6 +73,9 @@ export class MemberService implements Service {
     if (await this.emailExists(email)) return null
 
     const invitedMember = await this.insertIntoDatabase(invitation)
+
+    const token = await this.tokenService.generateRegistrationToken(invitedMember._id.toHexString())
+    
 
     return plainToInstance(MemberDto, invitedMember, {
       excludeExtraneousValues: true,
