@@ -4,5 +4,10 @@
     },
     "jwt": {
         "privateKey": "plander_dev"
+    },
+    "smtp": {
+        "host": "smtp.ethereal.email",
+        "port": 587,
+        "from": "plander-dev@plander.com"
     }
 }
