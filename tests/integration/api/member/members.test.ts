@@ -664,6 +664,7 @@ describe('/api/members', () => {
 
       expect(sentEmails).toHaveLength(1)
       expect(sentEmails[0].to).toBe(payload.email)
+      expect(sentEmails[0]['context']).toHaveProperty('registrationLink')
     })
   })
 })
