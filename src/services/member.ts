@@ -9,17 +9,20 @@ import { MemberDto } from '../dto/member'
 import _ from 'lodash'
 import { MemberInviteDto } from '../dto/member-invite'
 import { TokenService } from './token'
+import { MailService } from './mail'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
   private repository: MemberRepository
 
   private tokenService: TokenService
+  private mailService: MailService
 
-  constructor({ clientInfo, memberRepository, tokenService }) {
+  constructor({ clientInfo, memberRepository, tokenService, mailService }) {
     this.repository = memberRepository
     this.clientInfo = clientInfo
     this.tokenService = tokenService
+    this.mailService = mailService
   }
 
   async get(options: CommonQueryOptions): Promise<MemberItemsDto> {
@@ -74,8 +77,11 @@ export class MemberService implements Service {
 
     const invitedMember = await this.insertIntoDatabase(invitation)
 
-    const token = await this.tokenService.generateRegistrationToken(invitedMember._id.toHexString())
-    
+    const token = await this.tokenService.generateRegistrationToken(
+      invitedMember._id.toHexString(),
+    )
+
+    await this.mailService.sendRegistrationEmail(invitedMember, token)
 
     return plainToInstance(MemberDto, invitedMember, {
       excludeExtraneousValues: true,

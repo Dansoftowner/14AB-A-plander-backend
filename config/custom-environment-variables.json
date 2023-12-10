@@ -4,5 +4,8 @@
     },
     "jwt": {
         "privateKey": "PLANDER_JWT_KEY"
+    },
+    "frontend": {
+        "host": "PLANDER_FRONTEND_HOST"
     }
 }

@@ -2,14 +2,16 @@ import { Express } from 'express'
 import request from 'supertest'
 import _ from 'lodash'
 import config from 'config'
-import jwt from 'jsonwebtoken'
-import associationModel, { Association } from '../../../../src/models/association'
 import memberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import mongoose from 'mongoose'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import members from './dummy-members.json'
 import registrationTokenModel from '../../../../src/models/registration-token'
+import nodemailer from 'nodemailer'
+import { NodemailerMock } from 'nodemailer-mock'
+
+const { mock: nodemailerMock } = nodemailer as unknown as NodemailerMock
 
 describe('/api/members', () => {
   let app: Express
@@ -568,6 +570,7 @@ describe('/api/members', () => {
         idNumber: undefined,
         phoneNumber: undefined,
       }
+      nodemailerMock.reset()
     })
 
     it('should return 401 response if no token provided', async () => {
@@ -652,6 +655,15 @@ describe('/api/members', () => {
 
       expect(registrationToken).not.toBeNull()
       expect(registrationToken!.token).toMatch(/[a-f0-9]{40}/)
+    })
+
+    it('should send email for the invited member', async () => {
+      await sendRequest()
+
+      const sentEmails = nodemailerMock.getSentMail()
+
+      expect(sentEmails).toHaveLength(1)
+      expect(sentEmails[0].to).toBe(payload.email)
     })
   })
 })

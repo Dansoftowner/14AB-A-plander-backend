@@ -19,6 +19,10 @@
         "auth": {
             "user": "",
             "pass": ""
-        }
+        },
+        "from": ""
+    },
+    "frontend": {
+        "host": ""
     }
 }
