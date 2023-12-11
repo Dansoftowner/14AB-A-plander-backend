@@ -185,6 +185,42 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.getMemberByUsername(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/members:
+     *  post:
+     *    tags:
+     *      - Members
+     *    description: |
+     *       Invites a new member to join the association.
+     *       - Only presidents have the permission to invite new members.
+     *       - 
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberInvite'
+     *    responses:
+     *      200:
+     *        description: Invitation proceeded. Returns the information about the invited member.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      403:
+     *       $ref: '#/components/responses/NotPresident'
+     *      422:
+     *        $ref: '#/components/responses/EmailReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.post(
       '/members',
       auth,

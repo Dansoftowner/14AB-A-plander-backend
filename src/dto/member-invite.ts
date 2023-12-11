@@ -5,6 +5,40 @@ import {
   removeFlags as rf,
 } from '../utils/common-regex'
 
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    MemberInvite:
+ *      type: object
+ *      properties:
+ *        email:
+ *          type: string
+ *          description: 'The email of the member to invite'
+ *          example: 'mrguardmaster@cryptomail.com'
+ *        guardNumber:
+ *          type: string
+ *          description: 'The guard number of the member to invite'
+ *          example: 'gizaac0'
+ *        name:
+ *          type: string
+ *          description: 'The name of the member to invite'
+ *          example: 'Mr. John Franklin'
+ *        address:
+ *          type: string
+ *          description: 'The geographical address of the member to invite'
+ *          example: 'Hungary, 1101 Elite Avenue 12.'
+ *        idNumber:
+ *          type: string
+ *          description: 'The Identity Card number of the member'
+ *          example: '626376IE'
+ *        phoneNumber:
+ *          type: string
+ *          description: 'The phone number of the member to invite'
+ *          example: '+36 20 344-7474'
+ *      required:
+ *        - email
+ */
 export class MemberInviteDto {
   email!: string
   guardNumber?: string
