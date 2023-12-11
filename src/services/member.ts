@@ -10,6 +10,7 @@ import _ from 'lodash'
 import { MemberInviteDto } from '../dto/member-invite'
 import { TokenService } from './token'
 import { MailService } from './mail'
+import logger from '../logging/logger'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -81,7 +82,10 @@ export class MemberService implements Service {
       invitedMember._id.toHexString(),
     )
 
-    await this.mailService.sendRegistrationEmail(invitedMember, token)
+    this.mailService
+      .sendRegistrationEmail(invitedMember, token)
+      .then((info) => logger.debug(`Registration mail is sent to ${info.envelope.to}.`))
+      .catch((err) => logger.debug(`Failed to send registration mail.`, err))
 
     return plainToInstance(MemberDto, invitedMember, {
       excludeExtraneousValues: true,

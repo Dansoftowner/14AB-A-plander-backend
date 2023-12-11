@@ -3,9 +3,13 @@ import { Member } from '../models/member'
 import config from 'config'
 import { mailTransporter } from '../utils/email'
 import Mail from 'nodemailer/lib/mailer'
+import SMTPTransport from 'nodemailer/lib/smtp-transport'
 
 export class MailService implements Service {
-  async sendRegistrationEmail(member: Member, token: string) {
+  sendRegistrationEmail(
+    member: Member,
+    token: string,
+  ): Promise<SMTPTransport.SentMessageInfo> {
     const mailOptions = {
       from: config.get('smtp.from'),
       to: member.email,
@@ -16,7 +20,7 @@ export class MailService implements Service {
       },
     }
 
-    await mailTransporter.sendMail(mailOptions as Mail.Options)
+    return mailTransporter.sendMail(mailOptions as Mail.Options)
   }
 
   private assembleRegistrationUrl({ _id }, token) {
