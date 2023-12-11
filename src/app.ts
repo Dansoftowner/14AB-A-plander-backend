@@ -21,11 +21,19 @@ export class App {
   readonly expressApp: Express = express()
 
   constructor(opts) {
+    this.requireCrucialConfig()
     this.connectToMongo()
     this.initializeMiddlewares()
     this.initializeRoutes(opts)
     this.initializeSwaggerDocs()
     this.initializeErrorMiddleware()
+  }
+
+  private requireCrucialConfig() {
+    ['mongo.uri', 'jwt.privateKey'].forEach((it) => {
+      if (!(config.has(it) && config.get(it)))
+        throw new Error(`FATAL ERROR: ${it} config is not set.`)
+    })
   }
 
   private connectToMongo() {
