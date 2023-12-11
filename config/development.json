@@ -6,8 +6,8 @@
         "privateKey": "plander_dev"
     },
     "smtp": {
-        "host": "smtp.ethereal.email",
-        "port": 587,
+        "host": "sandbox.smtp.mailtrap.io",
+        "port": 2525,
         "from": "plander-dev@plander.com"
     }
 }
