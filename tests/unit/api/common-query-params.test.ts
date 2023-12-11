@@ -9,10 +9,7 @@ import {
   PROJECTION_PARAM_NAME,
   SEARCH_PARAM_NAME,
   SORT_PARAM_NAME,
-  getPaginationInfo,
-  getProjection,
-  getSearchQuery,
-  getSort,
+  resolveOptions,
 } from '../../../src/api/common-query-params'
 
 describe('api common utils', () => {
@@ -26,7 +23,7 @@ describe('api common utils', () => {
       req.query[OFFSET_PARAM_NAME] = offset
       req.query[LIMIT_PARAM_NAME] = limit
 
-      return getPaginationInfo(req as Request)
+      return resolveOptions(req as Request)
     }
 
     it.each([
@@ -76,19 +73,14 @@ describe('api common utils', () => {
 
   describe('projection extractor utility', () => {
     let projection: string
-    let projectionMap: { lite: string; full: string } | undefined
 
     const execute = () => {
       const req = { query: {} }
 
       req.query[PROJECTION_PARAM_NAME] = projection
 
-      return getProjection(req as Request, projectionMap)
+      return resolveOptions(req as Request).projection
     }
-
-    beforeEach(() => {
-      projectionMap = undefined
-    })
 
     it.each(['lite', 'full'])('should return the projection', (input) => {
       projection = input
@@ -98,52 +90,27 @@ describe('api common utils', () => {
       expect(result).toBe(input)
     })
 
-    it('should return the projection mapped to "lite"', () => {
-      projection = 'lite'
-
-      projectionMap = { full: '', lite: 'abc' }
-
-      const result = execute()
-
-      expect(result).toBe(projectionMap.lite)
-    })
-
-    it('should return the projection mapped to "full"', () => {
-      projection = 'full'
-
-      projectionMap = { full: 'abc', lite: '' }
-
-      const result = execute()
-
-      expect(result).toBe(projectionMap.full)
-    })
-
     it('should return the default projection if the input is unknown', () => {
       projection = 'sgfw'
 
-      projectionMap = { full: 'abc', lite: 'cba' }
-
       const result = execute()
 
-      expect(result).toBe(projectionMap[DEFAULT_PROJECTION])
+      expect(result).toBe(DEFAULT_PROJECTION)
     })
   })
 
   describe('sort option extractor utility', () => {
     let sort: string | undefined
-    let defaultSort: string | undefined
 
     const execute = () => {
       const req = { query: {} }
 
       req.query[SORT_PARAM_NAME] = sort
 
-      return getSort(req as Request, defaultSort as string)
+      return resolveOptions(req as Request).sort
     }
 
-    beforeEach(() => {
-      sort = defaultSort = undefined
-    })
+    beforeEach(() => (sort = undefined))
 
     it('should return the given sort option', () => {
       sort = 'asdf'
@@ -153,12 +120,10 @@ describe('api common utils', () => {
       expect(result).toBe(sort)
     })
 
-    it('should return the default sort', () => {
-      defaultSort = 'sfsd'
-
+    it('should return undefined if sort is not specified', () => {
       const result = execute()
 
-      expect(result).toBe(defaultSort)
+      expect(result).toBeUndefined()
     })
   })
 
@@ -170,7 +135,7 @@ describe('api common utils', () => {
 
       req.query[SEARCH_PARAM_NAME] = searchQuery
 
-      return getSearchQuery(req as Request)
+      return resolveOptions(req as Request).searchTerm
     }
 
     it('should return undefined if there is no search query', () => {

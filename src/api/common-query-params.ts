@@ -4,7 +4,6 @@
 
 import { Request } from 'express'
 import _ from 'lodash'
-import { PaginationInfoDto } from '../dto/pagination-info'
 
 export const OFFSET_PARAM_NAME = 'offset'
 export const LIMIT_PARAM_NAME = 'limit'
@@ -25,21 +24,13 @@ export interface CommonQueryOptions {
   searchTerm: string | undefined
 }
 
-// TODO: only export this
 export function resolveOptions(req: Request): CommonQueryOptions {
   return {
     offset: extractOffset(req),
     limit: extractLimit(req),
-    projection: getProjection(req) as 'lite' | 'full',
-    sort: getSort(req, undefined!),
-    searchTerm: getSearchQuery(req),
-  }
-}
-
-export function getPaginationInfo(req: Request): PaginationInfoDto {
-  return {
-    offset: extractOffset(req),
-    limit: extractLimit(req),
+    projection: extractProjection(req) as 'lite' | 'full',
+    sort: extractSort(req, undefined!),
+    searchTerm: extractSearchQuery(req),
   }
 }
 
@@ -56,16 +47,10 @@ export function getPaginationInfo(req: Request): PaginationInfoDto {
  *         default: 'lite'
  *       description: Specifies the projection mode.
  */
-export function getProjection(
-  req: Request,
-  projectionMap = {
-    lite: 'lite',
-    full: 'full',
-  },
-): string {
-  const raw = req.query[PROJECTION_PARAM_NAME] as string
-  if (_.keys(projectionMap).includes(raw)) return projectionMap[raw]
-  return projectionMap[DEFAULT_PROJECTION]
+function extractProjection(req: Request): string {
+  let raw: string | undefined = req.query[PROJECTION_PARAM_NAME] as string
+  if (!['lite', 'full'].includes(raw)) raw = undefined
+  return raw || DEFAULT_PROJECTION
 }
 
 /**
@@ -80,7 +65,7 @@ export function getProjection(
  *        default: name
  *      description: Specifies the attribute used to sort the items.
  */
-export function getSort(req: Request, defaultSort: string): string {
+function extractSort(req: Request, defaultSort: string): string {
   return (req.query[SORT_PARAM_NAME] as string) || defaultSort
 }
 
@@ -95,7 +80,7 @@ export function getSort(req: Request, defaultSort: string): string {
  *        type: string
  *      description: Performs a search based on the given value.
  */
-export function getSearchQuery(req: Request): string | undefined {
+function extractSearchQuery(req: Request): string | undefined {
   return req.query[SEARCH_PARAM_NAME]?.toString()
 }
 
