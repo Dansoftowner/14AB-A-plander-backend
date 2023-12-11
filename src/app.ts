@@ -36,7 +36,7 @@ export class App {
   }
 
   private initializeMiddlewares() {
-    this.expressApp.use(cors())
+    this.expressApp.use(cors({ credentials: true, origin: true }))
     this.expressApp.use(helmet())
     if (config.get('logging.isHttpEnabled')) this.expressApp.use(morgan('tiny'))
     this.expressApp.use(cookieParser())
