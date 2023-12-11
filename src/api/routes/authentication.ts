@@ -6,6 +6,10 @@ import { CredentialsDto } from '../../dto/credentials'
 import rateLimiter, { loginRateLimiter } from '../../middlewares/rate-limiter'
 
 export class AuthenticationRoutes extends RoutesProvider {
+  private get loginRateLimiter() {
+    return process.env.NODE_ENV === 'development' ? rateLimiter : loginRateLimiter
+  }
+
   constructor({ authenticationController }) {
     super(authenticationController)
   }
@@ -52,7 +56,7 @@ export class AuthenticationRoutes extends RoutesProvider {
      */
     this.router.post(
       '/auth',
-      loginRateLimiter,
+      this.loginRateLimiter,
       validate(CredentialsDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.auth(req, res)),
     )
