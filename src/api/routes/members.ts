@@ -194,7 +194,11 @@ export class MemberRoutes extends RoutesProvider {
      *    description: |
      *       Invites a new member to join the association.
      *       - Only presidents have the permission to invite new members.
-     *       - 
+     *       - The president has to provide **only the email** of the new member, altough he can specify additional information as well.
+     *       - Calling this endpoint will trigger a mail to the new member that contains a **registration link**.
+     *       - Until the new member accepts the registration link, the data will be stored in an **unregistered** state.
+     *
+     *       **Authentication is required** before using this endpoint.
      *    requestBody:
      *      required: true
      *      content:
@@ -202,7 +206,7 @@ export class MemberRoutes extends RoutesProvider {
      *        schema:
      *         $ref: '#/components/schemas/MemberInvite'
      *    responses:
-     *      200:
+     *      201:
      *        description: Invitation proceeded. Returns the information about the invited member.
      *        content:
      *          application/json:

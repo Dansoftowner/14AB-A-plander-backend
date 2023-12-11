@@ -19,11 +19,11 @@ import {
  *        guardNumber:
  *          type: string
  *          description: 'The guard number of the member to invite'
- *          example: 'gizaac0'
+ *          example: '12/2030/32145'
  *        name:
  *          type: string
  *          description: 'The name of the member to invite'
- *          example: 'Mr. John Franklin'
+ *          example: 'Mr John Franklin'
  *        address:
  *          type: string
  *          description: 'The geographical address of the member to invite'
@@ -50,9 +50,9 @@ export class MemberInviteDto {
   static validationSchema(): Joi.ObjectSchema<MemberInviteDto> {
     return Joi.object({
       email: Joi.string().email().required(),
-      guardNumber: Joi.string().pattern(rf(guardNumberPattern())).optional(),
-      name: Joi.string().pattern(rf(fullNamePattern())).optional(),
-      address: Joi.string().pattern(/[0-9]/).optional(),
+      guardNumber: Joi.string().regex(rf(guardNumberPattern())).optional(),
+      name: Joi.string().regex(rf(fullNamePattern())).optional(),
+      address: Joi.string().regex(/[0-9]/).optional(),
       idNumber: Joi.string().optional(),
       phoneNumber: Joi.string().min(1).optional(),
     })
