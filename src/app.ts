@@ -36,7 +36,13 @@ export class App {
   }
 
   private initializeMiddlewares() {
-    this.expressApp.use(cors({ credentials: true, origin: ['http://localhost:5173'] }))
+    this.expressApp.use(
+      cors({
+        credentials: true,
+        origin: ['http://localhost:5173'],
+        exposedHeaders: ['set-cookie'],
+      }),
+    )
     this.expressApp.use(helmet())
     if (config.get('logging.isHttpEnabled')) this.expressApp.use(morgan('tiny'))
     this.expressApp.use(cookieParser())
