@@ -6,5 +6,7 @@
     "invalid-payload": "Incorrect data format!",
     "wrong-credentials": "Invalid username or password!",
     "unauthorized": "Not authorized!",
-    "invalid-token": "Invalid token!"
+    "invalid-token": "Invalid token!",
+    "not-president": "Only presidents have the permission to perform this action!",
+    "email-reserved": "The given e-mail is already in use!"
 }
