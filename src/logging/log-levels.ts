@@ -3,4 +3,5 @@ export default {
   error: 1,
   success: 2,
   info: 3,
+  debug: 4,
 }

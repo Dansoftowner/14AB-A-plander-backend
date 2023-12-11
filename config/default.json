@@ -4,7 +4,7 @@
         "dir": "logs",
         "isFileEnabled": true,
         "isHttpEnabled": true,
-        "level": "info"
+        "level": "debug"
     },
     "jwt": {
         "privateKey": "",
