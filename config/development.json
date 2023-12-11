@@ -3,7 +3,6 @@
         "uri": "mongodb://127.0.0.1/plander_dev"
     },
     "jwt": {
-        "privateKey": "plander_dev",
-        "cookieSecure": true
+        "privateKey": "plander_dev"
     }
 }

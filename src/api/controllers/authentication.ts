@@ -33,7 +33,7 @@ export class AuthenticationController implements Controller {
 
   private addTokenCooie(res: Response, token: string, isAutoLogin: boolean) {
     const cookieOptions: CookieOptions = {
-      sameSite: 'none',
+      sameSite: config.get('jwt.cookieSameSite'),
       httpOnly: true,
       secure: config.get('jwt.cookieSecure'),
     }
