@@ -32,11 +32,7 @@ export class AuthenticationController implements Controller {
   }
 
   private addTokenCooie(res: Response, token: string, isAutoLogin: boolean) {
-    const cookieOptions: CookieOptions = {
-      sameSite: 'lax',
-      httpOnly: true,
-      secure: config.get('jwt.cookieSecure'),
-    }
+    const cookieOptions: CookieOptions = this.cookieOptions()
 
     if (isAutoLogin) cookieOptions.maxAge = 365 * 24 * 60 * 60 * 1000
 
@@ -44,6 +40,14 @@ export class AuthenticationController implements Controller {
   }
 
   private removeTokenCookie(res: Response) {
-    res.clearCookie(config.get('jwt.cookieName'))
+    res.clearCookie(config.get('jwt.cookieName'), this.cookieOptions())
+  }
+
+  private cookieOptions(): CookieOptions {
+    return {
+      sameSite: config.get('jwt.cookieSameSite'),
+      httpOnly: true,
+      secure: config.get('jwt.cookieSecure'),
+    }
   }
 }
