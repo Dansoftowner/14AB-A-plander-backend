@@ -153,14 +153,15 @@ describe('/api/associations', () => {
       async (searchQuery) => {
         q = searchQuery
 
+        const expectedItems = associations
+          .map((it) => it.name)
+          .filter((it) => new RegExp(searchQuery, 'i').test(it))
+          .sort()
+
         const res = await sendRequest()
 
-        expect(res.body.items.map((it) => it.name)).toEqual(
-          associations
-            .map((it) => it.name)
-            .filter((it) => new RegExp(`.*${searchQuery}.*`, 'i').test(it))
-            .sort(),
-        )
+        expect(res.body.metadata.total).toBe(expectedItems.length)
+        expect(res.body.items.map((it) => it.name)).toEqual(expectedItems)
       },
     )
   })
