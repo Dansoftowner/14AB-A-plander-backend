@@ -128,4 +128,17 @@ export enum ApiErrorCode {
    *             $ref: '#/components/schemas/Error'
    */
   EMAIL_RESERVED = 'email-reserved',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      UsernameIdNumberReserved:
+   *        description: "The given username/id number is already in use."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  USERNAME_ID_NUMBER_RESERVED = 'username-id-number-reserved',
 }

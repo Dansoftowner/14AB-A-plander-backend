@@ -73,7 +73,10 @@ export class MemberController implements Controller {
       payload,
     )
 
-    if (!registeredMember) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+    if (registeredMember === undefined)
+      throw new ApiError(422, ApiErrorCode.USERNAME_ID_NUMBER_RESERVED)
+    if (registeredMember === null)
+      throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
     res.status(200).send(instanceToPlain(registeredMember))
   }

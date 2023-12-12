@@ -97,7 +97,7 @@ export class MemberService implements Service {
     id: string,
     registrationToken: string,
     registration: MemberRegistrationDto,
-  ): Promise<MemberDto | null> {
+  ): Promise<MemberDto | null | undefined> {
     const tokenExists = await this.tokenService.hasRegistrationToken(
       id,
       registrationToken,
@@ -106,6 +106,7 @@ export class MemberService implements Service {
     if (!tokenExists) return null
 
     const updatedMember = await this.updateRegisteredMemberInDb(id, registration)
+    if (!updatedMember) return updatedMember
 
     await this.tokenService.removeRegistrationToken(id)
 
@@ -124,12 +125,18 @@ export class MemberService implements Service {
     return this.repository.insert(member)
   }
 
-  private updateRegisteredMemberInDb(id: string, member: object) {
+  private async updateRegisteredMemberInDb(id: string, member: object) {
     member = _.pickBy(member, (it) => it !== undefined)
     member['_id'] = id
     member['isRegistered'] = true
 
-    return this.repository.update(member)
+    try {
+      return await this.repository.update(member)
+    } catch (ex: any) {
+      // if unique values are duplicated, mongoose will throw an error that has a property 'code' with the value of '11000'
+      if (ex.code == 11000) return undefined
+      throw ex
+    }
   }
 
   private dbOptions(

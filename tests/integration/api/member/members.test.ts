@@ -672,6 +672,7 @@ describe('/api/members', () => {
   })
 
   describe('POST /api/members/register/{id}/{registrationToken}', () => {
+    let member
     let id: string
     let token: string
 
@@ -692,7 +693,8 @@ describe('/api/members', () => {
     beforeEach(async () => {
       client = undefined
 
-      id = members.find((it) => !it.isRegistered)!._id
+      member = members.find((it) => !it.isRegistered)
+      id = member!._id
       token = crypto.randomBytes(20).toString('hex')
 
       registrationTokenModel.insertMany([
@@ -749,6 +751,26 @@ describe('/api/members', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(404)
+    })
+
+    it('should return 422 response if the username is already in use', async () => {
+      payload.username = members
+        .filter((it) => it.association == member.association)
+        .find((it) => it.isRegistered)!.username
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
+    })
+
+    it('should return 422 response if the idNumber is already in use', async () => {
+      payload.idNumber = members
+        .filter((it) => it.association == member.association)
+        .find((it) => it.isRegistered)!.idNumber
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
     })
 
     it('should update member data in database', async () => {

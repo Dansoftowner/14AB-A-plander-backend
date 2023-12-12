@@ -8,5 +8,6 @@
     "unauthorized": "Not authorized!",
     "invalid-token": "Invalid token!",
     "not-president": "Only presidents have the permission to perform this action!",
-    "email-reserved": "The given e-mail is already in use!"
+    "email-reserved": "The given e-mail is already in use!",
+    "username-id-number-reserved": "The given username or id number is already registered!"
 }
