@@ -1,32 +1,46 @@
+import { FilterQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import associationModel, { Association } from '../models/association'
 import { sanitizeForRegex as s } from '../utils/sanitize'
 
+export interface AssociationQueryOptions {
+  offset?: number
+  limit?: number
+  sort?: string
+  projection?: string
+  searchTerm?: string
+}
+
 export class AssociationRepository implements Repository {
-  count(): Promise<number> {
-    return associationModel.countDocuments()
-  }
+  async get(
+    options: AssociationQueryOptions,
+  ): Promise<{ count: number; items: Association[] }> {
+    const { offset, limit, sort, projection } = options
+    const filter = this.filterQuery(options)
 
-  get({ paginationInfo, projection, sort, searchTerm }): Promise<Association[]> {
-    return associationModel
-      .find(this.getFilter(searchTerm))
-      .skip(paginationInfo.offset)
-      .limit(paginationInfo.limit)
+    const count = await associationModel.countDocuments(filter)
+    const items = await associationModel
+      .find(this.filterQuery(options))
+      .skip(offset!)
+      .limit(limit!)
       .sort(sort)
-      .select(projection)
+      .select(projection!)
+
+    return { count, items }
   }
 
-  private getFilter(searchTerm: string) {
-    return searchTerm
-      ? {
-          name: {
-            $regex: new RegExp(`.*${s(searchTerm)}.*`, 'i'),
-          },
-        }
-      : {}
+  async findById(
+    id: string,
+    { projection }: AssociationQueryOptions,
+  ): Promise<Association> {
+    return await associationModel.findById(id).select(projection!)
   }
 
-  findById(id: string, projection: string) {
-    return associationModel.findById(id).select(projection)
+  private filterQuery(options: AssociationQueryOptions) {
+    const filterObj: FilterQuery<Association> = {}
+
+    if (options.searchTerm) filterObj.name = new RegExp(s(options.searchTerm), 'i')
+
+    return filterObj
   }
 }

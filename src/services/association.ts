@@ -1,9 +1,12 @@
 import { Service } from '../base/service'
 import { AssociationItemsDto } from '../dto/association-items'
 import { plainToInstance } from 'class-transformer'
-import { PaginationInfoDto } from '../dto/pagination-info'
-import { AssociationRepository } from '../repositories/association'
+import {
+  AssociationQueryOptions,
+  AssociationRepository,
+} from '../repositories/association'
 import { AssociationDto } from '../dto/association'
+import { CommonQueryOptions } from '../api/common-query-params'
 
 export default class AssociationService implements Service {
   private repository: AssociationRepository
@@ -12,15 +15,9 @@ export default class AssociationService implements Service {
     this.repository = associationRepository
   }
 
-  async get(options: {
-    paginationInfo: PaginationInfoDto
-    projection: string
-    sort: string
-    searchTerm: string | undefined
-  }): Promise<AssociationItemsDto> {
-    const items = await this.repository.get(options)
-    const total = await this.repository.count()
-    const metadata = { ...options.paginationInfo, total }
+  async get(options: CommonQueryOptions): Promise<AssociationItemsDto> {
+    const { count, items } = await this.repository.get(this.dbOptions(options))
+    const metadata = { offset: options.offset, limit: options.limit, total: count }
 
     return plainToInstance(
       AssociationItemsDto,
@@ -32,10 +29,30 @@ export default class AssociationService implements Service {
     )
   }
 
-  async getById(id: string, projection: string): Promise<AssociationDto | null> {
-    const item = await this.repository.findById(id, projection)
+  async getById(
+    id: string,
+    options: CommonQueryOptions,
+  ): Promise<AssociationDto | null> {
+    const item = await this.repository.findById(id, this.dbOptions(options))
+
     return plainToInstance(AssociationDto, item, {
       excludeExtraneousValues: true,
     })
+  }
+
+  private dbOptions(options: CommonQueryOptions): AssociationQueryOptions {
+    return {
+      ...options,
+      projection: this.adjustProjection(options.projection).join(' '),
+      sort: options.sort || 'name',
+    }
+  }
+
+  private adjustProjection(projection: 'lite' | 'full'): string[] {
+    const visibleFields = ['_id', 'name']
+
+    if (projection == 'full') visibleFields.push('location', 'certificate')
+
+    return visibleFields
   }
 }
