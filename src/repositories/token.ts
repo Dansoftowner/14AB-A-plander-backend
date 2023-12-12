@@ -6,7 +6,7 @@ export class TokenRepository implements Repository {
     await registrationTokenModel.insertMany({ memberId, token })
   }
 
-  async registrationTokenExists(
+  async hasRegistrationToken(
     memberId: string,
     registrationToken: string,
   ): Promise<boolean> {
@@ -16,5 +16,9 @@ export class TokenRepository implements Repository {
     })
 
     return token != null
+  }
+
+  async removeRegistrationToken(memberId: string) {
+    await registrationTokenModel.deleteMany({ memberId })
   }
 }

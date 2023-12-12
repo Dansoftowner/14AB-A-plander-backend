@@ -3,22 +3,26 @@ import { TokenRepository } from '../repositories/token'
 import { randomBytes } from 'crypto'
 
 export class TokenService implements Service {
-  private tokenRepository: TokenRepository
+  private repository: TokenRepository
 
   constructor({ tokenRepository }) {
-    this.tokenRepository = tokenRepository
+    this.repository = tokenRepository
   }
 
   async generateRegistrationToken(memberId: string): Promise<string> {
     const token = this.generateToken()
 
-    await this.tokenRepository.insertRegistrationToken(memberId, token)
+    await this.repository.insertRegistrationToken(memberId, token)
 
     return token
   }
 
-  async registrationTokenExists(memberId: string, registrationToken: string): Promise<boolean> { 
-    return await this.tokenRepository.registrationTokenExists(memberId, registrationToken)
+  hasRegistrationToken(memberId: string, registrationToken: string): Promise<boolean> {
+    return this.repository.hasRegistrationToken(memberId, registrationToken)
+  }
+
+  removeRegistrationToken(id: string): Promise<void> {
+    return this.repository.removeRegistrationToken(id)
   }
 
   private generateToken(): string {

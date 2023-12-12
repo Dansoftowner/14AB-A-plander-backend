@@ -98,26 +98,38 @@ export class MemberService implements Service {
     registrationToken: string,
     registration: MemberRegistrationDto,
   ): Promise<MemberDto | null> {
-    const tokenExists = await this.tokenService.registrationTokenExists(
+    const tokenExists = await this.tokenService.hasRegistrationToken(
       id,
       registrationToken,
     )
 
     if (!tokenExists) return null
 
-    return null
+    const updatedMember = await this.updateRegisteredMemberInDb(id, registration)
+
+    await this.tokenService.removeRegistrationToken(id)
+
+    return plainToInstance(MemberDto, updatedMember, { excludeExtraneousValues: true })
   }
 
   private async emailExists(email: string) {
     return await this.repository.existsWithEmail(email, this.clientInfo.association)
   }
 
-  private async insertIntoDatabase(member: object) {
+  private insertIntoDatabase(member: object) {
     member = _.pickBy(member, (it) => it !== undefined)
     member['association'] = this.clientInfo.association
     member['isRegistered'] = false
 
-    return await this.repository.insert(member)
+    return this.repository.insert(member)
+  }
+
+  private updateRegisteredMemberInDb(id: string, member: object) {
+    member = _.pickBy(member, (it) => it !== undefined)
+    member['_id'] = id
+    member['isRegistered'] = true
+
+    return this.repository.update(member)
   }
 
   private dbOptions(

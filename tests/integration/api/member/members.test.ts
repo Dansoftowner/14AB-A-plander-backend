@@ -678,11 +678,11 @@ describe('/api/members', () => {
     let payload: {
       username: string | undefined
       password: string | undefined
-      guardNUmber: string | undefined
       name: string | undefined
       address: string | undefined
       idNumber: string | undefined
       phoneNumber: string | undefined
+      guardNumber: string | undefined
     }
 
     const sendRequest = async () => {
@@ -692,15 +692,12 @@ describe('/api/members', () => {
     beforeEach(async () => {
       client = undefined
 
-      const member = members.find((it) => !it.isRegistered)
-      memberModel.insertMany([member])
-
-      id = member!._id
+      id = members.find((it) => !it.isRegistered)!._id
       token = crypto.randomBytes(20).toString('hex')
 
       registrationTokenModel.insertMany([
         {
-          memberId: member!._id,
+          memberId: id,
           token,
         },
       ])
@@ -708,13 +705,35 @@ describe('/api/members', () => {
       payload = {
         username: 'imthebest7',
         password: 'IhaveTheßestPass01',
-        guardNUmber: undefined,
-        name: undefined,
-        address: undefined,
-        idNumber: undefined,
-        phoneNumber: undefined,
+        name: 'John Smith',
+        address: 'London Avenue 12',
+        idNumber: '2325IE',
+        phoneNumber: '+12 23 43 111',
+        guardNumber: undefined,
       }
     })
+
+    it.each(['username', 'password', 'name', 'address', 'idNumber', 'phoneNumber'])(
+      'should return 400 response if %p is not specified',
+      async (attribute) => {
+        payload[attribute] = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      },
+    )
+
+    it.each(['aBc12', 'abcdefgh', 'Abcdefgh', '123456789'])(
+      'should return 400 response if password is weak',
+      async (pass) => {
+        payload.password = pass
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      },
+    )
 
     it('should return 404 response if the given id does not exist', async () => {
       id = new mongoose.Types.ObjectId().toHexString()
@@ -722,6 +741,43 @@ describe('/api/members', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if the registration token does not exist', async () => {
+      token = crypto.randomBytes(20).toString('hex')
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should update member data in database', async () => {
+      await sendRequest()
+
+      const memberInDb = await memberModel.findById(id)
+
+      expect(memberInDb!.isRegistered).toBe(true)
+      expect(memberInDb).toMatchObject(payload)
+    })
+
+    it('should remove registration token from database', async () => {
+      await sendRequest()
+
+      const registrationToken = await registrationTokenModel.findOne({
+        memberId: id,
+        token,
+      })
+
+      expect(registrationToken).toBeNull()
+    })
+
+    it('should return updated member in response', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(_.pick(res.body, _.keys(payload))).toMatchObject(
+        _.pick(payload, _.keys(res.body)),
+      )
     })
   })
 })

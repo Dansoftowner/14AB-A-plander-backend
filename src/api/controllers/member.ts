@@ -74,5 +74,7 @@ export class MemberController implements Controller {
     )
 
     if (!registeredMember) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+    res.status(200).send(instanceToPlain(registeredMember))
   }
 }

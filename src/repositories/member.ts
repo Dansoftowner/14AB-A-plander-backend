@@ -72,6 +72,10 @@ export class MemberRepository implements Repository {
     return inserted[0]
   }
 
+  update(member: object): Promise<Member | null> {
+    return memberModel.findByIdAndUpdate(member['_id'], member, { new: true })
+  }
+
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
     const filterObj: FilterQuery<Member> = {
       association: options.associationId,
