@@ -1,15 +1,16 @@
+import crypto from 'crypto'
 import { Express } from 'express'
 import request from 'supertest'
 import _ from 'lodash'
 import config from 'config'
-import memberModel, { Member } from '../../../../src/models/member'
-import container from '../../../../src/di'
 import mongoose from 'mongoose'
-import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
-import members from './dummy-members.json'
-import registrationTokenModel from '../../../../src/models/registration-token'
 import nodemailer from 'nodemailer'
 import { NodemailerMock } from 'nodemailer-mock'
+import memberModel, { Member } from '../../../../src/models/member'
+import container from '../../../../src/di'
+import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
+import registrationTokenModel from '../../../../src/models/registration-token'
+import members from './dummy-members.json'
 
 const { mock: nodemailerMock } = nodemailer as unknown as NodemailerMock
 
@@ -39,6 +40,7 @@ describe('/api/members', () => {
   beforeAll(async () => {
     app = container.resolve('app').expressApp
     await memberModel.deleteMany({})
+    await registrationTokenModel.deleteMany({})
   })
 
   beforeEach(async () => {
@@ -49,6 +51,7 @@ describe('/api/members', () => {
 
   afterEach(async () => {
     await memberModel.deleteMany({})
+    await registrationTokenModel.deleteMany({})
   })
 
   afterAll(async () => {
@@ -665,6 +668,60 @@ describe('/api/members', () => {
       expect(sentEmails).toHaveLength(1)
       expect(sentEmails[0].to).toBe(payload.email)
       expect(sentEmails[0]['context']).toHaveProperty('registrationLink')
+    })
+  })
+
+  describe('POST /api/members/register/{id}/{registrationToken}', () => {
+    let id: string
+    let token: string
+
+    let payload: {
+      username: string | undefined
+      password: string | undefined
+      guardNUmber: string | undefined
+      name: string | undefined
+      address: string | undefined
+      idNumber: string | undefined
+      phoneNumber: string | undefined
+    }
+
+    const sendRequest = async () => {
+      return request(app).post(`/api/members/register/${id}/${token}`).send(payload)
+    }
+
+    beforeEach(async () => {
+      client = undefined
+
+      const member = members.find((it) => !it.isRegistered)
+      memberModel.insertMany([member])
+
+      id = member!._id
+      token = crypto.randomBytes(20).toString('hex')
+
+      registrationTokenModel.insertMany([
+        {
+          memberId: member!._id,
+          token,
+        },
+      ])
+
+      payload = {
+        username: 'imthebest7',
+        password: 'IhaveTheßestPass01',
+        guardNUmber: undefined,
+        name: undefined,
+        address: undefined,
+        idNumber: undefined,
+        phoneNumber: undefined,
+      }
+    })
+
+    it('should return 404 response if the given id does not exist', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
     })
   })
 })

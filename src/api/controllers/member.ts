@@ -7,9 +7,18 @@ import { ApiError } from '../error/api-error'
 import { ApiErrorCode } from '../error/api-error-codes'
 import { ClientInfo } from '../../utils/jwt'
 import { MemberInviteDto } from '../../dto/member-invite'
+import { MemberRegistrationDto } from '../../dto/member-registration'
+import di from '../../di'
+import { asValue } from 'awilix'
 
 export class MemberController implements Controller {
   private service(req: Request): MemberService {
+    if (!req.scope)
+      return di
+        .createScope()
+        .register({ clientInfo: asValue(undefined) })
+        .resolve('memberService')
+
     return req.scope!.resolve('memberService')
   }
 
@@ -52,5 +61,18 @@ export class MemberController implements Controller {
     if (!invitedMember) throw new ApiError(422, ApiErrorCode.EMAIL_RESERVED)
 
     res.status(201).send(instanceToPlain(invitedMember))
+  }
+
+  async registerMember(req: Request, res: Response): Promise<any> {
+    const { id, registrationToken } = req.params
+    const payload = plainToInstance(MemberRegistrationDto, req.body)
+
+    const registeredMember = await this.service(req).register(
+      id,
+      registrationToken,
+      payload,
+    )
+
+    if (!registeredMember) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
   }
 }

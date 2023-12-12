@@ -59,7 +59,11 @@ export class MemberRepository implements Repository {
   }
 
   async existsWithEmail(email: string, associationId: string): Promise<boolean> {
-    return await memberModel.exists({ email, association: associationId }) != null
+    return (await memberModel.exists({ email, association: associationId })) != null
+  }
+
+  async existsWithId(id: string): Promise<boolean> {
+    return (await memberModel.exists({ _id: id })) != null
   }
 
   async insert(member: object): Promise<Member> {

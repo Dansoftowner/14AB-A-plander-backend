@@ -11,6 +11,7 @@ import { MemberInviteDto } from '../dto/member-invite'
 import { TokenService } from './token'
 import { MailService } from './mail'
 import logger from '../logging/logger'
+import { MemberRegistrationDto } from '../dto/member-registration'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -90,6 +91,21 @@ export class MemberService implements Service {
     return plainToInstance(MemberDto, invitedMember, {
       excludeExtraneousValues: true,
     })
+  }
+
+  async register(
+    id: string,
+    registrationToken: string,
+    registration: MemberRegistrationDto,
+  ): Promise<MemberDto | null> {
+    const tokenExists = await this.tokenService.registrationTokenExists(
+      id,
+      registrationToken,
+    )
+
+    if (!tokenExists) return null
+
+    return null
   }
 
   private async emailExists(email: string) {

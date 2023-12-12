@@ -17,6 +17,10 @@ export class TokenService implements Service {
     return token
   }
 
+  async registrationTokenExists(memberId: string, registrationToken: string): Promise<boolean> { 
+    return await this.tokenRepository.registrationTokenExists(memberId, registrationToken)
+  }
+
   private generateToken(): string {
     return randomBytes(20).toString('hex')
   }

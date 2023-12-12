@@ -1,5 +1,6 @@
 import { RoutesProvider } from '../../base/routes-provider'
 import { MemberInviteDto } from '../../dto/member-invite'
+import { MemberRegistrationDto } from '../../dto/member-registration'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import president from '../../middlewares/president'
@@ -231,6 +232,12 @@ export class MemberRoutes extends RoutesProvider {
       president,
       validate(MemberInviteDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.inviteMember(req, res)),
+    )
+
+    this.router.post(
+      '/members/register/:id/:registrationToken',
+      validate(MemberRegistrationDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.registerMember(req, res)),
     )
   }
 }
