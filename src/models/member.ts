@@ -100,15 +100,16 @@ const memberSchema = new Schema<Member>({
   },
 })
 
-const commonIndexOptions: IndexOptions = {
-  unique: true,
-  partialFilterExpression: {
-    isRegistered: true,
-  },
-}
-
 memberSchema.index({ association: 1, email: 1 }, { unique: true })
-memberSchema.index({ association: 1, username: 1 }, commonIndexOptions)
-memberSchema.index({ association: 1, idNumber: 1 }, commonIndexOptions)
+
+memberSchema.index(
+  { association: 1, username: 1 },
+  { unique: true, partialFilterExpression: { username: { $type: 'string' } } },
+)
+
+memberSchema.index(
+  { association: 1, idNumber: 1 },
+  { unique: true, partialFilterExpression: { idNumber: { $type: 'string' } } },
+)
 
 export default mongoose.model('Member', memberSchema, 'members')
