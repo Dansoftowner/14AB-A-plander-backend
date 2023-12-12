@@ -234,6 +234,50 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.inviteMember(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/members/register/{id}/{registrationToken}:
+     *  post:
+     *    tags:
+     *      - Members
+     *    description: |
+     *       An invited member can register through this endpoint.
+     *       This endpoint will be **typically called by an invited member who recieved a registration link** through e-mail.
+     *
+     *       - The invited member can provide personal data and credentials.
+     *       - Technically the member is already present in the database, so this endpoint basically **updates** a resource.
+     *
+     *       **Authentication is not required** before using this endpoint, since the `registrationToken` identifies the client.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema: 
+     *          type: string
+     *          required: true
+     *          description: The unique id of the invited member.
+     * 
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberRegistration'
+     *    responses:
+     *      201:
+     *        description: Registration proceeded. Returns the information about the registered member.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      422:
+     *        $ref: '#/components/responses/UsernameIdNumberReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.post(
       '/members/register/:id/:registrationToken',
       validate(MemberRegistrationDto.validationSchema()),
