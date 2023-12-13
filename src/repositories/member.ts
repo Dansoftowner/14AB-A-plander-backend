@@ -72,11 +72,11 @@ export class MemberRepository implements Repository {
     const token = crypto.randomBytes(20).toString('hex')
 
     await new RegistrationTokenModel({
-      memberId: inserted[0]._id,
+      memberId: inserted._id,
       token,
     }).save()
 
-    return { invitedMember: inserted[0], token }
+    return { invitedMember: inserted, token }
   }
 
   async register(member: object, token: string): Promise<Member | null> {

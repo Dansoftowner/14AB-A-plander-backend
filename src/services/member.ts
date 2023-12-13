@@ -17,7 +17,7 @@ export class MemberService implements Service {
 
   private mailService: MailService
 
-  constructor({ clientInfo, memberRepository, tokenService, mailService }) {
+  constructor({ clientInfo, memberRepository, mailService }) {
     this.repository = memberRepository
     this.clientInfo = clientInfo
     this.mailService = mailService
@@ -102,13 +102,13 @@ export class MemberService implements Service {
   }
 
   private insertIntoDatabase(invitation: MemberInviteDto) {
-    const member = {
+    let member = {
       ...invitation,
       association: this.clientInfo.association,
       isRegistered: false,
     }
 
-    // member = _.pickBy(member, (it) => it !== undefined)
+    member = _.pickBy(member, (it) => it !== undefined)
 
     return this.repository.invite(member)
   }
@@ -118,13 +118,13 @@ export class MemberService implements Service {
     token: string,
     registration: object,
   ) {
-    const member = {
+    let member = {
       _id: id,
       isRegistered: true,
       ...registration,
     }
 
-    // member = _.pickBy(member, (it) => it !== undefined)
+    member = _.pickBy(member, (it) => it !== undefined)
 
     try {
       return await this.repository.register(member, token)
