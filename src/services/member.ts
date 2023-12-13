@@ -69,7 +69,7 @@ export class MemberService implements Service {
   }
 
   async getInvited(id: string, registrationToken: string): Promise<MemberDto | null> {
-    const item = this.repository.findByRegistrationToken(id, registrationToken)
+    const item = await this.repository.findByRegistrationToken(id, registrationToken)
 
     return plainToInstance(MemberDto, item, { excludeExtraneousValues: true })
   }

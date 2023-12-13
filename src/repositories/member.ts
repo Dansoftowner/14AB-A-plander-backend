@@ -64,7 +64,7 @@ export class MemberRepository implements Repository {
   ): Promise<Member | null> {
     const isTokenPresent = await RegistrationTokenModel.exists({
       memberId: id,
-      registrationToken,
+      token: registrationToken,
     })
 
     if (!isTokenPresent) return null
