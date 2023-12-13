@@ -1,14 +1,12 @@
 import { plainToInstance } from 'class-transformer'
 import { Service } from '../base/service'
 import { MemberItemsDto } from '../dto/member-items'
-import { PaginationInfoDto } from '../dto/pagination-info'
 import { MemberQueryOptions, MemberRepository } from '../repositories/member'
 import { ClientInfo } from '../utils/jwt'
 import { CommonQueryOptions } from '../api/common-query-params'
 import { MemberDto } from '../dto/member'
 import _ from 'lodash'
 import { MemberInviteDto } from '../dto/member-invite'
-import { TokenService } from './token'
 import { MailService } from './mail'
 import logger from '../logging/logger'
 import { MemberRegistrationDto } from '../dto/member-registration'
@@ -17,13 +15,11 @@ export class MemberService implements Service {
   private clientInfo: ClientInfo
   private repository: MemberRepository
 
-  private tokenService: TokenService
   private mailService: MailService
 
   constructor({ clientInfo, memberRepository, tokenService, mailService }) {
     this.repository = memberRepository
     this.clientInfo = clientInfo
-    this.tokenService = tokenService
     this.mailService = mailService
   }
 
@@ -77,11 +73,7 @@ export class MemberService implements Service {
 
     if (await this.emailExists(email)) return null
 
-    const invitedMember = await this.insertIntoDatabase(invitation)
-
-    const token = await this.tokenService.generateRegistrationToken(
-      invitedMember._id.toHexString(),
-    )
+    const { invitedMember, token } = await this.insertIntoDatabase(invitation)
 
     this.mailService
       .sendRegistrationEmail(invitedMember, token)
@@ -95,20 +87,12 @@ export class MemberService implements Service {
 
   async register(
     id: string,
-    registrationToken: string,
+    token: string,
     registration: MemberRegistrationDto,
   ): Promise<MemberDto | null | undefined> {
-    const tokenExists = await this.tokenService.hasRegistrationToken(
-      id,
-      registrationToken,
-    )
+    const updatedMember = await this.registerInvitedMemberInDb(id, token, registration)
 
-    if (!tokenExists) return null
-
-    const updatedMember = await this.updateRegisteredMemberInDb(id, registration)
     if (!updatedMember) return updatedMember
-
-    await this.tokenService.removeRegistrationToken(id)
 
     return plainToInstance(MemberDto, updatedMember, { excludeExtraneousValues: true })
   }
@@ -117,21 +101,33 @@ export class MemberService implements Service {
     return await this.repository.existsWithEmail(email, this.clientInfo.association)
   }
 
-  private insertIntoDatabase(member: object) {
-    member = _.pickBy(member, (it) => it !== undefined)
-    member['association'] = this.clientInfo.association
-    member['isRegistered'] = false
+  private insertIntoDatabase(invitation: MemberInviteDto) {
+    const member = {
+      ...invitation,
+      association: this.clientInfo.association,
+      isRegistered: false,
+    }
 
-    return this.repository.insert(member)
+    // member = _.pickBy(member, (it) => it !== undefined)
+
+    return this.repository.invite(member)
   }
 
-  private async updateRegisteredMemberInDb(id: string, member: object) {
-    member = _.pickBy(member, (it) => it !== undefined)
-    member['_id'] = id
-    member['isRegistered'] = true
+  private async registerInvitedMemberInDb(
+    id: string,
+    token: string,
+    registration: object,
+  ) {
+    const member = {
+      _id: id,
+      isRegistered: true,
+      ...registration,
+    }
+
+    // member = _.pickBy(member, (it) => it !== undefined)
 
     try {
-      return await this.repository.update(member)
+      return await this.repository.register(member, token)
     } catch (ex: any) {
       // if unique values are duplicated, mongoose will throw an error that has a property 'code' with the value of '11000'
       if (ex.code == 11000) return undefined
