@@ -58,6 +58,20 @@ export class MemberRepository implements Repository {
     return (await MemberModel.findOne(filter).select(options.projection!)) as Member
   }
 
+  async findByRegistrationToken(
+    id: string,
+    registrationToken: string,
+  ): Promise<Member | null> {
+    const isTokenPresent = await RegistrationTokenModel.exists({
+      memberId: id,
+      registrationToken,
+    })
+
+    if (!isTokenPresent) return null
+
+    return await MemberModel.findById(id)
+  }
+
   async existsWithEmail(email: string, associationId: string): Promise<boolean> {
     return (await MemberModel.exists({ email, association: associationId })) != null
   }

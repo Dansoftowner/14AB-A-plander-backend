@@ -68,6 +68,12 @@ export class MemberService implements Service {
     })
   }
 
+  async getInvited(id: string, registrationToken: string): Promise<MemberDto | null> {
+    const item = this.repository.findByRegistrationToken(id, registrationToken)
+
+    return plainToInstance(MemberDto, item, { excludeExtraneousValues: true })
+  }
+
   async invite(invitation: MemberInviteDto): Promise<MemberDto | null> {
     const { email } = invitation
 

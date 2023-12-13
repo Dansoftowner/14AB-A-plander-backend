@@ -54,6 +54,16 @@ export class MemberController implements Controller {
     res.send(instanceToPlain(member))
   }
 
+  async getInvitedMember(req: Request, res: Response) {
+    const { id, registrationToken } = req.params
+
+    const member = await this.service(req).getInvited(id, registrationToken)
+
+    if (!member) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+    res.send(instanceToPlain(member))
+  }
+
   async inviteMember(req: Request, res: Response) {
     const payload = plainToInstance(MemberInviteDto, req.body)
 

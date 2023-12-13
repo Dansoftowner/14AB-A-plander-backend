@@ -234,6 +234,11 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.inviteMember(req, res)),
     )
 
+    this.router.get(
+      '/members/register/:id/:registrationToken',
+      asyncErrorHandler((req, res) => controller.getInvitedMember(req, res))
+    )
+
     /**
      * @openapi
      * /api/members/register/{id}/{registrationToken}:
