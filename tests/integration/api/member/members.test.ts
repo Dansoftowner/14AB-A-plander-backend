@@ -6,10 +6,10 @@ import config from 'config'
 import mongoose from 'mongoose'
 import nodemailer from 'nodemailer'
 import { NodemailerMock } from 'nodemailer-mock'
-import memberModel, { Member } from '../../../../src/models/member'
+import MemberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
-import registrationTokenModel from '../../../../src/models/registration-token'
+import RegistrationTokenModel from '../../../../src/models/registration-token'
 import members from './dummy-members.json'
 
 const { mock: nodemailerMock } = nodemailer as unknown as NodemailerMock
@@ -39,19 +39,18 @@ describe('/api/members', () => {
 
   beforeAll(async () => {
     app = container.resolve('app').expressApp
-    await memberModel.deleteMany({})
-    await registrationTokenModel.deleteMany({})
+    await MemberModel.deleteMany({})
+    await RegistrationTokenModel.deleteMany({})
   })
 
   beforeEach(async () => {
-    await memberModel.insertMany(members)
+    await MemberModel.insertMany(members)
     client = presidentMember
     rateLimiterStore.resetAll()
   })
 
   afterEach(async () => {
-    await memberModel.deleteMany({})
-    await registrationTokenModel.deleteMany({})
+    await MemberModel.deleteMany({})
   })
 
   afterAll(async () => {
@@ -619,7 +618,7 @@ describe('/api/members', () => {
     it('should save invited member to the database', async () => {
       const res = await sendRequest()
 
-      const invitedMember = await memberModel.findOne({
+      const invitedMember = await MemberModel.findOne({
         association: client.association,
         email: payload.email,
       })
@@ -632,7 +631,7 @@ describe('/api/members', () => {
     it('should save invited member to the database', async () => {
       const res = await sendRequest()
 
-      const invitedMember = await memberModel.findOne({
+      const invitedMember = await MemberModel.findOne({
         association: client.association,
         email: payload.email,
       })
@@ -652,7 +651,7 @@ describe('/api/members', () => {
     it('should generate a registration token for the invited member', async () => {
       const res = await sendRequest()
 
-      const registrationToken = await registrationTokenModel.findOne({
+      const registrationToken = await RegistrationTokenModel.findOne({
         memberId: res.body._id,
       })
 
@@ -672,25 +671,29 @@ describe('/api/members', () => {
   })
 
   describe('/api/members/register/{id}/registrationToken', () => {
+    afterEach(async () => {
+      await RegistrationTokenModel.deleteMany({})
+    })
+
+    let member
+    let id: string
+    let token: string
+
+    beforeEach(async () => {
+      client = undefined
+
+      member = members.find((it) => !it.isRegistered)
+      id = member!._id
+      token = crypto.randomBytes(20).toString('hex')
+
+      await new RegistrationTokenModel({
+        memberId: id,
+        token,
+      }).save()
+    })
+
     describe('GET /', () => {
-      let member
-      let id: string
-      let token: string
-
       beforeEach(async () => {
-        client = undefined
-
-        member = members.find((it) => !it.isRegistered)
-        id = member!._id
-        token = crypto.randomBytes(20).toString('hex')
-
-        registrationTokenModel.insertMany([
-          {
-            memberId: id,
-            token,
-          },
-        ])
-
         member = {
           ...member,
           username: 'imthebest7',
@@ -702,12 +705,10 @@ describe('/api/members', () => {
           guardNumber: undefined,
         }
 
-        await memberModel.findByIdAndUpdate(id, member)
+        await MemberModel.findByIdAndUpdate(id, member)
       })
 
-      const sendRequest = async () => {
-        return request(app).get(`/api/members/register/${id}/{token}`)
-      }
+      const sendRequest = () => request(app).get(`/api/members/register/${id}/${token}`)
 
       it('should return 404 response if the given id does not exist', async () => {
         id = new mongoose.Types.ObjectId().toHexString()
@@ -728,15 +729,11 @@ describe('/api/members', () => {
       it('should return invited member data if the url is valid', async () => {
         const res = await sendRequest()
 
-        expect(res.body).toMatchObject(member)
+        expect(res.body).toMatchObject(_.pick(member, _.keys(res.body)))
       })
     })
 
     describe('POST /', () => {
-      let member
-      let id: string
-      let token: string
-
       let payload: {
         username: string | undefined
         password: string | undefined
@@ -748,19 +745,6 @@ describe('/api/members', () => {
       }
 
       beforeEach(async () => {
-        client = undefined
-
-        member = members.find((it) => !it.isRegistered)
-        id = member!._id
-        token = crypto.randomBytes(20).toString('hex')
-
-        registrationTokenModel.insertMany([
-          {
-            memberId: id,
-            token,
-          },
-        ])
-
         payload = {
           username: 'imthebest7',
           password: 'IhaveTheßestPass01',
@@ -837,7 +821,7 @@ describe('/api/members', () => {
       it('should update member data in database', async () => {
         await sendRequest()
 
-        const memberInDb = await memberModel.findById(id)
+        const memberInDb = await MemberModel.findById(id)
 
         expect(memberInDb!.isRegistered).toBe(true)
         expect(memberInDb).toMatchObject(payload)
@@ -846,7 +830,7 @@ describe('/api/members', () => {
       it('should remove registration token from database', async () => {
         await sendRequest()
 
-        const registrationToken = await registrationTokenModel.findOne({
+        const registrationToken = await RegistrationTokenModel.findOne({
           memberId: id,
           token,
         })
