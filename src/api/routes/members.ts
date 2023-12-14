@@ -234,9 +234,57 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.inviteMember(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/members/register/{id}/{registrationToken}:
+     *  get:
+     *    tags:
+     *      - Members
+     *    description: |
+     *       Basically this endpoint gives back the information that the president who invited
+     *       the member has provided through the [`POST /api/members`](#/Members/post_api_members) endpoint.
+     *
+     *       This endpoint will be **typically called by an invited member who recieved a registration link** through e-mail.
+     *
+     *       **Authentication is not required** before using this endpoint, since the `registrationToken` identifies the client.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the invited member.
+     *      - in: path
+     *        name: registrationToken
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The registration token of the invited member.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberRegistration'
+     *    responses:
+     *      201:
+     *        description: Registration proceeded. Returns the information about the registered member.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      422:
+     *        $ref: '#/components/responses/UsernameIdNumberReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.get(
       '/members/register/:id/:registrationToken',
-      asyncErrorHandler((req, res) => controller.getInvitedMember(req, res))
+      asyncErrorHandler((req, res) => controller.getInvitedMember(req, res)),
     )
 
     /**
@@ -256,11 +304,16 @@ export class MemberRoutes extends RoutesProvider {
      *    parameters:
      *      - in: path
      *        name: id
-     *        schema: 
+     *        schema:
      *          type: string
      *          required: true
      *          description: The unique id of the invited member.
-     * 
+     *      - in: path
+     *        name: registrationToken
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The registration token of the invited member.
      *    requestBody:
      *      required: true
      *      content:
