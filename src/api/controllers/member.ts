@@ -59,7 +59,7 @@ export class MemberController implements Controller {
 
     const member = await this.service(req).getInvited(id, registrationToken)
 
-    if (!member) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+    if (!member) throw new ApiError(404, ApiErrorCode.INVALID_URL)
 
     res.send(instanceToPlain(member))
   }
@@ -85,8 +85,7 @@ export class MemberController implements Controller {
 
     if (registeredMember === undefined)
       throw new ApiError(422, ApiErrorCode.USERNAME_ID_NUMBER_RESERVED)
-    if (registeredMember === null)
-      throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+    if (registeredMember === null) throw new ApiError(404, ApiErrorCode.INVALID_URL)
 
     res.status(200).send(instanceToPlain(registeredMember))
   }
