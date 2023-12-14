@@ -4,5 +4,10 @@
     },
     "jwt": {
         "privateKey": "plander_dev"
+    },
+    "smtp": {
+        "host": "sandbox.smtp.mailtrap.io",
+        "port": 2525,
+        "from": "plander-dev@plander.com"
     }
 }

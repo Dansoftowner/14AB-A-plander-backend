@@ -19,7 +19,7 @@ import { JoiObjectId } from '../utils/joi'
  *        password:
  *          type: string
  *          description: 'The plain text password'
- *          example: 'MySupersafePassword789'
+ *          example: 'Apple123'
  *        isAutoLogin:
  *          type: boolean
  *          description: 'Whether the user should be automatically logged in (if true, a permanent cookie will be returned)'

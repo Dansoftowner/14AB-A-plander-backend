@@ -1,6 +1,10 @@
 import { RoutesProvider } from '../../base/routes-provider'
+import { MemberInviteDto } from '../../dto/member-invite'
+import { MemberRegistrationDto } from '../../dto/member-registration'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
+import president from '../../middlewares/president'
+import validate from '../../middlewares/validate'
 import validateObjectid from '../../middlewares/validate-objectid'
 import { MemberController } from '../controllers/member'
 
@@ -180,6 +184,162 @@ export class MemberRoutes extends RoutesProvider {
       '/members/username/:username',
       auth,
       asyncErrorHandler((req, res) => controller.getMemberByUsername(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/members:
+     *  post:
+     *    tags:
+     *      - Members
+     *    description: |
+     *       Invites a new member to join the association.
+     *       - Only presidents have the permission to invite new members.
+     *       - The president has to provide **only the email** of the new member, altough he can specify additional information as well.
+     *       - Calling this endpoint will trigger a mail to the new member that contains a **registration link**.
+     *       - Until the new member accepts the registration link, the data will be stored in an **unregistered** state.
+     *
+     *       **Authentication is required** before using this endpoint.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberInvite'
+     *    responses:
+     *      201:
+     *        description: Invitation proceeded. Returns the information about the invited member.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      403:
+     *       $ref: '#/components/responses/NotPresident'
+     *      422:
+     *        $ref: '#/components/responses/EmailReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.post(
+      '/members',
+      auth,
+      president,
+      validate(MemberInviteDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.inviteMember(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/members/register/{id}/{registrationToken}:
+     *  get:
+     *    tags:
+     *      - Members
+     *    description: |
+     *       Basically this endpoint gives back the information that the president who invited
+     *       the member has provided through the [`POST /api/members`](#/Members/post_api_members) endpoint.
+     *
+     *       This endpoint will be **typically called by an invited member who recieved a registration link** through e-mail.
+     *
+     *       **Authentication is not required** before using this endpoint, since the `registrationToken` identifies the client.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the invited member.
+     *      - in: path
+     *        name: registrationToken
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The registration token of the invited member.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberRegistration'
+     *    responses:
+     *      201:
+     *        description: Registration proceeded. Returns the information about the registered member.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      422:
+     *        $ref: '#/components/responses/UsernameIdNumberReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.get(
+      '/members/register/:id/:registrationToken',
+      asyncErrorHandler((req, res) => controller.getInvitedMember(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/members/register/{id}/{registrationToken}:
+     *  post:
+     *    tags:
+     *      - Members
+     *    description: |
+     *       An invited member can register through this endpoint.
+     *       This endpoint will be **typically called by an invited member who recieved a registration link** through e-mail.
+     *
+     *       - The invited member can provide personal data and credentials.
+     *       - Technically the member is already present in the database, so this endpoint basically **updates** a resource.
+     *
+     *       **Authentication is not required** before using this endpoint, since the `registrationToken` identifies the client.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the invited member.
+     *      - in: path
+     *        name: registrationToken
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The registration token of the invited member.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberRegistration'
+     *    responses:
+     *      201:
+     *        description: Registration proceeded. Returns the information about the registered member.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      422:
+     *        $ref: '#/components/responses/UsernameIdNumberReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.post(
+      '/members/register/:id/:registrationToken',
+      validate(MemberRegistrationDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.registerMember(req, res)),
     )
   }
 }

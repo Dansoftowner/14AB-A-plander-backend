@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types } from 'mongoose'
+import mongoose, { IndexOptions, Schema, Types } from 'mongoose'
 import { Association } from './association'
 import { isEmail, isFullName, isGuardNumber } from '../utils/common-regex'
 
@@ -101,7 +101,15 @@ const memberSchema = new Schema<Member>({
 })
 
 memberSchema.index({ association: 1, email: 1 }, { unique: true })
-memberSchema.index({ association: 1, username: 1 }, { unique: true })
-memberSchema.index({ association: 1, idNumber: 1 }, { unique: true })
+
+memberSchema.index(
+  { association: 1, username: 1 },
+  { unique: true, partialFilterExpression: { username: { $type: 'string' } } },
+)
+
+memberSchema.index(
+  { association: 1, idNumber: 1 },
+  { unique: true, partialFilterExpression: { idNumber: { $type: 'string' } } },
+)
 
 export default mongoose.model('Member', memberSchema, 'members')

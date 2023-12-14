@@ -1,7 +1,10 @@
 import { FilterQuery } from 'mongoose'
 import { Repository } from '../base/repository'
-import memberModel, { Member } from '../models/member'
+import MemberModel, { Member } from '../models/member'
 import { sanitizeForRegex as s } from '../utils/sanitize'
+import RegistrationTokenModel from '../models/registration-token'
+import crypto from 'crypto'
+import _ from 'lodash'
 
 export interface MemberQueryOptions {
   associationId: string
@@ -18,9 +21,8 @@ export class MemberRepository implements Repository {
     const { offset, limit, sort, projection } = options
     const filter = this.filterQuery(options)
 
-    const count = await memberModel.countDocuments(filter)
-    const items = await memberModel
-      .find(filter)
+    const count = await MemberModel.countDocuments(filter)
+    const items = await MemberModel.find(filter)
       .skip(offset!)
       .limit(limit!)
       .sort(sort)
@@ -33,7 +35,7 @@ export class MemberRepository implements Repository {
     const filter = this.filterQuery(options)
     filter._id = id
 
-    return memberModel.findOne(filter).select(options.projection!)
+    return MemberModel.findOne(filter).select(options.projection!)
   }
 
   async findByEmail(
@@ -43,7 +45,7 @@ export class MemberRepository implements Repository {
     const filter = this.filterQuery(options)
     filter.email = email
 
-    return (await memberModel.findOne(filter).select(options.projection!)) as Member
+    return (await MemberModel.findOne(filter).select(options.projection!)) as Member
   }
 
   async findByUsername(
@@ -53,7 +55,55 @@ export class MemberRepository implements Repository {
     const filter = this.filterQuery(options)
     filter.username = username
 
-    return (await memberModel.findOne(filter).select(options.projection!)) as Member
+    return (await MemberModel.findOne(filter).select(options.projection!)) as Member
+  }
+
+  async findByRegistrationToken(
+    id: string,
+    registrationToken: string,
+  ): Promise<Member | null> {
+    const isTokenPresent = await RegistrationTokenModel.exists({
+      memberId: id,
+      token: registrationToken,
+    })
+
+    if (!isTokenPresent) return null
+
+    return await MemberModel.findById(id)
+  }
+
+  async existsWithEmail(email: string, associationId: string): Promise<boolean> {
+    return (await MemberModel.exists({ email, association: associationId })) != null
+  }
+
+  async existsWithId(id: string): Promise<boolean> {
+    return (await MemberModel.exists({ _id: id })) != null
+  }
+
+  async invite(member: object): Promise<{ invitedMember: Member; token: string }> {
+    const inserted = await new MemberModel(member).save()
+
+    const token = crypto.randomBytes(20).toString('hex')
+
+    await new RegistrationTokenModel({
+      memberId: inserted._id,
+      token,
+    }).save()
+
+    return { invitedMember: inserted, token }
+  }
+
+  async register(member: object, token: string): Promise<Member | null> {
+    const memberId = member['_id']
+
+    const isTokenValid = await RegistrationTokenModel.findOneAndDelete({
+      memberId,
+      token,
+    })
+
+    if (!isTokenValid) return null
+
+    return await MemberModel.findByIdAndUpdate(memberId, member, { new: true })
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {

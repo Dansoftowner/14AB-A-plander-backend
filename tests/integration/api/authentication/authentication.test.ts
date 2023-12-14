@@ -160,13 +160,12 @@ describe('Endpoints related to authentication', () => {
     it('should return cookie if the credentials are correct', async () => {
       const res = await sendRequest()
 
-      const { cookie, isHttpOnly, isSameSiteLax, maxAge, token } =
-        getAuthCookieInfo(res)
+      const { cookie, isHttpOnly, isCrossSite, maxAge, token } = getAuthCookieInfo(res)
 
       expect(res.status).toBe(200)
       expect(cookie).toBeDefined()
       expect(isHttpOnly).toBe(true)
-      expect(isSameSiteLax).toBe(true)
+      expect(isCrossSite).toBe(true)
       expect(maxAge).toBeUndefined()
       expect(token).toBeDefined()
       expect(() => jwt.verify(token!, config.get('jwt.privateKey'))).not.toThrow()
@@ -177,13 +176,12 @@ describe('Endpoints related to authentication', () => {
 
       const res = await sendRequest()
 
-      const { cookie, isHttpOnly, isSameSiteLax, maxAge, token } =
-        getAuthCookieInfo(res)
+      const { cookie, isHttpOnly, isCrossSite, maxAge, token } = getAuthCookieInfo(res)
 
       expect(res.status).toBe(200)
       expect(cookie).toBeDefined()
       expect(isHttpOnly).toBe(true)
-      expect(isSameSiteLax).toBe(true)
+      expect(isCrossSite).toBe(true)
       expect(maxAge).toBeGreaterThan(0)
       expect(token).toBeDefined()
       expect(() => jwt.verify(token!, config.get('jwt.privateKey'))).not.toThrow()

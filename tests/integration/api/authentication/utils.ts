@@ -4,7 +4,7 @@ import config from 'config'
 export interface CookieInfo {
   cookie: string | undefined
   isHttpOnly: boolean | undefined
-  isSameSiteLax: boolean | undefined
+  isCrossSite: boolean | undefined
   maxAge: number | undefined
   expires: string | undefined
   token: string | undefined
@@ -17,7 +17,7 @@ export function getAuthCookieInfo(res: supertest.Response): CookieInfo {
   const cookie = rawCookies.find((it) => it.startsWith(cookieName))
 
   const isHttpOnly = cookie?.includes('HttpOnly;')
-  const isSameSiteLax = cookie?.includes('SameSite=Lax')
+  const isCrossSite = cookie?.includes('SameSite=None')
   const maxAge = retrieveMaxAge(cookie)
   const expires = retrieveExpiry(cookie)
 
@@ -26,7 +26,7 @@ export function getAuthCookieInfo(res: supertest.Response): CookieInfo {
     cookie.indexOf(';'),
   )
 
-  return { cookie, isHttpOnly, isSameSiteLax, maxAge, expires, token }
+  return { cookie, isHttpOnly, isCrossSite, maxAge, expires, token }
 }
 
 function retrieveMaxAge(cookie: string | undefined): number | undefined {

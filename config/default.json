@@ -4,7 +4,7 @@
         "dir": "logs",
         "isFileEnabled": true,
         "isHttpEnabled": true,
-        "level": "info"
+        "level": "debug"
     },
     "jwt": {
         "privateKey": "",
@@ -12,5 +12,18 @@
         "cookieSameSite": "None",
         "cookieSecure": true,
         "headerName": "x-plander-auth"
+    },
+    "smtp": {
+        "host": "",
+        "port": 25,
+        "secure": false,
+        "auth": {
+            "user": "",
+            "pass": ""
+        },
+        "from": ""
+    },
+    "frontend": {
+        "host": ""
     }
 }

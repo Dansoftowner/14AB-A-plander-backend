@@ -4,5 +4,18 @@
     },
     "jwt": {
         "privateKey": "PLANDER_JWT_KEY"
+    },
+    "frontend": {
+        "host": "PLANDER_FRONTEND_HOST"
+    },
+    "smtp": {
+        "host": "PLANDER_SMTP_HOST",
+        "port": "PLANDER_SMTP_PORT",
+        "secure": "PLANDER_SMTP_SECURE",
+        "auth": {
+            "user": "PLANDER_SMTP_USER",
+            "pass": "PLANDER_SMTP_PASS"
+        },
+        "from": "PLANDER_SMTP_FROM"
     }
 }

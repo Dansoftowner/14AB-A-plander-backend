@@ -6,5 +6,8 @@
     "invalid-payload": "Érvénytelen formátum!",
     "wrong-credentials": "Érvénytelen felhasználónév vagy jelszó!",
     "unauthorized": "Nincs érvényes belépés!",
-    "invalid-token": "Hiteltelen azonosítás!"
+    "invalid-token": "Hiteltelen azonosítás!",
+    "not-president": "Csak elnöki jogosultsággal lehet a műveletet végrehajtani!",
+    "email-reserved": "A megadott e-mail cím már le van foglalva!",
+    "username-id-number-reserved": "A megadott felhasználónév vagy személyigazolványszám már regisztrálva van!"
 }

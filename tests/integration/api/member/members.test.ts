@@ -1,14 +1,18 @@
+import crypto from 'crypto'
 import { Express } from 'express'
 import request from 'supertest'
 import _ from 'lodash'
 import config from 'config'
-import jwt from 'jsonwebtoken'
-import associationModel, { Association } from '../../../../src/models/association'
-import memberModel, { Member } from '../../../../src/models/member'
-import container from '../../../../src/di'
 import mongoose from 'mongoose'
+import nodemailer from 'nodemailer'
+import { NodemailerMock } from 'nodemailer-mock'
+import MemberModel, { Member } from '../../../../src/models/member'
+import container from '../../../../src/di'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
+import RegistrationTokenModel from '../../../../src/models/registration-token'
 import members from './dummy-members.json'
+
+const { mock: nodemailerMock } = nodemailer as unknown as NodemailerMock
 
 describe('/api/members', () => {
   let app: Express
@@ -35,17 +39,18 @@ describe('/api/members', () => {
 
   beforeAll(async () => {
     app = container.resolve('app').expressApp
-    await memberModel.deleteMany({})
+    await MemberModel.deleteMany({})
+    await RegistrationTokenModel.deleteMany({})
   })
 
   beforeEach(async () => {
-    await memberModel.insertMany(members)
+    await MemberModel.insertMany(members)
     client = presidentMember
     rateLimiterStore.resetAll()
   })
 
   afterEach(async () => {
-    await memberModel.deleteMany({})
+    await MemberModel.deleteMany({})
   })
 
   afterAll(async () => {
@@ -538,6 +543,309 @@ describe('/api/members', () => {
       expect(_.keys(res.body)).toContain('idNumber')
       expect(_.keys(res.body)).toContain('address')
       expect(_.keys(res.body)).toContain('guardNumber')
+    })
+  })
+
+  describe('POST /', () => {
+    let payload: {
+      email: string | undefined
+      guardNUmber: string | undefined
+      name: string | undefined
+      address: string | undefined
+      idNumber: string | undefined
+      phoneNumber: string | undefined
+    }
+
+    const sendRequest = async () => {
+      return request(app)
+        .post('/api/members')
+        .set(config.get('jwt.headerName'), await generateToken())
+        .send(payload)
+    }
+
+    beforeEach(async () => {
+      payload = {
+        email: 'member@example.com',
+        guardNUmber: undefined,
+        name: undefined,
+        address: undefined,
+        idNumber: undefined,
+        phoneNumber: undefined,
+      }
+      nodemailerMock.reset()
+    })
+
+    it('should return 401 response if no token provided', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 403 response if the client is not a president', async () => {
+      client = regularMember
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should return 400 response if email is not specified', async () => {
+      payload.email = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if email is not valid', async () => {
+      payload.email = Math.random().toString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 422 response if the email is already used by someone', async () => {
+      payload.email = companionMembers().find((it) => it._id != client._id)!.email
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
+    })
+
+    it('should save invited member to the database', async () => {
+      const res = await sendRequest()
+
+      const invitedMember = await MemberModel.findOne({
+        association: client.association,
+        email: payload.email,
+      })
+
+      expect(res.status).toBe(201)
+      expect(invitedMember).not.toBeNull()
+      expect(invitedMember!.isRegistered).toBe(false)
+    })
+
+    it('should save invited member to the database', async () => {
+      const res = await sendRequest()
+
+      const invitedMember = await MemberModel.findOne({
+        association: client.association,
+        email: payload.email,
+      })
+
+      expect(res.status).toBe(201)
+      expect(invitedMember).not.toBeNull()
+      expect(invitedMember!.isRegistered).toBe(false)
+    })
+
+    it('should return the invited member', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(201)
+      expect(res.body).toMatchObject(_.pickBy(payload, (it) => it !== undefined))
+    })
+
+    it('should generate a registration token for the invited member', async () => {
+      const res = await sendRequest()
+
+      const registrationToken = await RegistrationTokenModel.findOne({
+        memberId: res.body._id,
+      })
+
+      expect(registrationToken).not.toBeNull()
+      expect(registrationToken!.token).toMatch(/[a-f0-9]{40}/)
+    })
+
+    it('should send email for the invited member', async () => {
+      await sendRequest()
+
+      const sentEmails = nodemailerMock.getSentMail()
+
+      expect(sentEmails).toHaveLength(1)
+      expect(sentEmails[0].to).toBe(payload.email)
+      expect(sentEmails[0]['context']).toHaveProperty('registrationLink')
+    })
+  })
+
+  describe('/api/members/register/{id}/registrationToken', () => {
+    afterEach(async () => {
+      await RegistrationTokenModel.deleteMany({})
+    })
+
+    let member
+    let id: string
+    let token: string
+
+    beforeEach(async () => {
+      client = undefined
+
+      member = members.find((it) => !it.isRegistered)
+      id = member!._id
+      token = crypto.randomBytes(20).toString('hex')
+
+      await new RegistrationTokenModel({
+        memberId: id,
+        token,
+      }).save()
+    })
+
+    describe('GET /', () => {
+      beforeEach(async () => {
+        member = {
+          ...member,
+          username: 'imthebest7',
+          password: 'IhaveTheßestPass01',
+          name: 'John Smith',
+          address: 'London Avenue 12',
+          idNumber: '2325IE',
+          phoneNumber: '+12 23 43 111',
+          guardNumber: undefined,
+        }
+
+        await MemberModel.findByIdAndUpdate(id, member)
+      })
+
+      const sendRequest = () => request(app).get(`/api/members/register/${id}/${token}`)
+
+      it('should return 404 response if the given id does not exist', async () => {
+        id = new mongoose.Types.ObjectId().toHexString()
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 404 response if the registration token does not exist', async () => {
+        token = crypto.randomBytes(20).toString('hex')
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return invited member data if the url is valid', async () => {
+        const res = await sendRequest()
+
+        expect(res.body).toMatchObject(_.pick(member, _.keys(res.body)))
+      })
+    })
+
+    describe('POST /', () => {
+      let payload: {
+        username: string | undefined
+        password: string | undefined
+        name: string | undefined
+        address: string | undefined
+        idNumber: string | undefined
+        phoneNumber: string | undefined
+        guardNumber: string | undefined
+      }
+
+      beforeEach(async () => {
+        payload = {
+          username: 'imthebest7',
+          password: 'IhaveTheßestPass01',
+          name: 'John Smith',
+          address: 'London Avenue 12',
+          idNumber: '2325IE',
+          phoneNumber: '+12 23 43 111',
+          guardNumber: undefined,
+        }
+      })
+
+      const sendRequest = async () => {
+        return request(app).post(`/api/members/register/${id}/${token}`).send(payload)
+      }
+
+      it.each(['username', 'password', 'name', 'address', 'idNumber', 'phoneNumber'])(
+        'should return 400 response if %p is not specified',
+        async (attribute) => {
+          payload[attribute] = undefined
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
+
+      it.each(['aBc12', 'abcdefgh', 'Abcdefgh', '123456789'])(
+        'should return 400 response if password is weak',
+        async (pass) => {
+          payload.password = pass
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
+
+      it('should return 404 response if the given id does not exist', async () => {
+        id = new mongoose.Types.ObjectId().toHexString()
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 404 response if the registration token does not exist', async () => {
+        token = crypto.randomBytes(20).toString('hex')
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 422 response if the username is already in use', async () => {
+        payload.username = members
+          .filter((it) => it.association == member.association)
+          .find((it) => it.isRegistered)!.username
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(422)
+      })
+
+      it('should return 422 response if the idNumber is already in use', async () => {
+        payload.idNumber = members
+          .filter((it) => it.association == member.association)
+          .find((it) => it.isRegistered)!.idNumber
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(422)
+      })
+
+      it('should update member data in database', async () => {
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(id)
+
+        expect(memberInDb!.isRegistered).toBe(true)
+        expect(memberInDb).toMatchObject(payload)
+      })
+
+      it('should remove registration token from database', async () => {
+        await sendRequest()
+
+        const registrationToken = await RegistrationTokenModel.findOne({
+          memberId: id,
+          token,
+        })
+
+        expect(registrationToken).toBeNull()
+      })
+
+      it('should return updated member in response', async () => {
+        const res = await sendRequest()
+
+        expect(res.status).toBe(200)
+        expect(_.pick(res.body, _.keys(payload))).toMatchObject(
+          _.pick(payload, _.keys(res.body)),
+        )
+      })
     })
   })
 })

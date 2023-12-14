@@ -102,4 +102,43 @@ export enum ApiErrorCode {
    *             $ref: '#/components/schemas/Error'
    */
   INVALID_TOKEN = 'invalid-token',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      NotPresident:
+   *        description: "The given action is only permitted for presidents (errorCode: 'not-president')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  NOT_PRESIDENT = 'not-president',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      EmailReserved:
+   *        description: "The given email is already in use."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  EMAIL_RESERVED = 'email-reserved',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      UsernameIdNumberReserved:
+   *        description: "The given username/id number is already in use."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  USERNAME_ID_NUMBER_RESERVED = 'username-id-number-reserved',
 }
