@@ -876,4 +876,91 @@ describe('/api/members', () => {
       })
     })
   })
+
+  describe('/forgotten-password', () => {
+    afterEach(async () => {
+      await RestorationTokenModel.deleteMany({})
+    })
+
+    let member
+    let association: string | undefined
+    let email: string | undefined
+
+    beforeEach(async () => {
+      client = undefined
+
+      member = members.find((it) => it.isRegistered)
+      association = member.association
+      email = member.email
+    })
+
+    describe('POST /', () => {
+      const sendRequest = () =>
+        request(app)
+          .post('/api/members/forgotten-password')
+          .send({ association, email })
+
+      beforeEach(() => nodemailerMock.reset())
+
+      it('should return 400 response if association is not provided', async () => {
+        association = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it('should return 400 response if email is not provided', async () => {
+        email = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it('should return 204 response even if email is not registered', async () => {
+        email = 'not-registered@not-registered.com'
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(204)
+      })
+
+      it('should return 204 response if request is valid', async () => {
+        const res = await sendRequest()
+
+        expect(res.status).toBe(204)
+      })
+
+      it('should generate restoration token if request is valid', async () => {
+        await sendRequest()
+
+        const restorationToken = await RestorationTokenModel.findOne({
+          memberId: member._id,
+        })
+
+        expect(restorationToken).not.toBeNull()
+        expect(restorationToken!.token).toMatch(/[a-f0-9]{40}/)
+      })
+
+      it('should send email if request is valid', async () => {
+        await sendRequest()
+
+        const restorationToken = await RestorationTokenModel.findOne({
+          memberId: member._id,
+        })
+
+        const sentEmails = nodemailerMock.getSentMail()
+
+        expect(sentEmails).toHaveLength(1)
+        expect(sentEmails[0].from).toBe(config.get('smtp.from'))
+        expect(sentEmails[0].to).toBe(email)
+        expect(sentEmails[0]['context']).toHaveProperty('restorationLink')
+        expect(sentEmails[0]['context'].restorationLink).toContain(member._id)
+        expect(sentEmails[0]['context'].restorationLink).toContain(
+          restorationToken!.token,
+        )
+      })
+    })
+  })
 })
