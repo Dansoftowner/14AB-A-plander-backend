@@ -10,5 +10,8 @@
     },
     "jwt": {
         "privateKey": "plander_test"
+    },
+    "frontend": {
+        "host": "http://localhost"
     }
 }
