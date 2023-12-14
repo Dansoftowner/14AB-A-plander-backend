@@ -27,19 +27,6 @@ function decodeJwt(token: string): ClientInfo {
 }
 
 function retrieveToken(req: Request): string | undefined {
-  const cookie = getAuthCookie(req)
-  const header = getAuthHeader(req)
-
-  return cookie ?? header
-}
-
-function getAuthHeader(req: Request): string | undefined {
   const headerName: string = config.get('jwt.headerName')
   return headerName ? req.header(headerName) : undefined
-}
-
-function getAuthCookie(req: Request): string | undefined {
-  const cookieName: string = config.get('jwt.cookieName')
-  req.cookies = req.cookies || {}
-  return cookieName ? req.cookies[cookieName] : undefined
 }

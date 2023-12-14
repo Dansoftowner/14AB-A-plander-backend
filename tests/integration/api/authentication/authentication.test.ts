@@ -12,7 +12,6 @@ import {
   loginRateLimiterStore,
   rateLimiterStore,
 } from '../../../../src/middlewares/rate-limiter'
-import { getAuthCookieInfo } from './utils'
 
 describe('Endpoints related to authentication', () => {
   let app: Express
@@ -155,50 +154,6 @@ describe('Endpoints related to authentication', () => {
 
       expect(res.status).toBe(200)
       expect(() => jwt.verify(res.body, config.get('jwt.privateKey'))).not.toThrow()
-    })
-
-    it('should return cookie if the credentials are correct', async () => {
-      const res = await sendRequest()
-
-      const { cookie, isHttpOnly, isCrossSite, maxAge, token } = getAuthCookieInfo(res)
-
-      expect(res.status).toBe(200)
-      expect(cookie).toBeDefined()
-      expect(isHttpOnly).toBe(true)
-      expect(isCrossSite).toBe(true)
-      expect(maxAge).toBeUndefined()
-      expect(token).toBeDefined()
-      expect(() => jwt.verify(token!, config.get('jwt.privateKey'))).not.toThrow()
-    })
-
-    it('should return permanent cookie if auto-login is turned on', async () => {
-      isAutoLogin = true
-
-      const res = await sendRequest()
-
-      const { cookie, isHttpOnly, isCrossSite, maxAge, token } = getAuthCookieInfo(res)
-
-      expect(res.status).toBe(200)
-      expect(cookie).toBeDefined()
-      expect(isHttpOnly).toBe(true)
-      expect(isCrossSite).toBe(true)
-      expect(maxAge).toBeGreaterThan(0)
-      expect(token).toBeDefined()
-      expect(() => jwt.verify(token!, config.get('jwt.privateKey'))).not.toThrow()
-    })
-  })
-
-  describe('POST /api/logout', () => {
-    const sendRequest = () => {
-      return request(app).post('/api/logout').send()
-    }
-
-    it('should remove the token cookie by setting an expiry date in the past', async () => {
-      const res = await sendRequest()
-
-      const { expires } = getAuthCookieInfo(res)
-
-      expect(expires).not.toContain(new Date().getFullYear().toString())
     })
   })
 })

@@ -1,7 +1,4 @@
 {
-    "jwt": {
-        "cookieSecure": true
-    },
     "logging": {
         "level": "info"
     }

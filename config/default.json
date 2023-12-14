@@ -8,9 +8,6 @@
     },
     "jwt": {
         "privateKey": "",
-        "cookieName": "plander_auth",
-        "cookieSameSite": "None",
-        "cookieSecure": true,
         "headerName": "x-plander-auth"
     },
     "smtp": {
