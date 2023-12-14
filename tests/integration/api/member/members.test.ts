@@ -10,6 +10,7 @@ import MemberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import RegistrationTokenModel from '../../../../src/models/registration-token'
+import RestorationTokenModel from '../../../../src/models/restoration-token'
 import members from './dummy-members.json'
 
 const { mock: nodemailerMock } = nodemailer as unknown as NodemailerMock
@@ -660,17 +661,28 @@ describe('/api/members', () => {
     })
 
     it('should send email for the invited member', async () => {
-      await sendRequest()
+      const res = await sendRequest()
+
+      const memberId = res.body._id
+
+      const registrationToken = await RegistrationTokenModel.findOne({
+        memberId,
+      })
 
       const sentEmails = nodemailerMock.getSentMail()
 
       expect(sentEmails).toHaveLength(1)
+      expect(sentEmails[0].from).toBe(config.get('smtp.from'))
       expect(sentEmails[0].to).toBe(payload.email)
       expect(sentEmails[0]['context']).toHaveProperty('registrationLink')
+      expect(sentEmails[0]['context'].registrationLink).toContain(memberId)
+      expect(sentEmails[0]['context'].registrationLink).toContain(
+        registrationToken!.token,
+      )
     })
   })
 
-  describe('/api/members/register/{id}/registrationToken', () => {
+  describe('/register/{id}/registrationToken', () => {
     afterEach(async () => {
       await RegistrationTokenModel.deleteMany({})
     })
