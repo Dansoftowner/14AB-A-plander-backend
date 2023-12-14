@@ -19,6 +19,9 @@ export default rateLimit({
   limit: 100,
   standardHeaders: true,
   store: rateLimiterStore,
+  validate: {
+    xForwardedForHeader: false,
+  },
   handler,
 })
 
@@ -27,5 +30,8 @@ export const loginRateLimiter = rateLimit({
   limit: 10,
   standardHeaders: true,
   store: loginRateLimiterStore,
+  validate: {
+    xForwardedForHeader: false,
+  },
   handler,
 })
