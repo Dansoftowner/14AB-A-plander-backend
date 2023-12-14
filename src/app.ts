@@ -30,7 +30,7 @@ export class App {
   }
 
   private requireCrucialConfig() {
-    ['mongo.uri', 'jwt.privateKey'].forEach((it) => {
+    ['mongo.uri', 'jwt.privateKey', 'frontend.host'].forEach((it) => {
       if (!(config.has(it) && config.get(it)))
         throw new Error(`FATAL ERROR: ${it} config is not set.`)
     })
@@ -47,8 +47,7 @@ export class App {
     this.expressApp.use(
       cors({
         credentials: true,
-        origin: ['http://localhost:5173'],
-        exposedHeaders: ['set-cookie'],
+        origin: config.get('frontend.host')
       }),
     )
     this.expressApp.use(helmet())
