@@ -16,6 +16,7 @@ export default class AssocationRoutes extends RoutesProvider {
      *  get:
      *    tags:
      *      - Associations
+     *    security: []
      *    description: |
      *      Fetches the registered associations.
      *
@@ -80,6 +81,7 @@ export default class AssocationRoutes extends RoutesProvider {
      *  get:
      *    tags:
      *      - Associations
+     *    security: []
      *    description: |
      *      Fetches the association based on the given id.
      *

@@ -1,3 +1,4 @@
+import config from 'config'
 import swaggerJsdoc from 'swagger-jsdoc'
 
 const options: swaggerJsdoc.Options = {
@@ -22,17 +23,17 @@ const options: swaggerJsdoc.Options = {
       },
     ],
     components: {
-      securitySchemas: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+      securitySchemes: {
+        MemberAuthorization: {
+          type: 'apiKey',
+          name: config.get('jwt.headerName'),
+          in: 'header',
         },
       },
     },
     security: [
       {
-        bearerAuth: [],
+        MemberAuthorization: [],
       },
     ],
   },

@@ -30,7 +30,7 @@ export class App {
   }
 
   private requireCrucialConfig() {
-    ['mongo.uri', 'jwt.privateKey', 'frontend.host'].forEach((it) => {
+    ;['mongo.uri', 'jwt.privateKey', 'frontend.host'].forEach((it) => {
       if (!(config.has(it) && config.get(it)))
         throw new Error(`FATAL ERROR: ${it} config is not set.`)
     })
@@ -44,12 +44,7 @@ export class App {
   }
 
   private initializeMiddlewares() {
-    this.expressApp.use(
-      cors({
-        credentials: true,
-        origin: config.get('frontend.host')
-      }),
-    )
+    this.expressApp.use(cors({ origin: config.get('frontend.host') }))
     this.expressApp.use(helmet())
     if (config.get('logging.isHttpEnabled')) this.expressApp.use(morgan('tiny'))
     this.expressApp.use(cookieParser())
@@ -71,7 +66,16 @@ export class App {
   }
 
   private initializeSwaggerDocs() {
-    this.expressApp.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+    const swaggerUiOptions: swaggerUi.SwaggerUiOptions = {
+      customSiteTitle: 'Plander API Docs',
+    }
+
+    this.expressApp.use(
+      '/docs',
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerSpec, swaggerUiOptions),
+    )
+
     this.expressApp.use('/docs.json', (req, res) => res.json(swaggerSpec))
   }
 

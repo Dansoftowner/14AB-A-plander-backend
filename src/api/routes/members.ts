@@ -242,6 +242,7 @@ export class MemberRoutes extends RoutesProvider {
      *  get:
      *    tags:
      *      - Members
+     *    security: []
      *    description: |
      *       Basically this endpoint gives back the information that the president who invited
      *       the member has provided through the [`POST /api/members`](#/Members/post_api_members) endpoint.
@@ -290,6 +291,7 @@ export class MemberRoutes extends RoutesProvider {
      *  post:
      *    tags:
      *      - Members
+     *    security: []
      *    description: |
      *       An invited member can register through this endpoint.
      *       This endpoint will be **typically called by an invited member who recieved a registration link** through e-mail.
