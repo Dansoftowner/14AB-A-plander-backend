@@ -2,7 +2,7 @@ import _ from 'lodash'
 import config from 'config'
 import { CookieOptions, Request, Response } from 'express'
 import { Controller } from '../../base/controller'
-import { plainToInstance } from 'class-transformer'
+import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { CredentialsDto } from '../../dto/credentials'
 import { AuthenticationService } from '../../services/authentication'
 import { ApiError } from '../error/api-error'
@@ -18,10 +18,11 @@ export class AuthenticationController implements Controller {
   async auth(req: Request, res: Response) {
     const payload = plainToInstance(CredentialsDto, req.body)
 
-    const token = await this.service.auth(payload)
+    const authResult = await this.service.auth(payload)
 
-    if (!token) throw new ApiError(401, ApiErrorCode.WRONG_CREDENTIALS)
+    if (!authResult) throw new ApiError(401, ApiErrorCode.WRONG_CREDENTIALS)
 
-    res.json(token)
+    const { member, token } = authResult
+    res.header(config.get('jwt.headerName'), token).json(instanceToPlain(member))
   }
 }

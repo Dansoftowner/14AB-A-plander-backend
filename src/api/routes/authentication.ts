@@ -28,6 +28,8 @@ export class AuthenticationRoutes extends RoutesProvider {
      *    security: []
      *    description: |
      *       Authenticates the user based on the given credentials.
+     *       - It gives back the **authenticated member's data** in the **response body**
+     *       - The **authorization token** is provided in the http header called `x-plander-auth`
      *       - **Rate limit: 10 requests per hour.**
      *    requestBody:
      *      required: true
@@ -41,8 +43,12 @@ export class AuthenticationRoutes extends RoutesProvider {
      *        content:
      *          application/json:
      *            schema:
+     *                $ref: '#/components/schemas/Member'
+     *        headers:
+     *           x-plander-auth:
+     *              description: The (JWT) authorization token.
+     *              schema:
      *                type: string
-     *                description: The (JWT) token.
      *                example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.Et9HFtf9R3GEMA0IICOfFMVXY7kkTX1wr4qCyhIf58U'
      *      400:
      *        $ref: '#/components/responses/InvalidPayload'
