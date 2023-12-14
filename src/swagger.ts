@@ -1,3 +1,4 @@
+import config from 'config'
 import swaggerJsdoc from 'swagger-jsdoc'
 
 const options: swaggerJsdoc.Options = {
@@ -25,7 +26,7 @@ const options: swaggerJsdoc.Options = {
       securitySchemes: {
         MemberAuthorization: {
           type: 'apiKey',
-          name: 'x-plander-auth',
+          name: config.get('jwt.headerName'),
           in: 'header',
         },
       },
