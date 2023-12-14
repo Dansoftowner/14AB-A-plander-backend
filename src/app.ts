@@ -47,7 +47,7 @@ export class App {
     this.expressApp.use(
       cors({
         credentials: true,
-        origin: config.get('frontend.host')
+        origin: config.get('frontend.host'),
       }),
     )
     this.expressApp.use(helmet())
@@ -71,7 +71,16 @@ export class App {
   }
 
   private initializeSwaggerDocs() {
-    this.expressApp.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+    const swaggerUiOptions: swaggerUi.SwaggerUiOptions = {
+      customSiteTitle: 'Plander API Docs',
+    }
+
+    this.expressApp.use(
+      '/docs',
+      swaggerUi.serve,
+      swaggerUi.setup(swaggerSpec, swaggerUiOptions),
+    )
+    
     this.expressApp.use('/docs.json', (req, res) => res.json(swaggerSpec))
   }
 

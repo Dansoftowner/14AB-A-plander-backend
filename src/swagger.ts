@@ -22,17 +22,17 @@ const options: swaggerJsdoc.Options = {
       },
     ],
     components: {
-      securitySchemas: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
+      securitySchemes: {
+        MemberAuthorization: {
+          type: 'apiKey',
+          name: 'x-plander-auth',
+          in: 'header',
         },
       },
     },
     security: [
       {
-        bearerAuth: [],
+        MemberAuthorization: [],
       },
     ],
   },

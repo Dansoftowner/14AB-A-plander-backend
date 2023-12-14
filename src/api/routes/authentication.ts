@@ -25,6 +25,7 @@ export class AuthenticationRoutes extends RoutesProvider {
      *  post:
      *    tags:
      *      - Authentication
+     *    security: []
      *    description: |
      *       Authenticates the user based on the given credentials.
      *       - **Rate limit: 10 requests per hour.**
@@ -67,6 +68,7 @@ export class AuthenticationRoutes extends RoutesProvider {
      *  post:
      *    tags:
      *      - Authentication
+     *    security: []
      *    description: '**Only relevant for web applications:** removes the token cookie.'
      *    responses:
      *      204:
