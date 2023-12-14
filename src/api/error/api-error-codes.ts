@@ -141,4 +141,17 @@ export enum ApiErrorCode {
    *             $ref: '#/components/schemas/Error'
    */
   USERNAME_ID_NUMBER_RESERVED = 'username-id-number-reserved',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    InvalidURL:
+   *     description: "The given id-token pair is invalid (errorCode: 'invalid-url')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  INVALID_URL = 'invalid-url',
 }

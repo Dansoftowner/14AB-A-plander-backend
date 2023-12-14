@@ -260,21 +260,15 @@ export class MemberRoutes extends RoutesProvider {
      *          type: string
      *          required: true
      *          description: The registration token of the invited member.
-     *    requestBody:
-     *      required: true
-     *      content:
-     *       application/json:
-     *        schema:
-     *         $ref: '#/components/schemas/MemberRegistration'
      *    responses:
-     *      201:
-     *        description: Registration proceeded. Returns the information about the registered member.
+     *      200:
+     *        description: Succeeded. Returns the information about the invited member.
      *        content:
      *          application/json:
      *            schema:
      *              $ref: '#/components/schemas/Member'
-     *      400:
-     *        $ref: '#/components/responses/InvalidPayload'
+     *      404:
+     *        $ref: '#/components/responses/InvalidURL'
      *      422:
      *        $ref: '#/components/responses/UsernameIdNumberReserved'
      *      429:
@@ -329,6 +323,8 @@ export class MemberRoutes extends RoutesProvider {
      *              $ref: '#/components/schemas/Member'
      *      400:
      *        $ref: '#/components/responses/InvalidPayload'
+     *      404:
+     *        $ref: '#/components/responses/InvalidURL'
      *      422:
      *        $ref: '#/components/responses/UsernameIdNumberReserved'
      *      429:
