@@ -3,7 +3,6 @@ import express, { Express, RequestHandler } from 'express'
 import config from 'config'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import cookieParser from 'cookie-parser'
 import mongoose from 'mongoose'
 import swaggerUi from 'swagger-ui-express'
 import errorMiddleware from './middlewares/error'
@@ -30,7 +29,7 @@ export class App {
   }
 
   private requireCrucialConfig() {
-    ;['mongo.uri', 'jwt.privateKey', 'frontend.host'].forEach((it) => {
+    ['mongo.uri', 'jwt.privateKey', 'frontend.host'].forEach((it) => {
       if (!(config.has(it) && config.get(it)))
         throw new Error(`FATAL ERROR: ${it} config is not set.`)
     })
@@ -45,11 +44,14 @@ export class App {
 
   private initializeMiddlewares() {
     this.expressApp.use(
-      cors({ origin: config.get('frontend.host'), credentials: true }),
+      cors({
+        origin: config.get('frontend.host'),
+        credentials: true,
+        exposedHeaders: [config.get('jwt.headerName')],
+      }),
     )
     this.expressApp.use(helmet())
     if (config.get('logging.isHttpEnabled')) this.expressApp.use(morgan('tiny'))
-    this.expressApp.use(cookieParser())
     this.expressApp.use('/api', i18n)
     this.expressApp.use('/api', express.json())
   }
