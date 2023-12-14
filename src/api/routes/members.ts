@@ -5,8 +5,10 @@ import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import president from '../../middlewares/president'
 import validate from '../../middlewares/validate'
-import validateObjectid from '../../middlewares/validate-objectid'
+import validateObjectid, { validateObjectId } from '../../middlewares/validate-objectid'
 import { MemberController } from '../controllers/member'
+import { ApiError } from '../error/api-error'
+import { ApiErrorCode } from '../error/api-error-codes'
 
 export class MemberRoutes extends RoutesProvider {
   constructor({ memberController }) {
@@ -278,6 +280,7 @@ export class MemberRoutes extends RoutesProvider {
      */
     this.router.get(
       '/members/register/:id/:registrationToken',
+      validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
       asyncErrorHandler((req, res) => controller.getInvitedMember(req, res)),
     )
 
@@ -334,6 +337,7 @@ export class MemberRoutes extends RoutesProvider {
      */
     this.router.post(
       '/members/register/:id/:registrationToken',
+      validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
       validate(MemberRegistrationDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.registerMember(req, res)),
     )

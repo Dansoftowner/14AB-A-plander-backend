@@ -710,6 +710,14 @@ describe('/api/members', () => {
 
       const sendRequest = () => request(app).get(`/api/members/register/${id}/${token}`)
 
+      it('should return 404 response if the given id is not a valid object id', async () => {
+        id = '123'
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
       it('should return 404 response if the given id does not exist', async () => {
         id = new mongoose.Types.ObjectId().toHexString()
 
@@ -781,6 +789,14 @@ describe('/api/members', () => {
           expect(res.status).toBe(400)
         },
       )
+
+      it('should return 404 response if the given id is not a valid object id', async () => {
+        id = '123'
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
 
       it('should return 404 response if the given id does not exist', async () => {
         id = new mongoose.Types.ObjectId().toHexString()
