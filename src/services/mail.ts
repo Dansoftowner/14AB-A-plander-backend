@@ -16,7 +16,7 @@ export class MailService implements Service {
       subject: 'Registration Confirmation', // TODO: i18n
       template: 'registration',
       context: {
-        registrationLink: this.assembleRegistrationUrl(member, token),
+        registrationUrl: this.assembleRegistrationUrl(member, token),
       },
     }
 
@@ -30,10 +30,10 @@ export class MailService implements Service {
     const mailOptions = {
       from: config.get('smtp.from'),
       to: member.email,
-      subject: 'Restoration Confirmation', // TODO: i18n
-      template: 'registration',
+      subject: 'Reset password', // TODO: i18n
+      template: 'password-restoration',
       context: {
-        restorationLink: this.assembleRestorationUrl(member, token),
+        restorationUrl: this.assembleRestorationUrl(member, token),
       },
     }
 
@@ -44,7 +44,7 @@ export class MailService implements Service {
     return this.assembleUrl('restore', member, token)
   }
 
-  private assembleRegistrationUrl(member, token) {
+  private assembleRegistrationUrl(member: Member, token: string): string {
     return this.assembleUrl('register', member, token)
   }
 

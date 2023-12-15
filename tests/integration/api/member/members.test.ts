@@ -662,9 +662,9 @@ describe('/api/members', () => {
       expect(sentEmails).toHaveLength(1)
       expect(sentEmails[0].from).toBe(config.get('smtp.from'))
       expect(sentEmails[0].to).toBe(payload.email)
-      expect(sentEmails[0]['context']).toHaveProperty('registrationLink')
-      expect(sentEmails[0]['context'].registrationLink).toContain(memberId)
-      expect(sentEmails[0]['context'].registrationLink).toContain(
+      expect(sentEmails[0]['context']).toHaveProperty('registrationUrl')
+      expect(sentEmails[0]['context'].registrationUrl).toContain(memberId)
+      expect(sentEmails[0]['context'].registrationUrl).toContain(
         registrationToken!.token,
       )
     })
@@ -976,9 +976,9 @@ describe('/api/members', () => {
         expect(sentEmails).toHaveLength(1)
         expect(sentEmails[0].from).toBe(config.get('smtp.from'))
         expect(sentEmails[0].to).toBe(email)
-        expect(sentEmails[0]['context']).toHaveProperty('restorationLink')
-        expect(sentEmails[0]['context'].restorationLink).toContain(member._id)
-        expect(sentEmails[0]['context'].restorationLink).toContain(
+        expect(sentEmails[0]['context']).toHaveProperty('restorationUrl')
+        expect(sentEmails[0]['context'].restorationUrl).toContain(member._id)
+        expect(sentEmails[0]['context'].restorationUrl).toContain(
           restorationToken!.token,
         )
       })
