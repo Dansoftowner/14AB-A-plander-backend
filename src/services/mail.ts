@@ -16,14 +16,39 @@ export class MailService implements Service {
       subject: 'Registration Confirmation', // TODO: i18n
       template: 'registration',
       context: {
-        registrationLink: this.assembleRegistrationUrl(member, token),
+        registrationUrl: this.assembleRegistrationUrl(member, token),
       },
     }
 
     return mailTransporter.sendMail(mailOptions as Mail.Options)
   }
 
-  private assembleRegistrationUrl({ _id }, token) {
-    return `${config.get('frontend.host')}/register/${_id.toHexString()}/${token}`
+  sendRestorationEmail(
+    member: Member,
+    token: string,
+  ): Promise<SMTPTransport.SentMessageInfo> {
+    const mailOptions = {
+      from: config.get('smtp.from'),
+      to: member.email,
+      subject: 'Reset password', // TODO: i18n
+      template: 'password-restoration',
+      context: {
+        restorationUrl: this.assembleRestorationUrl(member, token),
+      },
+    }
+
+    return mailTransporter.sendMail(mailOptions as Mail.Options)
+  }
+
+  private assembleRestorationUrl(member: Member, token: string): string {
+    return this.assembleUrl('forgotten-password', member, token)
+  }
+
+  private assembleRegistrationUrl(member: Member, token: string): string {
+    return this.assembleUrl('register', member, token)
+  }
+
+  private assembleUrl(urlPrefix: string, { _id }, token: string): string {
+    return `${config.get('frontend.host')}/${urlPrefix}/${_id.toHexString()}/${token}`
   }
 }

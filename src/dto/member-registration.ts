@@ -19,6 +19,11 @@ import { JoiPassword } from '../utils/joi'
  *          minLength: 5
  *          maxLength: 20
  *          example: 'imthebestmember1'
+ *        password:
+ *          type: string
+ *          description: 'The password that the member wants to register with'
+ *          minLength: 8
+ *          example: 'Apple123'
  *        guardNumber:
  *          type: string
  *          description: 'The guard number of the member to invite'

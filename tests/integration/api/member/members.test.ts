@@ -11,6 +11,7 @@ import MemberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import RegistrationTokenModel from '../../../../src/models/registration-token'
+import RestorationTokenModel from '../../../../src/models/restoration-token'
 import members from './dummy-members.json'
 
 const { mock: nodemailerMock } = nodemailer as unknown as NodemailerMock
@@ -576,6 +577,10 @@ describe('/api/members', () => {
       nodemailerMock.reset()
     })
 
+    afterEach(async () => {
+      await RegistrationTokenModel.deleteMany({})
+    })
+
     it('should return 401 response if no token provided', async () => {
       client = undefined
 
@@ -644,21 +649,34 @@ describe('/api/members', () => {
       })
 
       expect(registrationToken).not.toBeNull()
-      expect(registrationToken!.token).toMatch(/[a-f0-9]{40}/)
+    })
+
+    it('should not spam database with registration tokens for the same member', async () => {
+      await sendRequest()
+      await sendRequest()
+
+      const registrationTokens = await RegistrationTokenModel.find()
+
+      expect(registrationTokens).toHaveLength(1)
     })
 
     it('should send email for the invited member', async () => {
-      await sendRequest()
+      const res = await sendRequest()
+
+      const memberId = res.body._id
 
       const sentEmails = nodemailerMock.getSentMail()
 
       expect(sentEmails).toHaveLength(1)
+      expect(sentEmails[0].from).toBe(config.get('smtp.from'))
       expect(sentEmails[0].to).toBe(payload.email)
-      expect(sentEmails[0]['context']).toHaveProperty('registrationLink')
+      expect(sentEmails[0]['context']).toHaveProperty('registrationUrl')
+      expect(sentEmails[0]['context'].registrationUrl).toContain(memberId)
+      expect(sentEmails[0]['context'].registrationUrl).toMatch(/\/[a-f0-9]{40}/)
     })
   })
 
-  describe('/api/members/register/{id}/registrationToken', () => {
+  describe('/register/:id/:registrationToken', () => {
     afterEach(async () => {
       await RegistrationTokenModel.deleteMany({})
     })
@@ -676,7 +694,7 @@ describe('/api/members', () => {
 
       await new RegistrationTokenModel({
         memberId: id,
-        token,
+        token: bcrypt.hashSync(token, 1),
       }).save()
     })
 
@@ -725,6 +743,7 @@ describe('/api/members', () => {
       it('should return invited member data if the url is valid', async () => {
         const res = await sendRequest()
 
+        expect(res.status).toBe(200)
         expect(res.body).toMatchObject(_.pick(member, _.keys(res.body)))
       })
     })
@@ -848,7 +867,6 @@ describe('/api/members', () => {
 
         const registrationToken = await RegistrationTokenModel.findOne({
           memberId: id,
-          token,
         })
 
         expect(registrationToken).toBeNull()
@@ -861,6 +879,197 @@ describe('/api/members', () => {
         expect(_.pick(res.body, _.keys(payload))).toMatchObject(
           _.pick(payload, _.keys(res.body)),
         )
+      })
+    })
+  })
+
+  describe('/forgotten-password', () => {
+    afterEach(async () => {
+      await RestorationTokenModel.deleteMany({})
+    })
+
+    let member
+    let association: string | undefined
+    let email: string | undefined
+
+    beforeEach(async () => {
+      client = undefined
+
+      member = members.find((it) => it.isRegistered)
+      association = member.association
+      email = member.email
+    })
+
+    describe('POST /', () => {
+      const sendRequest = () =>
+        request(app)
+          .post('/api/members/forgotten-password')
+          .send({ association, email })
+
+      beforeEach(() => nodemailerMock.reset())
+
+      it('should return 400 response if association is not provided', async () => {
+        association = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it('should return 400 response if email is not provided', async () => {
+        email = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it('should return 204 response even if email is not registered', async () => {
+        email = 'not-registered@not-registered.com'
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(204)
+      })
+
+      it('should return 204 response if request is valid', async () => {
+        const res = await sendRequest()
+
+        expect(res.status).toBe(204)
+      })
+
+      it('should generate restoration token if request is valid', async () => {
+        await sendRequest()
+
+        const restorationToken = await RestorationTokenModel.findOne({
+          memberId: member._id,
+        })
+
+        expect(restorationToken).not.toBeNull()
+      })
+
+      it('should not spam database with restoration tokens for the same member', async () => {
+        await sendRequest()
+        await sendRequest()
+
+        const restorationTokens = await RestorationTokenModel.find({
+          memberId: member._id,
+        })
+
+        expect(restorationTokens).toHaveLength(1)
+      })
+
+      it('should not generate restoration token if the member with the given email is unregistered', async () => {
+        await MemberModel.findByIdAndUpdate(member._id, { isRegistered: false })
+
+        const restorationToken = await RestorationTokenModel.findOne({
+          memberId: member._id,
+        })
+
+        expect(restorationToken).toBeNull()
+      })
+
+      it('should send email if request is valid', async () => {
+        await sendRequest()
+
+        const restorationToken = await RestorationTokenModel.findOne({
+          memberId: member._id,
+        })
+
+        const sentEmails = nodemailerMock.getSentMail()
+
+        expect(sentEmails).toHaveLength(1)
+        expect(sentEmails[0].from).toBe(config.get('smtp.from'))
+        expect(sentEmails[0].to).toBe(email)
+        expect(sentEmails[0]['context']).toHaveProperty('restorationUrl')
+        expect(sentEmails[0]['context'].restorationUrl).toContain(member._id)
+        expect(sentEmails[0]['context'].restorationUrl).toMatch(/\/[a-f0-9]{40}/)
+      })
+    })
+
+    describe('POST /:id/:restorationToken', () => {
+      let id: string
+      let token: string
+
+      let newPassword: string | undefined
+
+      const sendRequest = () =>
+        request(app)
+          .post(`/api/members/forgotten-password/${id}/${token}`)
+          .send({ password: newPassword })
+
+      beforeEach(async () => {
+        id = member._id
+        token = crypto.randomBytes(20).toString('hex')
+        newPassword = 'IWontForgetItAgain7'
+
+        await new RestorationTokenModel({
+          memberId: id,
+          token: bcrypt.hashSync(token, 1),
+        }).save()
+      })
+
+      it('should return 404 response if the given id is not a valid object id', async () => {
+        id = '123'
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 404 response if the id does not exist', async () => {
+        id = new mongoose.Types.ObjectId().toHexString()
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 404 response if token is invalid', async () => {
+        token = crypto.randomBytes(20).toString('hex')
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 400 response if new password is not specified', async () => {
+        newPassword = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it.each(['aBc12', 'abcdefgh', 'Abcdefgh', '123456789'])(
+        'should return 400 response if password is weak',
+        async (pass) => {
+          newPassword = pass
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
+
+      it('should update password in database', async () => {
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(id)
+
+        expect(memberInDb).not.toBeNull()
+        expect(memberInDb!.password).not.toBe(member.password)
+        expect(bcrypt.compareSync(newPassword!, memberInDb!.password!)).toBe(true)
+      })
+
+      it('should remove restoration token from database', async () => {
+        await sendRequest()
+
+        const restorationToken = await RestorationTokenModel.findOne({
+          memberId: id,
+        })
+
+        expect(restorationToken).toBeNull()
       })
     })
   })

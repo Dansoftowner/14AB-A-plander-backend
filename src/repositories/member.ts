@@ -3,6 +3,7 @@ import { Repository } from '../base/repository'
 import MemberModel, { Member } from '../models/member'
 import { sanitizeForRegex as s } from '../utils/sanitize'
 import RegistrationTokenModel from '../models/registration-token'
+import RestorationTokenModel from '../models/restoration-token'
 import crypto from 'crypto'
 import _ from 'lodash'
 
@@ -61,13 +62,16 @@ export class MemberRepository implements Repository {
   async findByRegistrationToken(
     id: string,
     registrationToken: string,
+    compareTokens: (token: string, encrypted: string) => Promise<boolean>,
   ): Promise<Member | null> {
-    const isTokenPresent = await RegistrationTokenModel.exists({
+    const tokenEntry = await RegistrationTokenModel.findOne({
       memberId: id,
-      token: registrationToken,
     })
 
-    if (!isTokenPresent) return null
+    if (!tokenEntry) return null
+
+    const areTokensEqual = await compareTokens(registrationToken, tokenEntry.token)
+    if (!areTokensEqual) return null
 
     return await MemberModel.findById(id)
   }
@@ -80,30 +84,77 @@ export class MemberRepository implements Repository {
     return (await MemberModel.exists({ _id: id })) != null
   }
 
-  async invite(member: object): Promise<{ invitedMember: Member; token: string }> {
+  async invite(member: object, registrationToken: string): Promise<Member> {
     const inserted = await new MemberModel(member).save()
-
-    const token = crypto.randomBytes(20).toString('hex')
 
     await new RegistrationTokenModel({
       memberId: inserted._id,
-      token,
+      token: registrationToken,
     }).save()
 
-    return { invitedMember: inserted, token }
+    return inserted
   }
 
-  async register(member: object, token: string): Promise<Member | null> {
+  async register(
+    member: object,
+    registrationToken: string,
+    compareTokens: (token: string, encrypted: string) => Promise<boolean>,
+  ): Promise<Member | null> {
     const memberId = member['_id']
 
-    const isTokenValid = await RegistrationTokenModel.findOneAndDelete({
+    const tokenEntry = await RegistrationTokenModel.findOne({
       memberId,
-      token,
     })
 
-    if (!isTokenValid) return null
+    if (!tokenEntry) return null
+
+    const areTokensEqual = await compareTokens(registrationToken, tokenEntry.token)
+    if (!areTokensEqual) return null
+
+    await tokenEntry.deleteOne()
 
     return await MemberModel.findByIdAndUpdate(memberId, member, { new: true })
+  }
+
+  async labelForgottenPassword(
+    association: string,
+    email: string,
+    restorationToken: string,
+  ): Promise<Member | null> {
+    const member = await this.findByEmail(email, { associationId: association })
+    if (!member) return null
+
+    await RestorationTokenModel.replaceOne(
+      { memberId: member._id },
+      { memberId: member._id, token: restorationToken },
+      { upsert: true },
+    )
+
+    return member
+  }
+
+  async restorePassword(
+    id: string,
+    restorationToken: string,
+    password: string,
+    compareTokens: (token: string, encrypted: string) => Promise<boolean>,
+  ): Promise<Member | null> {
+    const tokenEntry = await RestorationTokenModel.findOne({
+      memberId: id,
+    })
+
+    if (!tokenEntry) return null
+
+    const areTokensEqual = await compareTokens(restorationToken, tokenEntry.token)
+    if (!areTokensEqual) return null
+
+    await tokenEntry.deleteOne()
+
+    return await MemberModel.findByIdAndUpdate(id, {
+      $set: {
+        password,
+      },
+    })
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {

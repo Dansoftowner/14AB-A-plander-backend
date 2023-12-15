@@ -1,4 +1,5 @@
 import { RoutesProvider } from '../../base/routes-provider'
+import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-password'
 import { MemberInviteDto } from '../../dto/member-invite'
 import { MemberRegistrationDto } from '../../dto/member-registration'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
@@ -320,7 +321,7 @@ export class MemberRoutes extends RoutesProvider {
      *        schema:
      *         $ref: '#/components/schemas/MemberRegistration'
      *    responses:
-     *      201:
+     *      200:
      *        description: Registration proceeded. Returns the information about the registered member.
      *        content:
      *          application/json:
@@ -342,6 +343,97 @@ export class MemberRoutes extends RoutesProvider {
       validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
       validate(MemberRegistrationDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.registerMember(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/members/forgotten-password:
+     *  post:
+     *    tags:
+     *      - Members
+     *    security: []
+     *    description: |
+     *       A member who forgot his password can restore his password via this endpoint.
+     *
+     *       - The member has to provide the **association** where he is registered and the **email address associated with his account**.
+     *       - Calling this endpoint **triggers an email** to the provided address that contains a **restoration link**.
+     *       - If the **email address is not associated with any account** then simply no email will be sent and in the response **it's not indicated**
+     *
+     *       **Authentication is not required** before using this endpoint.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/ForgottenPassword'
+     *    responses:
+     *      204:
+     *        description: >
+     *            Succeeded. If the given email address is associated with any account
+     *            in the particular association, the restoration email is triggered.
+     *            **No content returned.**
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.post(
+      '/members/forgotten-password',
+      validate(ForgottenPasswordDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.labelForgottenPassword(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/members/forgotten-password/{id}/{restorationToken}:
+     *  post:
+     *    tags:
+     *      - Members
+     *    security: []
+     *    description: |
+     *       A member who forgot his password and requested a restoration through the [`/api/members/forgotten-password`](#/Members/post_api_members_forgotten_password) endpoint
+     *       can define a new password via this endpoint.
+     *       This endpoint will be **typically called by a member who recieved a restoration link** through e-mail.
+     *
+     *       **Authentication is not required** before using this endpoint, since the `restorationToken` identifies the client.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the invited member.
+     *      - in: path
+     *        name: restorationToken
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The restoration token of the member who forgot his password.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/NewPassword'
+     *    responses:
+     *      204:
+     *        description: Restoration proceeded. **No content returned.**
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      404:
+     *        $ref: '#/components/responses/InvalidURL'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.post(
+      '/members/forgotten-password/:id/:restorationToken',
+      validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
+      validate(NewPasswordDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.restorePassword(req, res)),
     )
   }
 }
