@@ -8,7 +8,7 @@ import { JoiObjectId, JoiPassword } from '../utils/joi'
  *    ForgottenPassword:
  *      type: object
  *      properties:
- *        association:
+ *        associationId:
  *          type: string
  *          description: 'Unique identifier of the association'
  *          example: '652f7b95fc13ae3ce86c7cdf'
@@ -21,12 +21,12 @@ import { JoiObjectId, JoiPassword } from '../utils/joi'
  *        - email
  */
 export class ForgottenPasswordDto {
-  association!: string
+  associationId!: string
   email!: string
 
   static validationSchema(): Joi.ObjectSchema<ForgottenPasswordDto> {
     return Joi.object({
-      association: JoiObjectId().required(),
+      associationId: JoiObjectId().required(),
       email: Joi.string().email().required(),
     })
   }

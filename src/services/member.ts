@@ -113,7 +113,7 @@ export class MemberService implements Service {
   }
 
   async labelForgottenPassword(restorationInfo: ForgottenPasswordDto) {
-    const { association, email } = restorationInfo
+    const { associationId: association, email } = restorationInfo
 
     const restorationToken = crypto.randomBytes(20).toString('hex')
 
