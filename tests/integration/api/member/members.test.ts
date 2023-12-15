@@ -743,6 +743,7 @@ describe('/api/members', () => {
       it('should return invited member data if the url is valid', async () => {
         const res = await sendRequest()
 
+        expect(res.status).toBe(200)
         expect(res.body).toMatchObject(_.pick(member, _.keys(res.body)))
       })
     })

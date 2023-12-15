@@ -62,13 +62,16 @@ export class MemberRepository implements Repository {
   async findByRegistrationToken(
     id: string,
     registrationToken: string,
+    compareTokens: (token: string, encrypted: string) => Promise<boolean>,
   ): Promise<Member | null> {
-    const isTokenPresent = await RegistrationTokenModel.exists({
+    const tokenEntry = await RegistrationTokenModel.findOne({
       memberId: id,
-      token: registrationToken,
     })
 
-    if (!isTokenPresent) return null
+    if (!tokenEntry) return null
+
+    const areTokensEqual = await compareTokens(registrationToken, tokenEntry.token)
+    if (!areTokensEqual) return null
 
     return await MemberModel.findById(id)
   }

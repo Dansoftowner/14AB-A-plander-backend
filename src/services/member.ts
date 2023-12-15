@@ -73,7 +73,11 @@ export class MemberService implements Service {
   }
 
   async getInvited(id: string, registrationToken: string): Promise<MemberDto | null> {
-    const item = await this.repository.findByRegistrationToken(id, registrationToken)
+    const item = await this.repository.findByRegistrationToken(
+      id,
+      registrationToken,
+      bcrypt.compare,
+    )
 
     return plainToInstance(MemberDto, item, { excludeExtraneousValues: true })
   }
