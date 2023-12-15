@@ -41,7 +41,7 @@ export class MailService implements Service {
   }
 
   private assembleRestorationUrl(member: Member, token: string): string {
-    return this.assembleUrl('restore', member, token)
+    return this.assembleUrl('forgotten-password', member, token)
   }
 
   private assembleRegistrationUrl(member: Member, token: string): string {
