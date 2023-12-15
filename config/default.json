@@ -10,6 +10,9 @@
         "privateKey": "",
         "headerName": "x-plander-auth"
     },
+    "crypto": {
+        "bcryptRounds": 10
+    },
     "smtp": {
         "host": "",
         "port": 25,

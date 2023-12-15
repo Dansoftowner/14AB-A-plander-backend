@@ -11,6 +11,9 @@
     "jwt": {
         "privateKey": "plander_test"
     },
+    "crypto": {
+        "bcryptRounds": 1
+    },
     "frontend": {
         "host": "http://localhost"
     }

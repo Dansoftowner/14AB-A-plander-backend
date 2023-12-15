@@ -25,7 +25,7 @@ export class AuthenticationService implements Service {
 
     if (!member) return null
 
-    const validPassword = await bcrypt.compare(credentials.password, member.password)
+    const validPassword = await bcrypt.compare(credentials.password, member.password!)
     if (!validPassword) return null
 
     const token = generateToken(member)

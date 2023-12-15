@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import bcrypt from 'bcrypt'
 import { Express } from 'express'
 import request from 'supertest'
 import _ from 'lodash'
@@ -629,19 +630,6 @@ describe('/api/members', () => {
       expect(invitedMember!.isRegistered).toBe(false)
     })
 
-    it('should save invited member to the database', async () => {
-      const res = await sendRequest()
-
-      const invitedMember = await MemberModel.findOne({
-        association: client.association,
-        email: payload.email,
-      })
-
-      expect(res.status).toBe(201)
-      expect(invitedMember).not.toBeNull()
-      expect(invitedMember!.isRegistered).toBe(false)
-    })
-
     it('should return the invited member', async () => {
       const res = await sendRequest()
 
@@ -852,7 +840,19 @@ describe('/api/members', () => {
         const memberInDb = await MemberModel.findById(id)
 
         expect(memberInDb!.isRegistered).toBe(true)
-        expect(memberInDb).toMatchObject(payload)
+        expect(_.omit(memberInDb, ['_id', 'password'])).toMatchObject(
+          _.omit(payload, 'password'),
+        )
+      })
+
+      it('should store hashed password in database', async () => {
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(id)
+
+        expect(memberInDb).not.toBeNull()
+        expect(memberInDb!.password).not.toBe(payload.password)
+        expect(bcrypt.compareSync(payload.password!, memberInDb!.password!)).toBe(true)
       })
 
       it('should remove registration token from database', async () => {
