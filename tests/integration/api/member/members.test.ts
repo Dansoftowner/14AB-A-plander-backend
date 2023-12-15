@@ -670,7 +670,7 @@ describe('/api/members', () => {
     })
   })
 
-  describe('/register/{id}/registrationToken', () => {
+  describe('/register/:id/:registrationToken', () => {
     afterEach(async () => {
       await RegistrationTokenModel.deleteMany({})
     })
@@ -981,6 +981,93 @@ describe('/api/members', () => {
         expect(sentEmails[0]['context'].restorationLink).toContain(
           restorationToken!.token,
         )
+      })
+    })
+
+    describe('POST /:id/:restorationToken', () => {
+      let id: string
+      let token: string
+
+      let newPassword: string | undefined
+
+      const sendRequest = () =>
+        request(app)
+          .post(`/api/members/forgotten-password/${id}/${token}`)
+          .send({ password: newPassword })
+
+      beforeEach(async () => {
+        id = member._id
+        token = crypto.randomBytes(20).toString('hex')
+        newPassword = 'IWontForgetItAgain7'
+
+        await new RestorationTokenModel({
+          memberId: id,
+          token,
+        }).save()
+      })
+
+      it('should return 404 response if the given id is not a valid object id', async () => {
+        id = '123'
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 404 response if the id does not exist', async () => {
+        id = new mongoose.Types.ObjectId().toHexString()
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 404 response if token is invalid', async () => {
+        token = crypto.randomBytes(20).toString('hex')
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 400 response if new password is not specified', async () => {
+        newPassword = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it.each(['aBc12', 'abcdefgh', 'Abcdefgh', '123456789'])(
+        'should return 400 response if password is weak',
+        async (pass) => {
+          newPassword = pass
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
+
+      it('should update password in database', async () => {
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(id)
+
+        expect(memberInDb).not.toBeNull()
+        expect(memberInDb!.password).not.toBe(member.password)
+        expect(bcrypt.compareSync(newPassword!, memberInDb!.password!)).toBe(true)
+      })
+
+      it('should remove restoration token from database', async () => {
+        await sendRequest()
+
+        const restorationToken = await RestorationTokenModel.findOne({
+          memberId: id,
+          token,
+        })
+
+        expect(restorationToken).toBeNull()
       })
     })
   })

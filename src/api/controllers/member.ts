@@ -10,19 +10,9 @@ import { MemberInviteDto } from '../../dto/member-invite'
 import { MemberRegistrationDto } from '../../dto/member-registration'
 import di from '../../di'
 import { asValue } from 'awilix'
-import { ForgottenPasswordDto } from '../../dto/forgotten-password'
+import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-password'
 
 export class MemberController implements Controller {
-  private service(req: Request): MemberService {
-    if (!req.scope)
-      return di
-        .createScope()
-        .register({ clientInfo: asValue(undefined) })
-        .resolve('memberService')
-
-    return req.scope!.resolve('memberService')
-  }
-
   async getMembers(req: Request, res: Response) {
     const result = await this.service(req).get(resolveOptions(req))
 
@@ -97,5 +87,30 @@ export class MemberController implements Controller {
     await this.service(req).labelForgottenPassword(payload)
 
     res.status(204).send()
+  }
+
+  async restorePassword(req: Request, res: Response) {
+    const { id, restorationToken } = req.params
+    const payload = plainToInstance(NewPasswordDto, req.body)
+
+    const isRestored = await this.service(req).restorePassword(
+      id,
+      restorationToken,
+      payload,
+    )
+
+    if (!isRestored) throw new ApiError(404, ApiErrorCode.INVALID_URL)
+
+    res.status(204).send()
+  }
+
+  private service(req: Request): MemberService {
+    if (!req.scope)
+      return di
+        .createScope()
+        .register({ clientInfo: asValue(undefined) })
+        .resolve('memberService')
+
+    return req.scope!.resolve('memberService')
   }
 }

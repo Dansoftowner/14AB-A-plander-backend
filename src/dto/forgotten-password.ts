@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { JoiObjectId } from '../utils/joi'
+import { JoiObjectId, JoiPassword } from '../utils/joi'
 
 export class ForgottenPasswordDto {
   association!: string
@@ -9,6 +9,16 @@ export class ForgottenPasswordDto {
     return Joi.object({
       association: JoiObjectId().required(),
       email: Joi.string().email().required(),
+    })
+  }
+}
+
+export class NewPasswordDto {
+  password!: string
+
+  static validationSchema(): Joi.ObjectSchema<NewPasswordDto> {
+    return Joi.object({
+      password: JoiPassword().required(),
     })
   }
 }

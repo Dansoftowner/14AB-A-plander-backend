@@ -125,6 +125,25 @@ export class MemberRepository implements Repository {
     return { member, token }
   }
 
+  async restorePassword(
+    id: string,
+    restorationToken: string,
+    password: string,
+  ): Promise<Member | null> {
+    const isTokenValid = await RestorationTokenModel.findOneAndDelete({
+      memberId: id,
+      token: restorationToken,
+    })
+
+    if (!isTokenValid) return null
+
+    return await MemberModel.findByIdAndUpdate(id, {
+      $set: {
+        password,
+      },
+    })
+  }
+
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
     const filterObj: FilterQuery<Member> = {
       association: options.associationId,

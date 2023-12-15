@@ -1,5 +1,5 @@
 import { RoutesProvider } from '../../base/routes-provider'
-import { ForgottenPasswordDto } from '../../dto/forgotten-password'
+import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-password'
 import { MemberInviteDto } from '../../dto/member-invite'
 import { MemberRegistrationDto } from '../../dto/member-registration'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
@@ -349,6 +349,13 @@ export class MemberRoutes extends RoutesProvider {
       '/members/forgotten-password',
       validate(ForgottenPasswordDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.labelForgottenPassword(req, res)),
+    )
+
+    this.router.post(
+      '/members/forgotten-password/:id/:restorationToken',
+      validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
+      validate(NewPasswordDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.restorePassword(req, res)),
     )
   }
 }
