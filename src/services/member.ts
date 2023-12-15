@@ -12,6 +12,7 @@ import { MemberInviteDto } from '../dto/member-invite'
 import { MailService } from './mail'
 import logger from '../logging/logger'
 import { MemberRegistrationDto } from '../dto/member-registration'
+import { ForgottenPasswordDto } from '../dto/forgotten-password'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -103,6 +104,26 @@ export class MemberService implements Service {
     if (!updatedMember) return updatedMember
 
     return plainToInstance(MemberDto, updatedMember, { excludeExtraneousValues: true })
+  }
+
+  async labelForgottenPassword(payload: ForgottenPasswordDto) {
+    const { association, email } = payload
+
+    const memberAndToken = await this.repository.labelForgottenPassword(
+      association,
+      email,
+    )
+
+    if (!memberAndToken) return
+
+    const { member, token } = memberAndToken
+
+    this.mailService
+      .sendRestorationEmail(member, token)
+      .then((info) => logger.debug(`Restoration mail is sent to ${info.envelope.to}.`))
+      .catch((err) =>
+        logger.error(`Failed to send restoration mail to ${err.envelope.to}`),
+      )
   }
 
   private async emailExists(email: string) {

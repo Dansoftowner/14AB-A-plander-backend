@@ -23,7 +23,32 @@ export class MailService implements Service {
     return mailTransporter.sendMail(mailOptions as Mail.Options)
   }
 
-  private assembleRegistrationUrl({ _id }, token) {
-    return `${config.get('frontend.host')}/register/${_id.toHexString()}/${token}`
+  sendRestorationEmail(
+    member: Member,
+    token: string,
+  ): Promise<SMTPTransport.SentMessageInfo> {
+    const mailOptions = {
+      from: config.get('smtp.from'),
+      to: member.email,
+      subject: 'Restoration Confirmation', // TODO: i18n
+      template: 'registration',
+      context: {
+        restorationLink: this.assembleRestorationUrl(member, token),
+      },
+    }
+
+    return mailTransporter.sendMail(mailOptions as Mail.Options)
+  }
+
+  private assembleRestorationUrl(member: Member, token: string): string {
+    return this.assembleUrl('restore', member, token)
+  }
+
+  private assembleRegistrationUrl(member, token) {
+    return this.assembleUrl('register', member, token)
+  }
+
+  private assembleUrl(urlPrefix: string, { _id }, token: string): string {
+    return `${config.get('frontend.host')}/${urlPrefix}/${_id.toHexString()}/${token}`
   }
 }

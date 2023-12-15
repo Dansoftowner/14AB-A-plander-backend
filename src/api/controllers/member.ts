@@ -10,6 +10,7 @@ import { MemberInviteDto } from '../../dto/member-invite'
 import { MemberRegistrationDto } from '../../dto/member-registration'
 import di from '../../di'
 import { asValue } from 'awilix'
+import { ForgottenPasswordDto } from '../../dto/forgotten-password'
 
 export class MemberController implements Controller {
   private service(req: Request): MemberService {
@@ -73,7 +74,7 @@ export class MemberController implements Controller {
     res.status(201).send(instanceToPlain(invitedMember))
   }
 
-  async registerMember(req: Request, res: Response): Promise<any> {
+  async registerMember(req: Request, res: Response) {
     const { id, registrationToken } = req.params
     const payload = plainToInstance(MemberRegistrationDto, req.body)
 
@@ -88,5 +89,13 @@ export class MemberController implements Controller {
     if (registeredMember === null) throw new ApiError(404, ApiErrorCode.INVALID_URL)
 
     res.status(200).send(instanceToPlain(registeredMember))
+  }
+
+  async labelForgottenPassword(req: Request, res: Response) {
+    const payload = plainToInstance(ForgottenPasswordDto, req.body)
+
+    await this.service(req).labelForgottenPassword(payload)
+
+    res.status(204).send()
   }
 }

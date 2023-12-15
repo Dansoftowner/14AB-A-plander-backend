@@ -943,6 +943,27 @@ describe('/api/members', () => {
         expect(restorationToken!.token).toMatch(/[a-f0-9]{40}/)
       })
 
+      it('should not spam database with restoration tokens for the same member', async () => {
+        await sendRequest()
+        await sendRequest()
+
+        const restorationTokens = await RestorationTokenModel.find({
+          memberId: member._id,
+        })
+
+        expect(restorationTokens).toHaveLength(1)
+      })
+
+      it('should not generate restoration token if the member with the given email is unregistered', async () => {
+        await MemberModel.findByIdAndUpdate(member._id, { isRegistered: false })
+
+        const restorationToken = await RestorationTokenModel.findOne({
+          memberId: member._id,
+        })
+
+        expect(restorationToken).toBeNull()
+      })
+
       it('should send email if request is valid', async () => {
         await sendRequest()
 

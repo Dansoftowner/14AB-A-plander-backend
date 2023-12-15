@@ -3,6 +3,7 @@ import { Repository } from '../base/repository'
 import MemberModel, { Member } from '../models/member'
 import { sanitizeForRegex as s } from '../utils/sanitize'
 import RegistrationTokenModel from '../models/registration-token'
+import RestorationTokenModel from '../models/restoration-token'
 import crypto from 'crypto'
 import _ from 'lodash'
 
@@ -104,6 +105,24 @@ export class MemberRepository implements Repository {
     if (!isTokenValid) return null
 
     return await MemberModel.findByIdAndUpdate(memberId, member, { new: true })
+  }
+
+  async labelForgottenPassword(
+    association: string,
+    email: string,
+  ): Promise<{ member: Member; token: string } | null> {
+    const member = await this.findByEmail(email, { associationId: association })
+    if (!member) return null
+
+    const token = crypto.randomBytes(20).toString('hex')
+
+    await RestorationTokenModel.replaceOne(
+      { memberId: member._id },
+      { memberId: member._id, token },
+      { upsert: true },
+    )
+
+    return { member, token }
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
