@@ -1,3 +1,6 @@
+import _ from 'lodash'
+import config from 'config'
+import bcrypt from 'bcrypt'
 import { plainToInstance } from 'class-transformer'
 import { Service } from '../base/service'
 import { MemberItemsDto } from '../dto/member-items'
@@ -5,7 +8,6 @@ import { MemberQueryOptions, MemberRepository } from '../repositories/member'
 import { ClientInfo } from '../utils/jwt'
 import { CommonQueryOptions } from '../api/common-query-params'
 import { MemberDto } from '../dto/member'
-import _ from 'lodash'
 import { MemberInviteDto } from '../dto/member-invite'
 import { MailService } from './mail'
 import logger from '../logging/logger'
@@ -128,6 +130,7 @@ export class MemberService implements Service {
       _id: id,
       isRegistered: true,
       ...registration,
+      password: await this.hashPassword(registration['password']),
     }
 
     member = _.pickBy(member, (it) => it !== undefined)
@@ -139,6 +142,11 @@ export class MemberService implements Service {
       if (ex.code == 11000) return undefined
       throw ex
     }
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(config.get('crypto.bcryptRounds'))
+    return await bcrypt.hash(password, salt)
   }
 
   private dbOptions(
