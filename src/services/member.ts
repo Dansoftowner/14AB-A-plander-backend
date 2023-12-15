@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import config from 'config'
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 import { plainToInstance } from 'class-transformer'
 import { Service } from '../base/service'
 import { MemberItemsDto } from '../dto/member-items'
@@ -82,10 +83,11 @@ export class MemberService implements Service {
 
     if (await this.emailExists(email)) return null
 
-    const { invitedMember, token } = await this.insertIntoDatabase(invitation)
+    const registrationToken = crypto.randomBytes(20).toString('hex')
+    const invitedMember = await this.inviteIntoDatabase(registrationToken, invitation)
 
     this.mailService
-      .sendRegistrationEmail(invitedMember, token)
+      .sendRegistrationEmail(invitedMember, registrationToken)
       .then((info) => logger.debug(`Registration mail is sent to ${info.envelope.to}.`))
       .catch((err) => logger.debug(`Failed to send registration mail.`, err))
 
@@ -99,7 +101,7 @@ export class MemberService implements Service {
     token: string,
     registration: MemberRegistrationDto,
   ): Promise<MemberDto | null | undefined> {
-    const updatedMember = await this.registerInvitedMemberInDb(id, token, registration)
+    const updatedMember = await this.registerIntoDatabase(id, token, registration)
 
     if (!updatedMember) return updatedMember
 
@@ -109,17 +111,18 @@ export class MemberService implements Service {
   async labelForgottenPassword(restorationInfo: ForgottenPasswordDto) {
     const { association, email } = restorationInfo
 
-    const memberAndToken = await this.repository.labelForgottenPassword(
+    const restorationToken = crypto.randomBytes(20).toString('hex')
+
+    const member = await this.repository.labelForgottenPassword(
       association,
       email,
+      await this.hashToken(restorationToken),
     )
 
-    if (!memberAndToken) return
-
-    const { member, token } = memberAndToken
+    if (!member) return
 
     this.mailService
-      .sendRestorationEmail(member, token)
+      .sendRestorationEmail(member, restorationToken)
       .then((info) => logger.debug(`Restoration mail is sent to ${info.envelope.to}.`))
       .catch((err) =>
         logger.error(`Failed to send restoration mail to ${err.envelope.to}`),
@@ -135,6 +138,7 @@ export class MemberService implements Service {
       id,
       restorationToken,
       await this.hashPassword(password),
+      bcrypt.compare,
     )
   }
 
@@ -142,7 +146,10 @@ export class MemberService implements Service {
     return await this.repository.existsWithEmail(email, this.clientInfo.association)
   }
 
-  private insertIntoDatabase(invitation: MemberInviteDto) {
+  private async inviteIntoDatabase(
+    registrationToken: string,
+    invitation: MemberInviteDto,
+  ) {
     let member = {
       ...invitation,
       association: this.clientInfo.association,
@@ -150,13 +157,14 @@ export class MemberService implements Service {
     }
 
     member = _.pickBy(member, (it) => it !== undefined)
+    registrationToken = await this.hashToken(registrationToken)
 
-    return this.repository.invite(member)
+    return this.repository.invite(member, registrationToken)
   }
 
-  private async registerInvitedMemberInDb(
+  private async registerIntoDatabase(
     id: string,
-    token: string,
+    registrationToken: string,
     registration: object,
   ) {
     let member = {
@@ -169,12 +177,17 @@ export class MemberService implements Service {
     member = _.pickBy(member, (it) => it !== undefined)
 
     try {
-      return await this.repository.register(member, token)
+      return await this.repository.register(member, registrationToken, bcrypt.compare)
     } catch (ex: any) {
       // if unique values are duplicated, mongoose will throw an error that has a property 'code' with the value of '11000'
       if (ex.code == 11000) return undefined
       throw ex
     }
+  }
+
+  private async hashToken(token: string): Promise<string> {
+    const salt = await bcrypt.genSalt(1)
+    return await bcrypt.hash(token, salt)
   }
 
   private async hashPassword(password: string): Promise<string> {

@@ -577,6 +577,10 @@ describe('/api/members', () => {
       nodemailerMock.reset()
     })
 
+    afterEach(async () => {
+      await RegistrationTokenModel.deleteMany({})
+    })
+
     it('should return 401 response if no token provided', async () => {
       client = undefined
 
@@ -645,17 +649,21 @@ describe('/api/members', () => {
       })
 
       expect(registrationToken).not.toBeNull()
-      expect(registrationToken!.token).toMatch(/[a-f0-9]{40}/)
+    })
+
+    it('should not spam database with registration tokens for the same member', async () => {
+      await sendRequest()
+      await sendRequest()
+
+      const registrationTokens = await RegistrationTokenModel.find()
+
+      expect(registrationTokens).toHaveLength(1)
     })
 
     it('should send email for the invited member', async () => {
       const res = await sendRequest()
 
       const memberId = res.body._id
-
-      const registrationToken = await RegistrationTokenModel.findOne({
-        memberId,
-      })
 
       const sentEmails = nodemailerMock.getSentMail()
 
@@ -664,9 +672,7 @@ describe('/api/members', () => {
       expect(sentEmails[0].to).toBe(payload.email)
       expect(sentEmails[0]['context']).toHaveProperty('registrationUrl')
       expect(sentEmails[0]['context'].registrationUrl).toContain(memberId)
-      expect(sentEmails[0]['context'].registrationUrl).toContain(
-        registrationToken!.token,
-      )
+      expect(sentEmails[0]['context'].registrationUrl).toMatch(/\/[a-f0-9]{40}/)
     })
   })
 
@@ -688,7 +694,7 @@ describe('/api/members', () => {
 
       await new RegistrationTokenModel({
         memberId: id,
-        token,
+        token: bcrypt.hashSync(token, 1),
       }).save()
     })
 
@@ -860,7 +866,6 @@ describe('/api/members', () => {
 
         const registrationToken = await RegistrationTokenModel.findOne({
           memberId: id,
-          token,
         })
 
         expect(registrationToken).toBeNull()
@@ -940,7 +945,6 @@ describe('/api/members', () => {
         })
 
         expect(restorationToken).not.toBeNull()
-        expect(restorationToken!.token).toMatch(/[a-f0-9]{40}/)
       })
 
       it('should not spam database with restoration tokens for the same member', async () => {
@@ -978,9 +982,7 @@ describe('/api/members', () => {
         expect(sentEmails[0].to).toBe(email)
         expect(sentEmails[0]['context']).toHaveProperty('restorationUrl')
         expect(sentEmails[0]['context'].restorationUrl).toContain(member._id)
-        expect(sentEmails[0]['context'].restorationUrl).toContain(
-          restorationToken!.token,
-        )
+        expect(sentEmails[0]['context'].restorationUrl).toMatch(/\/[a-f0-9]{40}/)
       })
     })
 
@@ -1002,7 +1004,7 @@ describe('/api/members', () => {
 
         await new RestorationTokenModel({
           memberId: id,
-          token,
+          token: bcrypt.hashSync(token, 1),
         }).save()
       })
 
@@ -1064,7 +1066,6 @@ describe('/api/members', () => {
 
         const restorationToken = await RestorationTokenModel.findOne({
           memberId: id,
-          token,
         })
 
         expect(restorationToken).toBeNull()
