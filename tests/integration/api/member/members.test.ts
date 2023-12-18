@@ -889,14 +889,14 @@ describe('/api/members', () => {
     })
 
     let member
-    let association: string | undefined
+    let associationId: string | undefined
     let email: string | undefined
 
     beforeEach(async () => {
       client = undefined
 
       member = members.find((it) => it.isRegistered)
-      association = member.association
+      associationId = member.association
       email = member.email
     })
 
@@ -904,12 +904,12 @@ describe('/api/members', () => {
       const sendRequest = () =>
         request(app)
           .post('/api/members/forgotten-password')
-          .send({ association, email })
+          .send({ associationId, email })
 
       beforeEach(() => nodemailerMock.reset())
 
       it('should return 400 response if association is not provided', async () => {
-        association = undefined
+        associationId = undefined
 
         const res = await sendRequest()
 
