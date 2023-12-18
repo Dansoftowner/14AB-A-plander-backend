@@ -435,5 +435,12 @@ export class MemberRoutes extends RoutesProvider {
       validate(NewPasswordDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.restorePassword(req, res)),
     )
+
+    this.router.patch(
+      '/members/credentials/mine',
+      auth,
+      validate(NewPasswordDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateCredentials(req, res)),
+    )
   }
 }

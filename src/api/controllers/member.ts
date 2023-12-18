@@ -11,6 +11,7 @@ import { MemberRegistrationDto } from '../../dto/member-registration'
 import di from '../../di'
 import { asValue } from 'awilix'
 import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-password'
+import { NewCredentialsDto } from '../../dto/new-credentials'
 
 export class MemberController implements Controller {
   async getMembers(req: Request, res: Response) {
@@ -100,6 +101,15 @@ export class MemberController implements Controller {
     )
 
     if (!isRestored) throw new ApiError(404, ApiErrorCode.INVALID_URL)
+
+    res.status(204).send()
+  }
+
+  async updateCredentials(req: Request, res: Response) {
+    const payload = plainToInstance(NewCredentialsDto, req.body)
+
+    const isUpdated = await this.service(req).updateCredentials(payload)
+    if (!isUpdated) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
     res.status(204).send()
   }

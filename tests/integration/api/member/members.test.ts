@@ -1073,4 +1073,76 @@ describe('/api/members', () => {
       })
     })
   })
+
+  describe('/credentials/mine', () => {
+    describe('PATCH /', () => {
+      let username: string | undefined
+      let password: string | undefined
+
+      const sendRequest = async () =>
+        request(app)
+          .patch('/api/members/credentials/mine')
+          .set(config.get('jwt.headerName'), await generateToken())
+          .send({ username, password })
+
+      beforeEach(async () => {
+        username = 'NewUsername123'
+        password = 'NewSafePassword123'
+      })
+
+      it('should return 401 message if client is not logged in', async () => {
+        client = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return 400 message if neither of username and password is specified', async () => {
+        username = password = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it.each(['123', 'abc', '<?Sani>!'])(
+        'should return 400 message if invalid username is specified',
+        async (value) => {
+          username = value
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
+
+      it.each(['aBc12', 'abcdefgh', 'Abcdefgh', '123456789'])(
+        'should return 400 response if password is weak',
+        async (pass) => {
+          password = pass
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
+
+      it('should update username', async () => {
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(client._id)
+
+        expect(memberInDb).toHaveProperty('username', username)
+      })
+
+      it('should update password', async () => {
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(client._id)
+
+        expect(bcrypt.compareSync(password!, memberInDb!.password!)).toBe(true)
+      })
+    })
+  })
 })

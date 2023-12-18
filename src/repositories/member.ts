@@ -6,6 +6,7 @@ import RegistrationTokenModel from '../models/registration-token'
 import RestorationTokenModel from '../models/restoration-token'
 import crypto from 'crypto'
 import _ from 'lodash'
+import { NewCredentialsDto } from '../dto/new-credentials'
 
 export interface MemberQueryOptions {
   associationId: string
@@ -154,6 +155,15 @@ export class MemberRepository implements Repository {
       $set: {
         password,
       },
+    })
+  }
+
+  async updateCredentials(
+    id: string,
+    newCredentials: NewCredentialsDto,
+  ): Promise<Member | null> {
+    return await MemberModel.findByIdAndUpdate(id, {
+      $set: _.pick(newCredentials, ['username', 'password']),
     })
   }
 

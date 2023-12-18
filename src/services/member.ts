@@ -14,6 +14,7 @@ import { MailService } from './mail'
 import logger from '../logging/logger'
 import { MemberRegistrationDto } from '../dto/member-registration'
 import { ForgottenPasswordDto, NewPasswordDto } from '../dto/forgotten-password'
+import { NewCredentialsDto } from '../dto/new-credentials'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -144,6 +145,13 @@ export class MemberService implements Service {
       await this.hashPassword(password),
       bcrypt.compare,
     )
+  }
+
+  async updateCredentials(newCredentials: NewCredentialsDto) {
+    if (newCredentials.password)
+      newCredentials.password = await this.hashPassword(newCredentials.password)
+
+    return await this.repository.updateCredentials(this.clientInfo._id, newCredentials)
   }
 
   private async emailExists(email: string) {
