@@ -1128,7 +1128,17 @@ describe('/api/members', () => {
         },
       )
 
+      it('should return 422 message if username is already in use', async () => {
+        username = companionMembers().find((it) => it != client)!.username
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(422)
+      })
+
       it('should update username', async () => {
+        password = undefined
+
         await sendRequest()
 
         const memberInDb = await MemberModel.findById(client._id)
@@ -1137,11 +1147,28 @@ describe('/api/members', () => {
       })
 
       it('should update password', async () => {
+        username = undefined
+
         await sendRequest()
 
         const memberInDb = await MemberModel.findById(client._id)
 
         expect(bcrypt.compareSync(password!, memberInDb!.password!)).toBe(true)
+      })
+
+      it('should update both username and password', async () => {
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(client._id)
+
+        expect(memberInDb).toHaveProperty('username', username)
+        expect(bcrypt.compareSync(password!, memberInDb!.password!)).toBe(true)
+      })
+
+      it('should return 204 response', async () => {
+        const res = await sendRequest()
+
+        expect(res.status).toBe(204)
       })
     })
   })

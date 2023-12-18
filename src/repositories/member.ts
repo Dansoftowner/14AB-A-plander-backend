@@ -81,6 +81,10 @@ export class MemberRepository implements Repository {
     return (await MemberModel.exists({ email, association: associationId })) != null
   }
 
+  async existsWithUsername(username, associationId): Promise<boolean> {
+    return (await MemberModel.exists({ username, association: associationId })) != null
+  }
+
   async existsWithId(id: string): Promise<boolean> {
     return (await MemberModel.exists({ _id: id })) != null
   }
@@ -162,9 +166,13 @@ export class MemberRepository implements Repository {
     id: string,
     newCredentials: NewCredentialsDto,
   ): Promise<Member | null> {
-    return await MemberModel.findByIdAndUpdate(id, {
-      $set: _.pick(newCredentials, ['username', 'password']),
-    })
+    return await MemberModel.findByIdAndUpdate(
+      id,
+      {
+        $set: _.pick(newCredentials, ['username', 'password']),
+      },
+      { new: true },
+    )
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {

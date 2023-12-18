@@ -10,5 +10,6 @@
     "not-president": "Only presidents have the permission to perform this action!",
     "email-reserved": "The given e-mail is already in use!",
     "username-id-number-reserved": "The given username or id number is already registered!",
+    "username-reserved": "The given username is already in use!",
     "invalid-url": "The given url is invalid!"
 }

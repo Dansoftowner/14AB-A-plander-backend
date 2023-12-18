@@ -147,15 +147,33 @@ export class MemberService implements Service {
     )
   }
 
-  async updateCredentials(newCredentials: NewCredentialsDto) {
+  async updateCredentials(
+    newCredentials: NewCredentialsDto,
+  ): Promise<MemberDto | null | undefined> {
+    
+    if (newCredentials.username) {
+      const { username } = newCredentials
+      const alreadyExists = await this.usernameExists(username)
+      if (alreadyExists) return undefined
+    }
+
     if (newCredentials.password)
       newCredentials.password = await this.hashPassword(newCredentials.password)
 
-    return await this.repository.updateCredentials(this.clientInfo._id, newCredentials)
+    const updated = await this.repository.updateCredentials(
+      this.clientInfo._id,
+      newCredentials,
+    )
+
+    return plainToInstance(MemberDto, updated, { excludeExtraneousValues: true })
   }
 
-  private async emailExists(email: string) {
-    return await this.repository.existsWithEmail(email, this.clientInfo.association)
+  private emailExists(email: string): Promise<boolean> {
+    return this.repository.existsWithEmail(email, this.clientInfo.association)
+  }
+
+  private usernameExists(username: string): Promise<boolean> {
+    return this.repository.existsWithUsername(username, this.clientInfo.association)
   }
 
   private async inviteIntoDatabase(

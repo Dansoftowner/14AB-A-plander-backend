@@ -121,7 +121,7 @@ export enum ApiErrorCode {
    * components:
    *    responses:
    *      EmailReserved:
-   *        description: "The given email is already in use."
+   *        description: "The given email is already in use. (errorCode: 'email-reserved')."
    *        content:
    *          application/json:
    *            schema:
@@ -134,13 +134,26 @@ export enum ApiErrorCode {
    * components:
    *    responses:
    *      UsernameIdNumberReserved:
-   *        description: "The given username/id number is already in use."
+   *        description: "The given username/id number is already in use. (errorCode: 'username-id-number-reserved')."
    *        content:
    *          application/json:
    *            schema:
    *             $ref: '#/components/schemas/Error'
    */
   USERNAME_ID_NUMBER_RESERVED = 'username-id-number-reserved',
+
+  /**
+   * @openapi
+   * components:
+   *    responses:
+   *      UsernameReserved:
+   *        description: "The given username is already in use inside the association. (errorCode: 'username-reserved')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  USERNAME_RESERVED = 'username-reserved',
 
   /**
    * @openapi

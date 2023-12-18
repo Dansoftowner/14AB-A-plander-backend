@@ -10,5 +10,6 @@
     "not-president": "Csak elnöki jogosultsággal lehet a műveletet végrehajtani!",
     "email-reserved": "A megadott e-mail cím már le van foglalva!",
     "username-id-number-reserved": "A megadott felhasználónév vagy személyigazolványszám már regisztrálva van!",
+    "username-reserved": "A megadott felhasználónév már le van foglalva!",
     "invalid-url": "Érvénytelen URL!"
 }

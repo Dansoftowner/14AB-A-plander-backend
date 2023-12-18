@@ -108,8 +108,10 @@ export class MemberController implements Controller {
   async updateCredentials(req: Request, res: Response) {
     const payload = plainToInstance(NewCredentialsDto, req.body)
 
-    const isUpdated = await this.service(req).updateCredentials(payload)
-    if (!isUpdated) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+    const result = await this.service(req).updateCredentials(payload)
+    
+    if (result === null) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+    if (result === undefined) throw new ApiError(422, ApiErrorCode.USERNAME_RESERVED)
 
     res.status(204).send()
   }

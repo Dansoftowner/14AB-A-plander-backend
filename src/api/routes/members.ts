@@ -2,6 +2,7 @@ import { RoutesProvider } from '../../base/routes-provider'
 import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-password'
 import { MemberInviteDto } from '../../dto/member-invite'
 import { MemberRegistrationDto } from '../../dto/member-registration'
+import { NewCredentialsDto } from '../../dto/new-credentials'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import president from '../../middlewares/president'
@@ -436,10 +437,41 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.restorePassword(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/members/credentials/mine:
+     *  patch:
+     *    tags:
+     *     - Members
+     *    description: |
+     *      A member can update his credentials (username and/or password) via this endpoint.
+     *      Either username or password has to be provided.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/NewCredentials'
+     *    responses:
+     *      204:
+     *        description: Update proceeded. **No content returned.**
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      422:
+     *        $ref: '#/components/responses/UsernameReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.patch(
       '/members/credentials/mine',
       auth,
-      validate(NewPasswordDto.validationSchema()),
+      validate(NewCredentialsDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.updateCredentials(req, res)),
     )
   }
