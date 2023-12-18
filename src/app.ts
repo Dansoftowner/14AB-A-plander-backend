@@ -43,6 +43,7 @@ export class App {
   }
 
   private initializeMiddlewares() {
+    this.expressApp.use(express.static('public'))
     this.expressApp.use(
       cors({
         origin: config.get('frontend.host'),
@@ -72,6 +73,7 @@ export class App {
   private initializeSwaggerDocs() {
     const swaggerUiOptions: swaggerUi.SwaggerUiOptions = {
       customSiteTitle: 'Plander API Docs',
+      customCssUrl: '/css/swagger-dark.css',
     }
 
     this.expressApp.use(
