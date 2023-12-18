@@ -4,7 +4,7 @@ import {
   guardNumberPattern,
   removeFlags as rf,
 } from '../utils/common-regex'
-import { JoiPassword } from '../utils/joi'
+import { JoiPassword, JoiUsername } from '../utils/joi'
 
 /**
  * @openapi
@@ -59,7 +59,7 @@ export class MemberRegistrationDto {
 
   static validationSchema(): Joi.ObjectSchema<MemberRegistrationDto> {
     return Joi.object({
-      username: Joi.string().alphanum().min(5).max(20).required(),
+      username: JoiUsername().required(),
       password: JoiPassword().required(),
       guardNumber: Joi.string().regex(rf(guardNumberPattern())).optional(),
       name: Joi.string().regex(rf(fullNamePattern())).required(),
