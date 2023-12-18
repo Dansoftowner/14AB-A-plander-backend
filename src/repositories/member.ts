@@ -73,7 +73,7 @@ export class MemberRepository implements Repository {
     const areTokensEqual = await compareTokens(registrationToken, tokenEntry.token)
     if (!areTokensEqual) return null
 
-    return await MemberModel.findById(id)
+    return await MemberModel.findById(id).populate('association', 'name')
   }
 
   async existsWithEmail(email: string, associationId: string): Promise<boolean> {

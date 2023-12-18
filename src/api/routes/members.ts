@@ -270,7 +270,7 @@ export class MemberRoutes extends RoutesProvider {
      *        content:
      *          application/json:
      *            schema:
-     *              $ref: '#/components/schemas/Member'
+     *              $ref: '#/components/schemas/MemberWithAssociation'
      *      404:
      *        $ref: '#/components/responses/InvalidURL'
      *      422:

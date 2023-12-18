@@ -13,6 +13,7 @@ import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import RegistrationTokenModel from '../../../../src/models/registration-token'
 import RestorationTokenModel from '../../../../src/models/restoration-token'
 import members from './dummy-members.json'
+import AssociationModel from '../../../../src/models/association'
 
 const { mock: nodemailerMock } = nodemailer as unknown as NodemailerMock
 
@@ -699,6 +700,8 @@ describe('/api/members', () => {
     })
 
     describe('GET /', () => {
+      let association
+
       beforeEach(async () => {
         member = {
           ...member,
@@ -712,6 +715,16 @@ describe('/api/members', () => {
         }
 
         await MemberModel.findByIdAndUpdate(id, member)
+        association = await AssociationModel.findOneAndReplace(
+          { _id: member.association },
+          {
+            _id: member.association,
+            name: 'Example',
+            location: 'Loc 12',
+            certificate: '12/1234',
+          },
+          { upsert: true, new: true },
+        )
       })
 
       const sendRequest = () => request(app).get(`/api/members/register/${id}/${token}`)
@@ -744,7 +757,19 @@ describe('/api/members', () => {
         const res = await sendRequest()
 
         expect(res.status).toBe(200)
-        expect(res.body).toMatchObject(_.pick(member, _.keys(res.body)))
+        expect(res.body).toMatchObject(
+          _.pick(
+            member,
+            _.keys(res.body).filter((it) => it !== 'association'),
+          ),
+        )
+      })
+
+      it('should return association in nested structure', async () => {
+        const res = await sendRequest()
+
+        expect(res.body.association._id).toBe(association._id.toHexString())
+        expect(res.body.association.name).toBe(association.name)
       })
     })
 
