@@ -5,6 +5,7 @@ import { MemberRegistrationDto } from '../../dto/member-registration'
 import { NewCredentialsDto } from '../../dto/new-credentials'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
+import password from '../../middlewares/password'
 import president from '../../middlewares/president'
 import validate from '../../middlewares/validate'
 import validateObjectid, { validateObjectId } from '../../middlewares/validate-objectid'
@@ -402,16 +403,16 @@ export class MemberRoutes extends RoutesProvider {
      *    parameters:
      *      - in: path
      *        name: id
+     *        description: The unique id of the member who forgot his password.
      *        schema:
      *          type: string
      *          required: true
-     *          description: The unique id of the invited member.
      *      - in: path
      *        name: restorationToken
+     *        description: The restoration token of the member who forgot his password.
      *        schema:
      *          type: string
      *          required: true
-     *          description: The restoration token of the member who forgot his password.
      *    requestBody:
      *      required: true
      *      content:
@@ -448,6 +449,15 @@ export class MemberRoutes extends RoutesProvider {
      *      Either username or password has to be provided.
      *
      *      **Authentication is required** before using this endpoint.
+     *      Also, because it is a sensitive operation, the **current password** of the
+     *      member **must be passed through the `x-current-pass` header**.
+     *    parameters:
+     *      - in: header
+     *        name: x-current-pass
+     *        description: The current password of the member.
+     *        schema:
+     *          type: string
+     *          required: true
      *    requestBody:
      *      required: true
      *      content:
@@ -471,6 +481,7 @@ export class MemberRoutes extends RoutesProvider {
     this.router.patch(
       '/members/credentials/mine',
       auth,
+      password,
       validate(NewCredentialsDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.updateCredentials(req, res)),
     )

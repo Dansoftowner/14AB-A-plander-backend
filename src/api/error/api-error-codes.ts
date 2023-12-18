@@ -167,4 +167,30 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   INVALID_URL = 'invalid-url',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    CurrentPassRequired:
+   *     description: "The current password must be provided in the header to perform this operation (errorCode: 'current-pass-required')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  CURRENT_PASS_REQUIRED = 'current-pass-required',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    CurrentPassRequired:
+   *     description: "The provided password is invalid (errorCode: 'current-pass-invalid')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  CURRENT_PASS_INVALID = 'current-pass-invalid',
 }

@@ -1078,20 +1078,39 @@ describe('/api/members', () => {
     describe('PATCH /', () => {
       let username: string | undefined
       let password: string | undefined
+      let oldPassword: string
 
       const sendRequest = async () =>
         request(app)
           .patch('/api/members/credentials/mine')
           .set(config.get('jwt.headerName'), await generateToken())
+          .set(config.get('headers.currentPass'), oldPassword!)
           .send({ username, password })
 
       beforeEach(async () => {
         username = 'NewUsername123'
         password = 'NewSafePassword123'
+        oldPassword = 'Gizaac0Password'
       })
 
       it('should return 401 message if client is not logged in', async () => {
         client = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return 401 message if client did not specify the current password', async () => {
+        oldPassword = ''
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return 401 message if the specified current password is invalid', async () => {
+        oldPassword = '123'
 
         const res = await sendRequest()
 
