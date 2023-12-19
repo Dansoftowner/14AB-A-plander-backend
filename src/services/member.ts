@@ -127,14 +127,17 @@ export class MemberService implements Service {
       await this.hashToken(restorationToken),
     )
 
-    if (!member) return
+    if (member)
+      this.mailService
+        .sendRestorationEmail(member, restorationToken)
+        .then((info) =>
+          logger.debug(`Restoration mail is sent to ${info.envelope.to}.`),
+        )
+        .catch((err) =>
+          logger.error(`Failed to send restoration mail to ${err.envelope.to}`),
+        )
 
-    this.mailService
-      .sendRestorationEmail(member, restorationToken)
-      .then((info) => logger.debug(`Restoration mail is sent to ${info.envelope.to}.`))
-      .catch((err) =>
-        logger.error(`Failed to send restoration mail to ${err.envelope.to}`),
-      )
+    return member
   }
 
   async restorePassword(
@@ -153,7 +156,6 @@ export class MemberService implements Service {
   async updateCredentials(
     newCredentials: NewCredentialsDto,
   ): Promise<MemberDto | null | undefined> {
-    
     if (newCredentials.username) {
       const { username } = newCredentials
       const alreadyExists = await this.usernameExists(username)

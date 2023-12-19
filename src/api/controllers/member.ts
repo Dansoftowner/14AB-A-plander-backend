@@ -85,7 +85,8 @@ export class MemberController implements Controller {
   async labelForgottenPassword(req: Request, res: Response) {
     const payload = plainToInstance(ForgottenPasswordDto, req.body)
 
-    await this.service(req).labelForgottenPassword(payload)
+    const foundMember = await this.service(req).labelForgottenPassword(payload)
+    if (!foundMember) throw new ApiError(422, ApiErrorCode.EMAIL_NOT_FOUND)
 
     res.status(204).send()
   }
