@@ -15,6 +15,7 @@ import logger from '../logging/logger'
 import { MemberRegistrationDto } from '../dto/member-registration'
 import { ForgottenPasswordDto, NewPasswordDto } from '../dto/forgotten-password'
 import { NewCredentialsDto } from '../dto/new-credentials'
+import { MemberWithAssociationDto } from '../dto/member-with-association'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -80,7 +81,9 @@ export class MemberService implements Service {
       bcrypt.compare,
     )
 
-    return plainToInstance(MemberDto, item, { excludeExtraneousValues: true })
+    return plainToInstance(MemberWithAssociationDto, item, {
+      excludeExtraneousValues: true,
+    })
   }
 
   async invite(invitation: MemberInviteDto): Promise<MemberDto | null> {

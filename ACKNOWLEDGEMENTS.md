@@ -1,5 +1,7 @@
 # Használt függőségek
 
+> Swagger UI Dark Theme is borrowed from [swagger-themes](https://github.com/ilyamixaltik/swagger-themes).
+
 ## Kiadási
 
 - [awilix](https://www.npmjs.com/package/awilix)
