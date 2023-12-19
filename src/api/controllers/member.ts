@@ -88,7 +88,7 @@ export class MemberController implements Controller {
     const foundMember = await this.service(req).labelForgottenPassword(payload)
     if (!foundMember) throw new ApiError(422, ApiErrorCode.EMAIL_NOT_FOUND)
 
-    res.status(204).send()
+    res.status(202).send()
   }
 
   async restorePassword(req: Request, res: Response) {
@@ -110,7 +110,7 @@ export class MemberController implements Controller {
     const payload = plainToInstance(NewCredentialsDto, req.body)
 
     const result = await this.service(req).updateCredentials(payload)
-    
+
     if (result === null) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
     if (result === undefined) throw new ApiError(422, ApiErrorCode.USERNAME_RESERVED)
 
