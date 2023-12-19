@@ -1281,7 +1281,7 @@ describe('/api/members', () => {
     beforeEach(() => {
       id = companionMembers()
         .filter((it) => it._id !== client._id)
-        .find((it) => !it.isRegistered)!._id
+        .find((it) => it.isRegistered)!._id
 
       currentPassword = 'Gizaac0Password'
     })
@@ -1387,6 +1387,13 @@ describe('/api/members', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(200)
+      expect(res.body).toMatchObject(
+        _.omit(members.find((it) => it._id === id)!, [
+          'association',
+          'password',
+          'preferences',
+        ]),
+      )
     })
   })
 })
