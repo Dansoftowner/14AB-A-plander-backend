@@ -630,7 +630,7 @@ describe('/api/members', () => {
         email: payload.email,
       })
 
-      expect(res.status).toBe(201)
+      expect(res.status).toBe(202)
       expect(invitedMember).not.toBeNull()
       expect(invitedMember!.isRegistered).toBe(false)
     })
@@ -638,7 +638,7 @@ describe('/api/members', () => {
     it('should return the invited member', async () => {
       const res = await sendRequest()
 
-      expect(res.status).toBe(201)
+      expect(res.status).toBe(202)
       expect(res.body).toMatchObject(_.pickBy(payload, (it) => it !== undefined))
     })
 
