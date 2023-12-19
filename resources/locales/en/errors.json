@@ -10,5 +10,8 @@
     "not-president": "Only presidents have the permission to perform this action!",
     "email-reserved": "The given e-mail is already in use!",
     "username-id-number-reserved": "The given username or id number is already registered!",
-    "invalid-url": "The given url is invalid!"
+    "username-reserved": "The given username is already in use!",
+    "invalid-url": "The given url is invalid!",
+    "current-pass-required": "Specifying current password is required!",
+    "current-pass-invalid": "The given password does not match the current password!"
 }

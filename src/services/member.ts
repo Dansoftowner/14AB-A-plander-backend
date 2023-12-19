@@ -14,6 +14,7 @@ import { MailService } from './mail'
 import logger from '../logging/logger'
 import { MemberRegistrationDto } from '../dto/member-registration'
 import { ForgottenPasswordDto, NewPasswordDto } from '../dto/forgotten-password'
+import { NewCredentialsDto } from '../dto/new-credentials'
 import { MemberWithAssociationDto } from '../dto/member-with-association'
 
 export class MemberService implements Service {
@@ -149,8 +150,33 @@ export class MemberService implements Service {
     )
   }
 
-  private async emailExists(email: string) {
-    return await this.repository.existsWithEmail(email, this.clientInfo.association)
+  async updateCredentials(
+    newCredentials: NewCredentialsDto,
+  ): Promise<MemberDto | null | undefined> {
+    
+    if (newCredentials.username) {
+      const { username } = newCredentials
+      const alreadyExists = await this.usernameExists(username)
+      if (alreadyExists) return undefined
+    }
+
+    if (newCredentials.password)
+      newCredentials.password = await this.hashPassword(newCredentials.password)
+
+    const updated = await this.repository.updateCredentials(
+      this.clientInfo._id,
+      newCredentials,
+    )
+
+    return plainToInstance(MemberDto, updated, { excludeExtraneousValues: true })
+  }
+
+  private emailExists(email: string): Promise<boolean> {
+    return this.repository.existsWithEmail(email, this.clientInfo.association)
+  }
+
+  private usernameExists(username: string): Promise<boolean> {
+    return this.repository.existsWithUsername(username, this.clientInfo.association)
   }
 
   private async inviteIntoDatabase(

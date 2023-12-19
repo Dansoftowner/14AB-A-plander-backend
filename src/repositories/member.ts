@@ -6,6 +6,7 @@ import RegistrationTokenModel from '../models/registration-token'
 import RestorationTokenModel from '../models/restoration-token'
 import crypto from 'crypto'
 import _ from 'lodash'
+import { NewCredentialsDto } from '../dto/new-credentials'
 
 export interface MemberQueryOptions {
   associationId: string
@@ -78,6 +79,10 @@ export class MemberRepository implements Repository {
 
   async existsWithEmail(email: string, associationId: string): Promise<boolean> {
     return (await MemberModel.exists({ email, association: associationId })) != null
+  }
+
+  async existsWithUsername(username, associationId): Promise<boolean> {
+    return (await MemberModel.exists({ username, association: associationId })) != null
   }
 
   async existsWithId(id: string): Promise<boolean> {
@@ -155,6 +160,19 @@ export class MemberRepository implements Repository {
         password,
       },
     })
+  }
+
+  async updateCredentials(
+    id: string,
+    newCredentials: NewCredentialsDto,
+  ): Promise<Member | null> {
+    return await MemberModel.findByIdAndUpdate(
+      id,
+      {
+        $set: _.pick(newCredentials, ['username', 'password']),
+      },
+      { new: true },
+    )
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {

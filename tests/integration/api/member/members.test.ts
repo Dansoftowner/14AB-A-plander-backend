@@ -914,14 +914,14 @@ describe('/api/members', () => {
     })
 
     let member
-    let association: string | undefined
+    let associationId: string | undefined
     let email: string | undefined
 
     beforeEach(async () => {
       client = undefined
 
       member = members.find((it) => it.isRegistered)
-      association = member.association
+      associationId = member.association
       email = member.email
     })
 
@@ -929,12 +929,12 @@ describe('/api/members', () => {
       const sendRequest = () =>
         request(app)
           .post('/api/members/forgotten-password')
-          .send({ association, email })
+          .send({ associationId, email })
 
       beforeEach(() => nodemailerMock.reset())
 
       it('should return 400 response if association is not provided', async () => {
-        association = undefined
+        associationId = undefined
 
         const res = await sendRequest()
 
@@ -1095,6 +1095,124 @@ describe('/api/members', () => {
         })
 
         expect(restorationToken).toBeNull()
+      })
+    })
+  })
+
+  describe('/credentials/mine', () => {
+    describe('PATCH /', () => {
+      let username: string | undefined
+      let password: string | undefined
+      let oldPassword: string
+
+      const sendRequest = async () =>
+        request(app)
+          .patch('/api/members/credentials/mine')
+          .set(config.get('jwt.headerName'), await generateToken())
+          .set(config.get('headers.currentPass'), oldPassword!)
+          .send({ username, password })
+
+      beforeEach(async () => {
+        username = 'NewUsername123'
+        password = 'NewSafePassword123'
+        oldPassword = 'Gizaac0Password'
+      })
+
+      it('should return 401 message if client is not logged in', async () => {
+        client = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return 401 message if client did not specify the current password', async () => {
+        oldPassword = ''
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return 401 message if the specified current password is invalid', async () => {
+        oldPassword = '123'
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return 400 message if neither of username and password is specified', async () => {
+        username = password = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it.each(['123', 'abc', '<?Sani>!'])(
+        'should return 400 message if invalid username is specified',
+        async (value) => {
+          username = value
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
+
+      it.each(['aBc12', 'abcdefgh', 'Abcdefgh', '123456789'])(
+        'should return 400 response if password is weak',
+        async (pass) => {
+          password = pass
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
+
+      it('should return 422 message if username is already in use', async () => {
+        username = companionMembers().find((it) => it != client)!.username
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(422)
+      })
+
+      it('should update username', async () => {
+        password = undefined
+
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(client._id)
+
+        expect(memberInDb).toHaveProperty('username', username)
+      })
+
+      it('should update password', async () => {
+        username = undefined
+
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(client._id)
+
+        expect(bcrypt.compareSync(password!, memberInDb!.password!)).toBe(true)
+      })
+
+      it('should update both username and password', async () => {
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(client._id)
+
+        expect(memberInDb).toHaveProperty('username', username)
+        expect(bcrypt.compareSync(password!, memberInDb!.password!)).toBe(true)
+      })
+
+      it('should return 204 response', async () => {
+        const res = await sendRequest()
+
+        expect(res.status).toBe(204)
       })
     })
   })

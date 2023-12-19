@@ -10,6 +10,9 @@
         "privateKey": "",
         "headerName": "x-plander-auth"
     },
+    "headers": {
+        "currentPass": "x-current-pass"
+    },
     "crypto": {
         "bcryptRounds": 10
     },
