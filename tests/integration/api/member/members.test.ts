@@ -1319,5 +1319,20 @@ describe('/api/members', () => {
       expect(res.status).toBe(403)
     })
     
+    it('should return 404 message if the given id is invalid', async () => {
+      id = '123'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 message if member with the given id does not exist', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
   })
 })

@@ -486,5 +486,14 @@ export class MemberRoutes extends RoutesProvider {
       validate(NewCredentialsDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.updateCredentials(req, res)),
     )
+
+    this.router.delete(
+      '/members/:id',
+      auth,
+      president,
+      password,
+      validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
+      asyncErrorHandler((req, res) => controller.deleteMember(req, res)),
+    )
   }
 }
