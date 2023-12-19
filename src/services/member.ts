@@ -87,17 +87,16 @@ export class MemberService implements Service {
   }
 
   async invite(invitation: MemberInviteDto): Promise<MemberDto | null> {
-    const { email } = invitation
-
-    if (await this.emailExists(email)) return null
-
     const registrationToken = crypto.randomBytes(20).toString('hex')
     const invitedMember = await this.inviteIntoDatabase(registrationToken, invitation)
 
-    this.mailService
-      .sendRegistrationEmail(invitedMember, registrationToken)
-      .then((info) => logger.debug(`Registration mail is sent to ${info.envelope.to}.`))
-      .catch((err) => logger.debug(`Failed to send registration mail.`, err))
+    if (invitedMember)
+      this.mailService
+        .sendRegistrationEmail(invitedMember, registrationToken)
+        .then((info) =>
+          logger.debug(`Registration mail is sent to ${info.envelope.to}.`),
+        )
+        .catch((err) => logger.debug(`Failed to send registration mail.`, err))
 
     return plainToInstance(MemberDto, invitedMember, {
       excludeExtraneousValues: true,
@@ -172,11 +171,7 @@ export class MemberService implements Service {
 
     return plainToInstance(MemberDto, updated, { excludeExtraneousValues: true })
   }
-
-  private emailExists(email: string): Promise<boolean> {
-    return this.repository.existsWithEmail(email, this.clientInfo.association)
-  }
-
+  
   private usernameExists(username: string): Promise<boolean> {
     return this.repository.existsWithUsername(username, this.clientInfo.association)
   }

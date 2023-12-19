@@ -89,14 +89,32 @@ export class MemberRepository implements Repository {
     return (await MemberModel.exists({ _id: id })) != null
   }
 
-  async invite(member: object, registrationToken: string): Promise<Member> {
-    const inserted = await new MemberModel(member).save()
+  async invite(member: object, registrationToken: string): Promise<Member | null> {
+    const registeredMember = await MemberModel.exists({
+      association: member['association'],
+      email: member['email'],
+      isRegistered: true,
+    })
 
-    await new RegistrationTokenModel({
-      memberId: inserted._id,
-      token: registrationToken,
-    }).save()
+    if (registeredMember) return null
 
+    const inserted = await MemberModel.findOneAndReplace(
+      {
+        association: member['association'],
+        email: member['email'],
+      },
+      member,
+      { upsert: true, new: true },
+    )
+
+    await RegistrationTokenModel.findOneAndReplace(
+      {
+        memberId: inserted._id,
+      },
+      { memberId: inserted._id, token: registrationToken },
+      { upsert: true },
+    )
+    
     return inserted
   }
 
