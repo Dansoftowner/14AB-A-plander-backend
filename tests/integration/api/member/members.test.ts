@@ -1266,4 +1266,58 @@ describe('/api/members', () => {
       })
     })
   })
+
+  describe('DELETE /:id', () => {
+    let id: string
+    let currentPassword: string
+
+    const sendRequest = async () =>
+      request(app)
+        .delete(`/api/members/${id}`)
+        .set(config.get('jwt.headerName'), await generateToken())
+        .set(config.get('headers.currentPass'), currentPassword)
+        .send()
+
+    beforeEach(() => {
+      id = companionMembers()
+        .filter((it) => it._id !== client._id)
+        .find((it) => !it.isRegistered)!
+        ._id
+      
+      currentPassword = 'Gizaac0Password'
+    })
+
+    it('should return 401 message if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 401 message if client did not specify his password', async () => {
+      currentPassword = ''
+      
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 401 message if client specified the password incorrectly', async () => {
+      currentPassword = 'abc1241A'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 403 message if client is not president', async () => {
+      client = regularMember
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+    
+  })
 })
