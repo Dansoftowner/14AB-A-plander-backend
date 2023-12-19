@@ -13,5 +13,6 @@
     "username-reserved": "A megadott felhasználónév már le van foglalva!",
     "invalid-url": "Érvénytelen URL!",
     "current-pass-required": "Ehhez a művelethez a jelenlegi jelszó megadása kötelező!",
-    "current-pass-invalid": "A megadott jelszó nem egyezik meg a jelenlegi jelszóval!"
+    "current-pass-invalid": "A megadott jelszó nem egyezik meg a jelenlegi jelszóval!",
+    "email-not-found": "A megadott e-mail címmel nincs regisztrált tag."
 }

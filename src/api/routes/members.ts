@@ -359,7 +359,6 @@ export class MemberRoutes extends RoutesProvider {
      *
      *       - The member has to provide the **association** where he is registered and the **email address associated with his account**.
      *       - Calling this endpoint **triggers an email** to the provided address that contains a **restoration link**.
-     *       - If the **email address is not associated with any account** then simply no email will be sent and in the response **it's not indicated**
      *
      *       **Authentication is not required** before using this endpoint.
      *    requestBody:
@@ -369,13 +368,15 @@ export class MemberRoutes extends RoutesProvider {
      *        schema:
      *         $ref: '#/components/schemas/ForgottenPassword'
      *    responses:
-     *      204:
+     *      202:
      *        description: >
-     *            Succeeded. If the given email address is associated with any account
+     *            Succeeded. If the given email address is associated with an account
      *            in the particular association, the restoration email is triggered.
      *            **No content returned.**
      *      400:
      *        $ref: '#/components/responses/InvalidPayload'
+     *      422:
+     *        $ref: '#/components/responses/EmailNotFound'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:

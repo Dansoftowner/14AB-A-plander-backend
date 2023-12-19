@@ -193,4 +193,17 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   CURRENT_PASS_INVALID = 'current-pass-invalid',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    EmailNotFound:
+   *     description: "The provided email does not exist (errorCode: 'email-not-found')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  EMAIL_NOT_FOUND = 'email-not-found',
 }
