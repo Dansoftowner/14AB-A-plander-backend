@@ -1281,9 +1281,8 @@ describe('/api/members', () => {
     beforeEach(() => {
       id = companionMembers()
         .filter((it) => it._id !== client._id)
-        .find((it) => !it.isRegistered)!
-        ._id
-      
+        .find((it) => !it.isRegistered)!._id
+
       currentPassword = 'Gizaac0Password'
     })
 
@@ -1297,7 +1296,7 @@ describe('/api/members', () => {
 
     it('should return 401 message if client did not specify his password', async () => {
       currentPassword = ''
-      
+
       const res = await sendRequest()
 
       expect(res.status).toBe(401)
@@ -1318,7 +1317,7 @@ describe('/api/members', () => {
 
       expect(res.status).toBe(403)
     })
-    
+
     it('should return 404 message if the given id is invalid', async () => {
       id = '123'
 
@@ -1333,6 +1332,61 @@ describe('/api/members', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(404)
+    })
+
+    it('should return 403 message if a president wants to remove another president', async () => {
+      const otherPresident = new MemberModel({
+        isRegistered: true,
+        association: client.association,
+        roles: ['member', 'president'],
+      })
+      await otherPresident.save({ validateBeforeSave: false })
+
+      id = otherPresident._id.toHexString()
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should return 422 message if a president wants to delete himself but there are no other presidents in the group', async () => {
+      id = client._id
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
+    })
+
+    it('should delete member from database', async () => {
+      const res = await sendRequest()
+
+      const member = await MemberModel.findById(id)
+
+      expect(res.status).toBe(200)
+      expect(member).toBeNull()
+    })
+
+    it('should delete president from database if there are other presidents', async () => {
+      const otherPresident = new MemberModel({
+        isRegistered: true,
+        association: client.association,
+        roles: ['member', 'president'],
+      })
+      await otherPresident.save({ validateBeforeSave: false })
+
+      id = client._id
+
+      const res = await sendRequest()
+
+      const member = await MemberModel.findById(id)
+
+      expect(res.status).toBe(200)
+      expect(member).toBeNull()
+    })
+
+    it('should return deleted member in the payload', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
     })
   })
 })

@@ -130,8 +130,10 @@ export class MemberController implements Controller {
 
       res.status(200).json(instanceToPlain(deletedMember))
     } catch (err) {
-      if (err instanceof PresidentDeletionError) //throw new ApiError(403, ApiErrorCode.)
-      if (err instanceof NoOtherPresidentError) //throw new ApiError()
+      if (err instanceof PresidentDeletionError)
+        throw new ApiError(403, ApiErrorCode.PRESIDENT_DELETION)
+      if (err instanceof NoOtherPresidentError)
+        throw new ApiError(422, ApiErrorCode.NO_OTHER_PRESIDENTS)
       throw err
     }
   }

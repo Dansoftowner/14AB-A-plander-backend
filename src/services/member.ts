@@ -183,7 +183,7 @@ export class MemberService implements Service {
       // the president wants to delete himself
 
       const areThereOtherPresidents =
-        (await this.repository.countPresidents(this.clientInfo.association)) > 0
+        (await this.repository.countPresidents(this.clientInfo.association)) > 1
 
       if (!areThereOtherPresidents) throw new NoOtherPresidentError()
     } else {
