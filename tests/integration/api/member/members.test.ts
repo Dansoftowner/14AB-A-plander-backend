@@ -615,7 +615,9 @@ describe('/api/members', () => {
     })
 
     it('should return 422 response if the email is already used by someone', async () => {
-      payload.email = companionMembers().find((it) => it._id != client._id)!.email
+      payload.email = companionMembers()
+        .filter((it) => it.isRegistered)
+        .find((it) => it._id != client._id)!.email
 
       const res = await sendRequest()
 
@@ -630,7 +632,7 @@ describe('/api/members', () => {
         email: payload.email,
       })
 
-      expect(res.status).toBe(201)
+      expect(res.status).toBe(202)
       expect(invitedMember).not.toBeNull()
       expect(invitedMember!.isRegistered).toBe(false)
     })
@@ -638,7 +640,7 @@ describe('/api/members', () => {
     it('should return the invited member', async () => {
       const res = await sendRequest()
 
-      expect(res.status).toBe(201)
+      expect(res.status).toBe(202)
       expect(res.body).toMatchObject(_.pickBy(payload, (it) => it !== undefined))
     })
 
@@ -673,6 +675,54 @@ describe('/api/members', () => {
       expect(sentEmails[0].to).toBe(payload.email)
       expect(sentEmails[0]['context']).toHaveProperty('registrationUrl')
       expect(sentEmails[0]['context'].registrationUrl).toContain(memberId)
+      expect(sentEmails[0]['context'].registrationUrl).toMatch(/\/[a-f0-9]{40}/)
+    })
+
+    it('should update invited member data if the president triggers the invite again', async () => {
+      await sendRequest()
+
+      payload.name = 'Other Name'
+      payload.phoneNumber = '+36 30 210 8787'
+
+      const res = await sendRequest()
+
+      const invitedMember = await MemberModel.findOne({
+        association: client.association,
+        email: payload.email,
+      })
+
+      expect(res.status).toBe(202)
+      expect(invitedMember).toHaveProperty('name', payload.name)
+      expect(invitedMember).toHaveProperty('phoneNumber', payload.phoneNumber)
+      expect(invitedMember!.isRegistered).toBe(false)
+    })
+
+    it('should regenerate registration token if president triggers the invite again', async () => {
+      let res = await sendRequest()
+
+      const oldRegistrationToken = await RegistrationTokenModel.findOne({
+        memberId: res.body._id,
+      })
+
+      res = await sendRequest()
+
+      const newRegistrationToken = await RegistrationTokenModel.findOne({
+        memberId: res.body._id,
+      })
+
+      expect(oldRegistrationToken!.token).not.toEqual(newRegistrationToken!.token)
+    })
+
+    it('should resend email if president trigger the invite again', async () => {
+      await sendRequest()
+      await sendRequest()
+
+      const sentEmails = nodemailerMock.getSentMail()
+
+      expect(sentEmails).toHaveLength(2)
+      expect(sentEmails[1].from).toBe(config.get('smtp.from'))
+      expect(sentEmails[1].to).toBe(payload.email)
+      expect(sentEmails[1]['context']).toHaveProperty('registrationUrl')
       expect(sentEmails[0]['context'].registrationUrl).toMatch(/\/[a-f0-9]{40}/)
     })
   })
