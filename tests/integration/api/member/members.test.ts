@@ -1385,4 +1385,134 @@ describe('/api/members', () => {
       expect(_.pick(res.body, _.keys(payload))).toMatchObject(payload)
     })
   })
+
+  describe('DELETE /:id', () => {
+    let id: string
+    let currentPassword: string
+
+    const sendRequest = async () =>
+      request(app)
+        .delete(`/api/members/${id}`)
+        .set(config.get('jwt.headerName'), await generateToken())
+        .set(config.get('headers.currentPass'), currentPassword)
+        .send()
+
+    beforeEach(() => {
+      id = companionMembers()
+        .filter((it) => it._id !== client._id)
+        .find((it) => it.isRegistered)!._id
+
+      currentPassword = 'Gizaac0Password'
+    })
+
+    it('should return 401 message if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 401 message if client did not specify his password', async () => {
+      currentPassword = ''
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 401 message if client specified the password incorrectly', async () => {
+      currentPassword = 'abc1241A'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 403 message if client is not president', async () => {
+      client = regularMember
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should return 404 message if the given id is invalid', async () => {
+      id = '123'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 message if member with the given id does not exist', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 403 message if a president wants to remove another president', async () => {
+      const otherPresident = new MemberModel({
+        isRegistered: true,
+        association: client.association,
+        roles: ['member', 'president'],
+      })
+      await otherPresident.save({ validateBeforeSave: false })
+
+      id = otherPresident._id.toHexString()
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should return 422 message if a president wants to delete himself but there are no other presidents in the group', async () => {
+      id = client._id
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
+    })
+
+    it('should delete member from database', async () => {
+      const res = await sendRequest()
+
+      const member = await MemberModel.findById(id)
+
+      expect(res.status).toBe(200)
+      expect(member).toBeNull()
+    })
+
+    it('should delete president from database if there are other presidents', async () => {
+      const otherPresident = new MemberModel({
+        isRegistered: true,
+        association: client.association,
+        roles: ['member', 'president'],
+      })
+      await otherPresident.save({ validateBeforeSave: false })
+
+      id = client._id
+
+      const res = await sendRequest()
+
+      const member = await MemberModel.findById(id)
+
+      expect(res.status).toBe(200)
+      expect(member).toBeNull()
+    })
+
+    it('should return deleted member in the payload', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(res.body).toMatchObject(
+        _.omit(members.find((it) => it._id === id)!, [
+          'association',
+          'password',
+          'preferences',
+        ]),
+      )
+    })
+  })
 })

@@ -5,6 +5,8 @@ import {
   MemberService,
   NotPresidentError,
   RegisteredMemberAlterError,
+  NoOtherPresidentError,
+  PresidentDeletionError,
 } from '../../services/member'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { ApiError } from '../error/api-error'
@@ -136,6 +138,23 @@ export class MemberController implements Controller {
         throw new ApiError(403, ApiErrorCode.NOT_PRESIDENT)
       if (err instanceof RegisteredMemberAlterError)
         throw new ApiError(403, ApiErrorCode.REGISTERED_MEMBER_ALTER)
+      throw err
+    }
+  }
+
+  async deleteMember(req: Request, res: Response) {
+    const id = req.params.id
+
+    try {
+      const deletedMember = await this.service(req).delete(id)
+      if (!deletedMember) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+      res.status(200).json(instanceToPlain(deletedMember))
+    } catch (err) {
+      if (err instanceof PresidentDeletionError)
+        throw new ApiError(403, ApiErrorCode.PRESIDENT_DELETION)
+      if (err instanceof NoOtherPresidentError)
+        throw new ApiError(422, ApiErrorCode.NO_OTHER_PRESIDENTS)
       throw err
     }
   }

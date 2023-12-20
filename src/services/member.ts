@@ -190,13 +190,40 @@ export class MemberService implements Service {
           projection: 'isRegistered',
         })
 
-        if (target && target.isRegistered)
-          throw new RegisteredMemberAlterError()
+        if (target && target.isRegistered) throw new RegisteredMemberAlterError()
       }
 
     const updatedMember = await this.repository.update(id, newContent)
 
     return plainToInstance(MemberDto, updatedMember, { excludeExtraneousValues: true })
+  }
+
+  /**
+   * @throws NoOtherPresidentError
+   * @throws PresidentDeletionError
+   */
+  async delete(id: string): Promise<MemberDto | null> {
+    // we assume that the current member is a president
+
+    if (this.clientInfo._id === id) {
+      // the president wants to delete himself
+
+      const areThereOtherPresidents =
+        (await this.repository.countPresidents(this.clientInfo.association)) > 1
+
+      if (!areThereOtherPresidents) throw new NoOtherPresidentError()
+    } else {
+      const isPresident = await this.repository.isPresident(
+        id,
+        this.clientInfo.association,
+      )
+
+      if (isPresident) throw new PresidentDeletionError()
+    }
+
+    const deleted = await this.repository.delete(id, this.clientInfo.association)
+
+    return plainToInstance(MemberDto, deleted, { excludeExtraneousValues: true })
   }
 
   private usernameExists(username: string): Promise<boolean> {
@@ -298,3 +325,13 @@ export class NotPresidentError extends Error {}
  * Thrown when a (president) client wants to alter another member who is registered.
  */
 export class RegisteredMemberAlterError extends Error {}
+
+/**
+ * Thrown when an president tries to delete another president
+ */
+export class PresidentDeletionError extends Error {}
+
+/**
+ * Thrown when a president tries to remove himself, but no other presidents are present in the group
+ */
+export class NoOtherPresidentError extends Error {}

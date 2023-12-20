@@ -495,5 +495,65 @@ export class MemberRoutes extends RoutesProvider {
       validate(MemberUpdateDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.updateMember(req, res)),
     )
+
+    /**
+     * @openapi
+     * /api/members/{id}:
+     *  delete:
+     *    tags:
+     *     - Members
+     *    description: |
+     *      Can be used to delete members from the given association.
+     *
+     *      - Only **presidents are permitted** to use this endpoint
+     *      - Only **regular members** can be deleted
+     *      - If a president **wants to remove himself** (by passing it's own id), that's only possible **if there are other presidents** present in the association.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *      Also, because it is a sensitive operation, the **current password** of the
+     *      member **must be passed through the `x-current-pass` header**.
+     *    parameters:
+     *      - in: header
+     *        name: x-current-pass
+     *        description: The current password of the member.
+     *        schema:
+     *          type: string
+     *          required: true
+     *      - in: path
+     *        name: id
+     *        description: The id of the member that the president wants to delete.
+     *        schema:
+     *          type: string
+     *          required: true
+     *    responses:
+     *      200:
+     *        description: Deletion proceeded. The details of the deleted member are returned.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidToken'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      403:
+     *        $ref: '#/components/responses/PresidentDeletion'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      422:
+     *        $ref: '#/components/responses/NoOtherPresidents'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.delete(
+      '/members/:id',
+      auth,
+      president,
+      password,
+      validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
+      asyncErrorHandler((req, res) => controller.deleteMember(req, res)),
+    )
   }
 }

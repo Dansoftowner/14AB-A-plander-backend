@@ -90,6 +90,23 @@ export class MemberRepository implements Repository {
     return (await MemberModel.exists({ _id: id })) != null
   }
 
+  countPresidents(associationId: string): Promise<number> {
+    return MemberModel.countDocuments({
+      association: associationId,
+      roles: 'president',
+    })
+  }
+
+  async isPresident(id: string, associationId: string): Promise<boolean> {
+    return (
+      (await MemberModel.exists({
+        _id: id,
+        association: associationId,
+        roles: 'president',
+      })) != null
+    )
+  }
+
   async invite(member: object, registrationToken: string): Promise<Member | null> {
     const registeredMember = await MemberModel.exists({
       association: member['association'],
@@ -202,6 +219,10 @@ export class MemberRepository implements Repository {
       },
       { new: true },
     )
+  }
+
+  delete(id: string, associationId: string): Promise<Member | null> {
+    return MemberModel.findOneAndDelete({ _id: id, association: associationId })
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
