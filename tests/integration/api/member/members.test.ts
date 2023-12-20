@@ -1386,6 +1386,67 @@ describe('/api/members', () => {
     })
   })
 
+  describe('PATCH /me', () => {
+    let payload: {
+      name: string | undefined
+      address: string | undefined
+      idNumber: string | undefined
+      phoneNumber: string | undefined
+      guardNumber: string | undefined
+    }
+
+    const sendRequest = async () =>
+      request(app)
+        .patch('/api/members/me')
+        .set(config.get('jwt.headerName'), await generateToken())
+        .send(payload)
+
+    beforeEach(async () => {
+      payload = {
+        name: 'New Name',
+        address: 'NewAddress123',
+        idNumber: '514371NW',
+        phoneNumber: '+32 40 123 1212',
+        guardNumber: '11/1111/111111',
+      }
+    })
+
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it.each([
+      ['name', '123'],
+      ['address', 'abc'],
+      ['guardNumber', '00'],
+    ])('should return 400 response if payload is invalid', async (property, value) => {
+      payload[property] = value
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should update member in database', async () => {
+      await sendRequest()
+
+      const memberInDb = await MemberModel.findById(client._id)
+
+      expect(_.pick(memberInDb, _.keys(payload))).toMatchObject(payload)
+    })
+
+    it('should return update member in response body', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(_.pick(res.body, _.keys(payload))).toMatchObject(payload)
+    })
+  })
+
   describe('DELETE /:id', () => {
     let id: string
     let currentPassword: string

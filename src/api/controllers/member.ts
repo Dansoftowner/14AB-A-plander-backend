@@ -151,6 +151,13 @@ export class MemberController implements Controller {
     }
   }
 
+  async updateMe(req: Request, res: Response) {
+    const clientInfo: ClientInfo = req.scope!.resolve('clientInfo')
+    req.params.id = clientInfo._id
+
+    await this.updateMember(req, res)
+  }
+
   async deleteMember(req: Request, res: Response) {
     const id = req.params.id
 

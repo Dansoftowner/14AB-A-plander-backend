@@ -489,6 +489,13 @@ export class MemberRoutes extends RoutesProvider {
     )
 
     this.router.patch(
+      '/members/me',
+      auth,
+      validate(MemberUpdateDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateMe(req, res)),
+    )
+
+    this.router.patch(
       '/members/:id',
       auth,
       validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
