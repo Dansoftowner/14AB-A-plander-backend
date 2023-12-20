@@ -1,13 +1,14 @@
 import { Request, Response } from 'express'
 import { Controller } from '../../base/controller'
 import { resolveOptions } from '../common-query-params'
+import { MemberService } from '../../services/member'
 import {
-  MemberService,
-  NotPresidentError,
-  RegisteredMemberAlterError,
   NoOtherPresidentError,
-  PresidentDeletionError,
-} from '../../services/member'
+  UsernameReservedError,
+} from '../../exception/member-errors'
+import { PresidentDeletionError } from '../../exception/member-errors'
+import { RegisteredMemberAlterError } from '../../exception/member-errors'
+import { NotPresidentError } from '../../exception/member-errors'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { ApiError } from '../error/api-error'
 import { ApiErrorCode } from '../error/api-error-codes'
@@ -19,6 +20,7 @@ import { asValue } from 'awilix'
 import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-password'
 import { NewCredentialsDto } from '../../dto/new-credentials'
 import { MemberUpdateDto } from '../../dto/member-update'
+import { ValueReservedError } from '../../exception/value-reserved-error'
 
 export class MemberController implements Controller {
   async getMembers(req: Request, res: Response) {
@@ -76,17 +78,21 @@ export class MemberController implements Controller {
     const { id, registrationToken } = req.params
     const payload = plainToInstance(MemberRegistrationDto, req.body)
 
-    const registeredMember = await this.service(req).register(
-      id,
-      registrationToken,
-      payload,
-    )
+    try {
+      const registeredMember = await this.service(req).register(
+        id,
+        registrationToken,
+        payload,
+      )
 
-    if (registeredMember === undefined)
-      throw new ApiError(422, ApiErrorCode.USERNAME_ID_NUMBER_RESERVED)
-    if (registeredMember === null) throw new ApiError(404, ApiErrorCode.INVALID_URL)
+      if (!registeredMember) throw new ApiError(404, ApiErrorCode.INVALID_URL)
 
-    res.status(200).send(instanceToPlain(registeredMember))
+      res.status(200).send(instanceToPlain(registeredMember))
+    } catch (err) {
+      if (err instanceof ValueReservedError)
+        throw new ApiError(422, ApiErrorCode.USERNAME_ID_NUMBER_RESERVED)
+      throw err
+    }
   }
 
   async labelForgottenPassword(req: Request, res: Response) {
@@ -116,12 +122,15 @@ export class MemberController implements Controller {
   async updateCredentials(req: Request, res: Response) {
     const payload = plainToInstance(NewCredentialsDto, req.body)
 
-    const result = await this.service(req).updateCredentials(payload)
-
-    if (result === null) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
-    if (result === undefined) throw new ApiError(422, ApiErrorCode.USERNAME_RESERVED)
-
-    res.status(204).send()
+    try {
+      const result = await this.service(req).updateCredentials(payload)
+      if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+      res.status(204).send()
+    } catch (err) {
+      if (err instanceof UsernameReservedError)
+        throw new ApiError(422, ApiErrorCode.USERNAME_RESERVED)
+      throw err
+    }
   }
 
   async updateMember(req: Request, res: Response) {
