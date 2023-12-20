@@ -16,6 +16,7 @@ import { MemberRegistrationDto } from '../dto/member-registration'
 import { ForgottenPasswordDto, NewPasswordDto } from '../dto/forgotten-password'
 import { NewCredentialsDto } from '../dto/new-credentials'
 import { MemberWithAssociationDto } from '../dto/member-with-association'
+import { MemberUpdateDto } from '../dto/member-update'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -171,7 +172,33 @@ export class MemberService implements Service {
 
     return plainToInstance(MemberDto, updated, { excludeExtraneousValues: true })
   }
-  
+
+  /**
+   * @throws NotPresidentError
+   * @throws RegisteredMemberAlterError
+   */
+  async update(id: string, newContent: MemberUpdateDto): Promise<MemberDto | null> {
+    // wants to update himself --> always permitted
+    // wants to update others --> only permitted if he is a president and the target is not a registered member
+
+    if (this.clientInfo._id !== id)
+      if (!this.clientInfo.hasRole('president')) {
+        throw new NotPresidentError()
+      } else {
+        const target = await this.repository.findById(id, {
+          associationId: this.clientInfo.association,
+          projection: 'isRegistered',
+        })
+
+        if (target && target.isRegistered)
+          throw new RegisteredMemberAlterError()
+      }
+
+    const updatedMember = await this.repository.update(id, newContent)
+
+    return plainToInstance(MemberDto, updatedMember, { excludeExtraneousValues: true })
+  }
+
   private usernameExists(username: string): Promise<boolean> {
     return this.repository.existsWithUsername(username, this.clientInfo.association)
   }
@@ -261,3 +288,13 @@ export class MemberService implements Service {
     return visibleFields
   }
 }
+
+/**
+ * Thrown when a given operation is only allowed for presidents
+ */
+export class NotPresidentError extends Error {}
+
+/**
+ * Thrown when a (president) client wants to alter another member who is registered.
+ */
+export class RegisteredMemberAlterError extends Error {}

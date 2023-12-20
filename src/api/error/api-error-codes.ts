@@ -206,4 +206,17 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   EMAIL_NOT_FOUND = 'email-not-found',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    RegisteredMemberAlter:
+   *     description: "The given member cannot be altered since it's registered (errorCode: 'registered-member-alter')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  REGISTERED_MEMBER_ALTER = 'registered-member-alter',
 }
