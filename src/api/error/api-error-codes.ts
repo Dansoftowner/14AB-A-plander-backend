@@ -206,4 +206,30 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   EMAIL_NOT_FOUND = 'email-not-found',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    PresidentDeletion:
+   *     description: "The given member is a president, therefore it cannot be deleted  (errorCode: 'president-deletion')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  PRESIDENT_DELETION = 'president-deletion',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    NoOtherPresidents:
+   *     description: "The president cannot delete himself since there are no other presidents in the group (errorCode: 'no-other-presidents')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  NO_OTHER_PRESIDENTS = 'no-other-presidents',
 }
