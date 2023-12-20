@@ -227,9 +227,16 @@ export class MemberService implements Service {
         if (target && target.isRegistered) throw new RegisteredMemberAlterError()
       }
 
-    const updatedMember = await this.repository.update(id, newContent)
+    try {
+      const updatedMember = await this.repository.update(id, this.clientInfo.association, newContent)
 
-    return plainToInstance(MemberDto, updatedMember, { excludeExtraneousValues: true })
+      return plainToInstance(MemberDto, updatedMember, {
+        excludeExtraneousValues: true,
+      })
+    } catch (ex: any) {
+      if (ex.code === 11000) throw new ValueReservedError()
+      throw ex
+    }
   }
 
   /**

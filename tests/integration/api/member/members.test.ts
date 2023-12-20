@@ -1331,6 +1331,24 @@ describe('/api/members', () => {
       expect(res.status).toBe(400)
     })
 
+    it('should return 404 response if the client wants to update a member outside of the association', async () => {
+      id = members.find((it) => it.association != client.association)!._id
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 409 error if id number is reserved', async () => {
+      payload.idNumber = companionMembers()
+        .filter((it) => it.isRegistered)
+        .find((it) => it._id !== id)!.idNumber
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(409)
+    })
+
     it('should return 403 response if the client is not a president and wants to update another member', async () => {
       client = regularMember
 
@@ -1429,6 +1447,16 @@ describe('/api/members', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(400)
+    })
+
+    it('should return 409 error if id number is reserved', async () => {
+      payload.idNumber = companionMembers()
+        .filter((it) => it.isRegistered)
+        .find((it) => it !== client)!.idNumber
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(409)
     })
 
     it('should update member in database', async () => {

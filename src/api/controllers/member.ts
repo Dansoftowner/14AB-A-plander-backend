@@ -147,6 +147,8 @@ export class MemberController implements Controller {
         throw new ApiError(403, ApiErrorCode.NOT_PRESIDENT)
       if (err instanceof RegisteredMemberAlterError)
         throw new ApiError(403, ApiErrorCode.REGISTERED_MEMBER_ALTER)
+      if (err instanceof ValueReservedError)
+        throw new ApiError(409, ApiErrorCode.ID_NUMBER_RESERVED)
       throw err
     }
   }

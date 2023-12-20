@@ -232,9 +232,13 @@ export class MemberRepository implements Repository {
     )
   }
 
-  async update(id: string, newContent: MemberUpdateDto): Promise<Member | null> {
-    return await MemberModel.findByIdAndUpdate(
-      id,
+  async update(
+    id: string,
+    associationId: string,
+    newContent: MemberUpdateDto,
+  ): Promise<Member | null> {
+    return await MemberModel.findOneAndUpdate(
+      { _id: id, association: associationId },
       {
         $set: newContent,
       },
