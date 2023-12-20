@@ -488,6 +488,46 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.updateCredentials(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/members/me:
+     *  patch:
+     *    tags:
+     *     - Members
+     *    description: |
+     *      A member can update his information via this endpoint.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberUpdate'
+     *    responses:
+     *      200:
+     *        description: Update proceeded. Returns the updated member.
+     *        content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      404:
+     *        description: This only occurs if the member is deleted from the database, but the token is still valid.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Error'
+     *      409:
+     *        $ref: '#/components/responses/IdNumberReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.patch(
       '/members/me',
       auth,
@@ -495,6 +535,51 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.updateMe(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/members/{id}:
+     *  patch:
+     *    tags:
+     *     - Members
+     *    description: |
+     *      A president can update the unregistered members' data in the association through this endpoint.
+     *
+     *      - **If the id is the same as the client's id that's like calling the [`PATCH /api/members/me`](#/Members/patch_api_members_me) endpoint.**
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        description: The id of the member that the president wants to update.
+     *        schema:
+     *          type: string
+     *          required: true
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberUpdate'
+     *    responses:
+     *      200:
+     *        description: Update proceeded. Returns the updated member.
+     *        content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      409:
+     *        $ref: '#/components/responses/IdNumberReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.patch(
       '/members/:id',
       auth,
