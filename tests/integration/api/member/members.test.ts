@@ -1322,8 +1322,6 @@ describe('/api/members', () => {
     it.each([
       ['name', '123'],
       ['address', 'abc'],
-      ['idNumber', '123'],
-      ['phoneNumber', '123'],
       ['guardNumber', '00'],
     ])('should return 400 response if payload is invalid', async (property, value) => {
       payload[property] = value

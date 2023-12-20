@@ -117,6 +117,10 @@ export class MemberController implements Controller {
     res.status(204).send()
   }
 
+  async updateMember(req: Request, res: Response) {
+    res.send()
+  }
+
   private service(req: Request): MemberService {
     if (!req.scope)
       return di

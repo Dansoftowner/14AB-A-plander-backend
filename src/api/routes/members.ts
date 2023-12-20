@@ -2,6 +2,7 @@ import { RoutesProvider } from '../../base/routes-provider'
 import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-password'
 import { MemberInviteDto } from '../../dto/member-invite'
 import { MemberRegistrationDto } from '../../dto/member-registration'
+import { MemberUpdateDto } from '../../dto/member-update'
 import { NewCredentialsDto } from '../../dto/new-credentials'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
@@ -485,6 +486,14 @@ export class MemberRoutes extends RoutesProvider {
       password,
       validate(NewCredentialsDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.updateCredentials(req, res)),
+    )
+
+    this.router.patch(
+      '/members/:id',
+      auth,
+      validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
+      validate(MemberUpdateDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateMember(req, res)),
     )
   }
 }
