@@ -1266,4 +1266,125 @@ describe('/api/members', () => {
       })
     })
   })
+
+  describe('PATCH /:id', () => {
+    let id: string
+    let payload: {
+      name: string | undefined
+      address: string | undefined
+      idNumber: string | undefined
+      phoneNumber: string | undefined
+      guardNumber: string | undefined
+    }
+
+    const sendRequest = async () =>
+      request(app)
+        .patch(`/api/members/${id}`)
+        .set(config.get('jwt.headerName'), await generateToken())
+        .send(payload)
+
+    beforeEach(async () => {
+      id = companionMembers().find((it) => !it.isRegistered)!._id
+
+      payload = {
+        name: 'New Name',
+        address: 'NewAddress123',
+        idNumber: '514371NW',
+        phoneNumber: '+32 40 123 1212',
+        guardNumber: '11/1111/111111',
+      }
+    })
+
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 404 response if invalid object-id is passed', async () => {
+      id = '123'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if no member with the given id exist', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it.each([
+      ['name', '123'],
+      ['address', 'abc'],
+      ['idNumber', '123'],
+      ['phoneNumber', '123'],
+      ['guardNumber', '00'],
+    ])('should return 400 response if payload is invalid', async (property, value) => {
+      payload[property] = value
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 403 response if the client is not a president and wants to update another member', async () => {
+      client = regularMember
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should return 403 response if the client wants to update a registered member', async () => {
+      id = companionMembers()
+        .filter((it) => it.isRegistered)
+        .find((it) => it !== client)!._id
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should update member in database', async () => {
+      await sendRequest()
+
+      const memberInDb = await MemberModel.findById(id)
+
+      expect(_.pick(memberInDb, _.keys(payload))).toMatchObject(payload)
+    })
+
+    it('should update self in database', async () => {
+      id = client._id
+
+      await sendRequest()
+
+      const memberInDb = await MemberModel.findById(id)
+
+      expect(_.pick(memberInDb, _.keys(payload))).toMatchObject(payload)
+    })
+
+    it('should update self in database even if not president', async () => {
+      client = regularMember
+      id = client._id
+
+      await sendRequest()
+
+      const memberInDb = await MemberModel.findById(id)
+
+      expect(_.pick(memberInDb, _.keys(payload))).toMatchObject(payload)
+    })
+
+    it('should return update member in response body', async () => {
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(_.pick(res.body, _.keys(payload))).toMatchObject(payload)
+    })
+  })
 })
