@@ -1149,7 +1149,7 @@ describe('/api/members', () => {
     })
   })
 
-  describe('/credentials/mine', () => {
+  describe('/me/credentials', () => {
     describe('PATCH /', () => {
       let username: string | undefined
       let password: string | undefined
@@ -1157,7 +1157,7 @@ describe('/api/members', () => {
 
       const sendRequest = async () =>
         request(app)
-          .patch('/api/members/credentials/mine')
+          .patch('/api/members/me/credentials')
           .set(config.get('jwt.headerName'), await generateToken())
           .set(config.get('headers.currentPass'), oldPassword!)
           .send({ username, password })

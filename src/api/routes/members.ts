@@ -96,6 +96,101 @@ export class MemberRoutes extends RoutesProvider {
 
     /**
      * @openapi
+     * /api/members/me:
+     *  patch:
+     *    tags:
+     *     - Members
+     *    description: |
+     *      A member can update his information via this endpoint.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberUpdate'
+     *    responses:
+     *      200:
+     *        description: Update proceeded. Returns the updated member.
+     *        content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      404:
+     *        description: This only occurs if the member is deleted from the database, but the token is still valid.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Error'
+     *      409:
+     *        $ref: '#/components/responses/IdNumberReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.patch(
+      '/members/me',
+      auth,
+      validate(MemberUpdateDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateMe(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/members/me/credentials:
+     *  patch:
+     *    tags:
+     *     - Members
+     *    description: |
+     *      A member can update his credentials (username and/or password) via this endpoint.
+     *      Either username or password has to be provided.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *      Also, because it is a sensitive operation, the **current password** of the
+     *      member **must be passed through the `x-current-pass` header**.
+     *    parameters:
+     *      - in: header
+     *        name: x-current-pass
+     *        description: The current password of the member.
+     *        schema:
+     *          type: string
+     *          required: true
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/NewCredentials'
+     *    responses:
+     *      204:
+     *        description: Update proceeded. **No content returned.**
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      422:
+     *        $ref: '#/components/responses/UsernameReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.patch(
+      '/members/me/credentials',
+      auth,
+      password,
+      validate(NewCredentialsDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateCredentials(req, res)),
+    )
+
+    /**
+     * @openapi
      * /api/members/{id}:
      *  get:
      *    tags:
@@ -149,6 +244,119 @@ export class MemberRoutes extends RoutesProvider {
 
     /**
      * @openapi
+     * /api/members/{id}:
+     *  patch:
+     *    tags:
+     *     - Members
+     *    description: |
+     *      A president can update the unregistered members' data in the association through this endpoint.
+     *
+     *      - **If the id is the same as the client's id that's like calling the [`PATCH /api/members/me`](#/Members/patch_api_members_me) endpoint.**
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        description: The id of the member that the president wants to update.
+     *        schema:
+     *          type: string
+     *          required: true
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/MemberUpdate'
+     *    responses:
+     *      200:
+     *        description: Update proceeded. Returns the updated member.
+     *        content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      409:
+     *        $ref: '#/components/responses/IdNumberReserved'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.patch(
+      '/members/:id',
+      auth,
+      validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
+      validate(MemberUpdateDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateMember(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/members/{id}:
+     *  delete:
+     *    tags:
+     *     - Members
+     *    description: |
+     *      Can be used to delete members from the given association.
+     *
+     *      - Only **presidents are permitted** to use this endpoint
+     *      - Only **regular members** can be deleted
+     *      - If a president **wants to remove himself** (by passing it's own id), that's only possible **if there are other presidents** present in the association.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *      Also, because it is a sensitive operation, the **current password** of the
+     *      member **must be passed through the `x-current-pass` header**.
+     *    parameters:
+     *      - in: header
+     *        name: x-current-pass
+     *        description: The current password of the member.
+     *        schema:
+     *          type: string
+     *          required: true
+     *      - in: path
+     *        name: id
+     *        description: The id of the member that the president wants to delete.
+     *        schema:
+     *          type: string
+     *          required: true
+     *    responses:
+     *      200:
+     *        description: Deletion proceeded. The details of the deleted member are returned.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Member'
+     *      400:
+     *        $ref: '#/components/responses/InvalidToken'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      403:
+     *        $ref: '#/components/responses/PresidentDeletion'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      422:
+     *        $ref: '#/components/responses/NoOtherPresidents'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.delete(
+      '/members/:id',
+      auth,
+      president,
+      password,
+      validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
+      asyncErrorHandler((req, res) => controller.deleteMember(req, res)),
+    )
+
+    /**
+     * @openapi
      * /api/members/username/{username}:
      *  get:
      *    tags:
@@ -190,7 +398,7 @@ export class MemberRoutes extends RoutesProvider {
       '/members/username/:username',
       auth,
       asyncErrorHandler((req, res) => controller.getMemberByUsername(req, res)),
-    )
+    )    
 
     /**
      * @openapi
@@ -438,214 +646,6 @@ export class MemberRoutes extends RoutesProvider {
       validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
       validate(NewPasswordDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.restorePassword(req, res)),
-    )
-
-    /**
-     * @openapi
-     * /api/members/credentials/mine:
-     *  patch:
-     *    tags:
-     *     - Members
-     *    description: |
-     *      A member can update his credentials (username and/or password) via this endpoint.
-     *      Either username or password has to be provided.
-     *
-     *      **Authentication is required** before using this endpoint.
-     *      Also, because it is a sensitive operation, the **current password** of the
-     *      member **must be passed through the `x-current-pass` header**.
-     *    parameters:
-     *      - in: header
-     *        name: x-current-pass
-     *        description: The current password of the member.
-     *        schema:
-     *          type: string
-     *          required: true
-     *    requestBody:
-     *      required: true
-     *      content:
-     *       application/json:
-     *        schema:
-     *         $ref: '#/components/schemas/NewCredentials'
-     *    responses:
-     *      204:
-     *        description: Update proceeded. **No content returned.**
-     *      400:
-     *        $ref: '#/components/responses/InvalidPayload'
-     *      401:
-     *        $ref: '#/components/responses/Unauthorized'
-     *      422:
-     *        $ref: '#/components/responses/UsernameReserved'
-     *      429:
-     *        $ref: '#/components/responses/SurpassedRateLimit'
-     *      5XX:
-     *        $ref: '#/components/responses/InternalServerError'
-     */
-    this.router.patch(
-      '/members/credentials/mine',
-      auth,
-      password,
-      validate(NewCredentialsDto.validationSchema()),
-      asyncErrorHandler((req, res) => controller.updateCredentials(req, res)),
-    )
-
-    /**
-     * @openapi
-     * /api/members/me:
-     *  patch:
-     *    tags:
-     *     - Members
-     *    description: |
-     *      A member can update his information via this endpoint.
-     *
-     *      **Authentication is required** before using this endpoint.
-     *    requestBody:
-     *      required: true
-     *      content:
-     *       application/json:
-     *        schema:
-     *         $ref: '#/components/schemas/MemberUpdate'
-     *    responses:
-     *      200:
-     *        description: Update proceeded. Returns the updated member.
-     *        content:
-     *         application/json:
-     *           schema:
-     *             $ref: '#/components/schemas/Member'
-     *      400:
-     *        $ref: '#/components/responses/InvalidPayload'
-     *      401:
-     *        $ref: '#/components/responses/Unauthorized'
-     *      404:
-     *        description: This only occurs if the member is deleted from the database, but the token is still valid.
-     *        content:
-     *          application/json:
-     *            schema:
-     *              $ref: '#/components/schemas/Error'
-     *      409:
-     *        $ref: '#/components/responses/IdNumberReserved'
-     *      429:
-     *        $ref: '#/components/responses/SurpassedRateLimit'
-     *      5XX:
-     *        $ref: '#/components/responses/InternalServerError'
-     */
-    this.router.patch(
-      '/members/me',
-      auth,
-      validate(MemberUpdateDto.validationSchema()),
-      asyncErrorHandler((req, res) => controller.updateMe(req, res)),
-    )
-
-    /**
-     * @openapi
-     * /api/members/{id}:
-     *  patch:
-     *    tags:
-     *     - Members
-     *    description: |
-     *      A president can update the unregistered members' data in the association through this endpoint.
-     *
-     *      - **If the id is the same as the client's id that's like calling the [`PATCH /api/members/me`](#/Members/patch_api_members_me) endpoint.**
-     *
-     *      **Authentication is required** before using this endpoint.
-     *    parameters:
-     *      - in: path
-     *        name: id
-     *        description: The id of the member that the president wants to update.
-     *        schema:
-     *          type: string
-     *          required: true
-     *    requestBody:
-     *      required: true
-     *      content:
-     *       application/json:
-     *        schema:
-     *         $ref: '#/components/schemas/MemberUpdate'
-     *    responses:
-     *      200:
-     *        description: Update proceeded. Returns the updated member.
-     *        content:
-     *         application/json:
-     *           schema:
-     *             $ref: '#/components/schemas/Member'
-     *      400:
-     *        $ref: '#/components/responses/InvalidPayload'
-     *      401:
-     *        $ref: '#/components/responses/Unauthorized'
-     *      404:
-     *        $ref: '#/components/responses/NotFound'
-     *      409:
-     *        $ref: '#/components/responses/IdNumberReserved'
-     *      429:
-     *        $ref: '#/components/responses/SurpassedRateLimit'
-     *      5XX:
-     *        $ref: '#/components/responses/InternalServerError'
-     */
-    this.router.patch(
-      '/members/:id',
-      auth,
-      validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
-      validate(MemberUpdateDto.validationSchema()),
-      asyncErrorHandler((req, res) => controller.updateMember(req, res)),
-    )
-
-    /**
-     * @openapi
-     * /api/members/{id}:
-     *  delete:
-     *    tags:
-     *     - Members
-     *    description: |
-     *      Can be used to delete members from the given association.
-     *
-     *      - Only **presidents are permitted** to use this endpoint
-     *      - Only **regular members** can be deleted
-     *      - If a president **wants to remove himself** (by passing it's own id), that's only possible **if there are other presidents** present in the association.
-     *
-     *      **Authentication is required** before using this endpoint.
-     *      Also, because it is a sensitive operation, the **current password** of the
-     *      member **must be passed through the `x-current-pass` header**.
-     *    parameters:
-     *      - in: header
-     *        name: x-current-pass
-     *        description: The current password of the member.
-     *        schema:
-     *          type: string
-     *          required: true
-     *      - in: path
-     *        name: id
-     *        description: The id of the member that the president wants to delete.
-     *        schema:
-     *          type: string
-     *          required: true
-     *    responses:
-     *      200:
-     *        description: Deletion proceeded. The details of the deleted member are returned.
-     *        content:
-     *          application/json:
-     *            schema:
-     *              $ref: '#/components/schemas/Member'
-     *      400:
-     *        $ref: '#/components/responses/InvalidToken'
-     *      401:
-     *        $ref: '#/components/responses/Unauthorized'
-     *      403:
-     *        $ref: '#/components/responses/PresidentDeletion'
-     *      404:
-     *        $ref: '#/components/responses/NotFound'
-     *      422:
-     *        $ref: '#/components/responses/NoOtherPresidents'
-     *      429:
-     *        $ref: '#/components/responses/SurpassedRateLimit'
-     *      5XX:
-     *        $ref: '#/components/responses/InternalServerError'
-     */
-    this.router.delete(
-      '/members/:id',
-      auth,
-      president,
-      password,
-      validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
-      asyncErrorHandler((req, res) => controller.deleteMember(req, res)),
     )
   }
 }
