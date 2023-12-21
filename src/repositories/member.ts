@@ -250,6 +250,17 @@ export class MemberRepository implements Repository {
     return MemberModel.findOneAndDelete({ _id: id, association: associationId })
   }
 
+  /**
+   * @returns null if member not found
+   * @returns undefined if member found but it has no preferences 
+   */
+  async getPreferences(id: string): Promise<object | null | undefined> {
+    const member = await MemberModel.findById(id).select('preferences')
+    if (!member) return null
+
+    return member.preferences || undefined
+  }
+
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
     const filterObj: FilterQuery<Member> = {
       association: options.associationId,

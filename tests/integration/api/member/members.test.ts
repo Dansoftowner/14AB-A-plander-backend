@@ -1604,4 +1604,50 @@ describe('/api/members', () => {
       )
     })
   })
+
+  describe('/me/preferences', () => {
+    describe('GET /', () => {
+      const sendRequest = async () =>
+        request(app)
+          .get('/api/members/me/preferences')
+          .set(config.get('jwt.headerName'), await generateToken())
+          .send()
+
+      it('should return 401 if client is not logged in', async () => {
+        client = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return 404 response if client is not in the database', async () => {
+        await MemberModel.findByIdAndDelete(client._id)
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return preferences of the client', async () => {
+        const res = await sendRequest()
+
+        expect(res.status).toBe(200)
+        expect(res.body).toMatchObject(client!.preferences)
+      })
+
+      it('should return empty object if client has no preferences', async () => {
+        client = await new MemberModel({
+          isRegistered: true,
+          association: client.association,
+          roles: ['member'],
+        }).save({ validateBeforeSave: false })
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(200)
+        expect(res.body).toMatchObject({})
+      })
+    })
+  })
 })

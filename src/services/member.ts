@@ -228,7 +228,11 @@ export class MemberService implements Service {
       }
 
     try {
-      const updatedMember = await this.repository.update(id, this.clientInfo.association, newContent)
+      const updatedMember = await this.repository.update(
+        id,
+        this.clientInfo.association,
+        newContent,
+      )
 
       return plainToInstance(MemberDto, updatedMember, {
         excludeExtraneousValues: true,
@@ -265,6 +269,12 @@ export class MemberService implements Service {
     const deleted = await this.repository.delete(id, this.clientInfo.association)
 
     return plainToInstance(MemberDto, deleted, { excludeExtraneousValues: true })
+  }
+
+  async getPreferences() {
+    const prefs = await this.repository.getPreferences(this.clientInfo._id)
+    if (prefs !== null) return prefs ?? {}
+    return null
   }
 
   private async hashToken(token: string): Promise<string> {

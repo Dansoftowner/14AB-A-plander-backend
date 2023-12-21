@@ -133,6 +133,14 @@ export class MemberController implements Controller {
     }
   }
 
+  async getMyPreferences(req: Request, res: Response) {
+    const prefs = await this.service(req).getPreferences()
+
+    if (!prefs) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+    res.status(200).send(prefs)
+  }
+
   async updateMember(req: Request, res: Response) {
     const id = req.params.id
     const payload = plainToInstance(MemberUpdateDto, req.body)

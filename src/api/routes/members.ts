@@ -191,6 +191,45 @@ export class MemberRoutes extends RoutesProvider {
 
     /**
      * @openapi
+     * /api/members/me/preferences:
+     *  get:
+     *    tags:
+     *      - Members
+     *    description: |
+     *      Returns the logged in member's preferences.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    responses:
+     *      200:
+     *        description: The preferences are returned.
+     *        content:
+     *          application/json:
+     *            schema:
+     *               description: The preferences of the logged in member (it has no predefined schema).
+     *               type: object
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      400:
+     *        $ref: '#/components/responses/InvalidToken'
+     *      404:
+     *        description: This only occurs if the member is deleted from the database, but the token is still valid.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Error'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.get(
+      '/members/me/preferences',
+      auth,
+      asyncErrorHandler((req, res) => controller.getMyPreferences(req, res)),
+    )
+
+    /**
+     * @openapi
      * /api/members/{id}:
      *  get:
      *    tags:
@@ -398,7 +437,7 @@ export class MemberRoutes extends RoutesProvider {
       '/members/username/:username',
       auth,
       asyncErrorHandler((req, res) => controller.getMemberByUsername(req, res)),
-    )    
+    )
 
     /**
      * @openapi
