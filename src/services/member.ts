@@ -16,6 +16,12 @@ import { MemberRegistrationDto } from '../dto/member-registration'
 import { ForgottenPasswordDto, NewPasswordDto } from '../dto/forgotten-password'
 import { NewCredentialsDto } from '../dto/new-credentials'
 import { MemberWithAssociationDto } from '../dto/member-with-association'
+import { MemberUpdateDto } from '../dto/member-update'
+import { NotPresidentError, UsernameReservedError } from '../exception/member-errors'
+import { RegisteredMemberAlterError } from '../exception/member-errors'
+import { PresidentDeletionError } from '../exception/member-errors'
+import { NoOtherPresidentError } from '../exception/member-errors'
+import { ValueReservedError } from '../exception/value-reserved-error'
 
 export class MemberService implements Service {
   private clientInfo: ClientInfo
@@ -88,7 +94,13 @@ export class MemberService implements Service {
 
   async invite(invitation: MemberInviteDto): Promise<MemberDto | null> {
     const registrationToken = crypto.randomBytes(20).toString('hex')
-    const invitedMember = await this.inviteIntoDatabase(registrationToken, invitation)
+    const hashedRegistrationToken = await this.hashToken(registrationToken)
+
+    const invitedMember = await this.repository.invite(
+      this.clientInfo.association,
+      invitation,
+      hashedRegistrationToken,
+    )
 
     if (invitedMember)
       this.mailService
@@ -96,34 +108,51 @@ export class MemberService implements Service {
         .then((info) =>
           logger.debug(`Registration mail is sent to ${info.envelope.to}.`),
         )
-        .catch((err) => logger.debug(`Failed to send registration mail.`, err))
+        .catch((err) => logger.error(`Failed to send registration mail.`, err))
 
     return plainToInstance(MemberDto, invitedMember, {
       excludeExtraneousValues: true,
     })
   }
 
+  /**
+   * @throws ValueReservedError
+   */
   async register(
     id: string,
     token: string,
     registration: MemberRegistrationDto,
-  ): Promise<MemberDto | null | undefined> {
-    const updatedMember = await this.registerIntoDatabase(id, token, registration)
+  ): Promise<MemberDto | null> {
+    registration.password = await this.hashPassword(registration.password)
 
-    if (!updatedMember) return updatedMember
+    try {
+      const updatedMember = await this.repository.register(
+        id,
+        token,
+        registration,
+        bcrypt.compare,
+      )
 
-    return plainToInstance(MemberDto, updatedMember, { excludeExtraneousValues: true })
+      return plainToInstance(MemberDto, updatedMember, {
+        excludeExtraneousValues: true,
+      })
+    } catch (ex: any) {
+      // if unique values are duplicated, mongoose will throw an error that has a property 'code' with the value of '11000'
+      if (ex.code == 11000) throw new ValueReservedError()
+      throw ex
+    }
   }
 
   async labelForgottenPassword(restorationInfo: ForgottenPasswordDto) {
     const { associationId: association, email } = restorationInfo
 
     const restorationToken = crypto.randomBytes(20).toString('hex')
+    const restorationTokenHash = await this.hashToken(restorationToken)
 
     const member = await this.repository.labelForgottenPassword(
       association,
       email,
-      await this.hashToken(restorationToken),
+      restorationTokenHash,
     )
 
     if (member)
@@ -132,9 +161,7 @@ export class MemberService implements Service {
         .then((info) =>
           logger.debug(`Restoration mail is sent to ${info.envelope.to}.`),
         )
-        .catch((err) =>
-          logger.error(`Failed to send restoration mail to ${err.envelope.to}`),
-        )
+        .catch((err) => logger.error('Failed to send restoration mail', err))
 
     return member
   }
@@ -152,13 +179,21 @@ export class MemberService implements Service {
     )
   }
 
+  /**
+   * @throws UsernameReservedError
+   */
   async updateCredentials(
     newCredentials: NewCredentialsDto,
-  ): Promise<MemberDto | null | undefined> {
+  ): Promise<MemberDto | null> {
     if (newCredentials.username) {
       const { username } = newCredentials
-      const alreadyExists = await this.usernameExists(username)
-      if (alreadyExists) return undefined
+
+      const alreadyExists = await this.repository.existsWithUsername(
+        username,
+        this.clientInfo.association,
+      )
+
+      if (alreadyExists) throw new UsernameReservedError()
     }
 
     if (newCredentials.password)
@@ -170,6 +205,38 @@ export class MemberService implements Service {
     )
 
     return plainToInstance(MemberDto, updated, { excludeExtraneousValues: true })
+  }
+
+  /**
+   * @throws NotPresidentError
+   * @throws RegisteredMemberAlterError
+   */
+  async update(id: string, newContent: MemberUpdateDto): Promise<MemberDto | null> {
+    // wants to update himself --> always permitted
+    // wants to update others --> only permitted if he is a president and the target is not a registered member
+
+    if (this.clientInfo._id !== id)
+      if (!this.clientInfo.hasRole('president')) {
+        throw new NotPresidentError()
+      } else {
+        const target = await this.repository.findById(id, {
+          associationId: this.clientInfo.association,
+          projection: 'isRegistered',
+        })
+
+        if (target && target.isRegistered) throw new RegisteredMemberAlterError()
+      }
+
+    try {
+      const updatedMember = await this.repository.update(id, this.clientInfo.association, newContent)
+
+      return plainToInstance(MemberDto, updatedMember, {
+        excludeExtraneousValues: true,
+      })
+    } catch (ex: any) {
+      if (ex.code === 11000) throw new ValueReservedError()
+      throw ex
+    }
   }
 
   /**
@@ -198,49 +265,6 @@ export class MemberService implements Service {
     const deleted = await this.repository.delete(id, this.clientInfo.association)
 
     return plainToInstance(MemberDto, deleted, { excludeExtraneousValues: true })
-  }
-
-  private usernameExists(username: string): Promise<boolean> {
-    return this.repository.existsWithUsername(username, this.clientInfo.association)
-  }
-
-  private async inviteIntoDatabase(
-    registrationToken: string,
-    invitation: MemberInviteDto,
-  ) {
-    let member = {
-      ...invitation,
-      association: this.clientInfo.association,
-      isRegistered: false,
-    }
-
-    member = _.pickBy(member, (it) => it !== undefined)
-    registrationToken = await this.hashToken(registrationToken)
-
-    return this.repository.invite(member, registrationToken)
-  }
-
-  private async registerIntoDatabase(
-    id: string,
-    registrationToken: string,
-    registration: object,
-  ) {
-    let member = {
-      _id: id,
-      isRegistered: true,
-      ...registration,
-      password: await this.hashPassword(registration['password']),
-    }
-
-    member = _.pickBy(member, (it) => it !== undefined)
-
-    try {
-      return await this.repository.register(member, registrationToken, bcrypt.compare)
-    } catch (ex: any) {
-      // if unique values are duplicated, mongoose will throw an error that has a property 'code' with the value of '11000'
-      if (ex.code == 11000) return undefined
-      throw ex
-    }
   }
 
   private async hashToken(token: string): Promise<string> {
@@ -289,13 +313,3 @@ export class MemberService implements Service {
     return visibleFields
   }
 }
-
-/**
- * Thrown when an president tries to delete another president
- */
-export class PresidentDeletionError extends Error {}
-
-/**
- * Thrown when a president tries to remove himself, but no other presidents are present in the group
- */
-export class NoOtherPresidentError extends Error {}

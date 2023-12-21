@@ -4,9 +4,11 @@ import MemberModel, { Member } from '../models/member'
 import { sanitizeForRegex as s } from '../utils/sanitize'
 import RegistrationTokenModel from '../models/registration-token'
 import RestorationTokenModel from '../models/restoration-token'
-import crypto from 'crypto'
 import _ from 'lodash'
 import { NewCredentialsDto } from '../dto/new-credentials'
+import { MemberUpdateDto } from '../dto/member-update'
+import { MemberRegistrationDto } from '../dto/member-registration'
+import { MemberInviteDto } from '../dto/member-invite'
 
 export interface MemberQueryOptions {
   associationId: string
@@ -106,21 +108,31 @@ export class MemberRepository implements Repository {
     )
   }
 
-  async invite(member: object, registrationToken: string): Promise<Member | null> {
+  async invite(
+    associationId: string,
+    invitation: MemberInviteDto,
+    registrationToken: string,
+  ): Promise<Member | null> {
     const registeredMember = await MemberModel.exists({
-      association: member['association'],
-      email: member['email'],
+      association: associationId,
+      email: invitation.email,
       isRegistered: true,
     })
 
     if (registeredMember) return null
 
+    invitation = _.pickBy(invitation, (it) => it !== undefined)
+
     const inserted = await MemberModel.findOneAndReplace(
       {
-        association: member['association'],
-        email: member['email'],
+        association: associationId,
+        email: invitation.email,
       },
-      member,
+      {
+        isRegistered: false,
+        association: associationId,
+        ...invitation,
+      },
       { upsert: true, new: true },
     )
 
@@ -136,14 +148,13 @@ export class MemberRepository implements Repository {
   }
 
   async register(
-    member: object,
+    id: string,
     registrationToken: string,
+    registration: MemberRegistrationDto,
     compareTokens: (token: string, encrypted: string) => Promise<boolean>,
   ): Promise<Member | null> {
-    const memberId = member['_id']
-
     const tokenEntry = await RegistrationTokenModel.findOne({
-      memberId,
+      memberId: id,
     })
 
     if (!tokenEntry) return null
@@ -153,7 +164,18 @@ export class MemberRepository implements Repository {
 
     await tokenEntry.deleteOne()
 
-    return await MemberModel.findByIdAndUpdate(memberId, member, { new: true })
+    registration = _.pickBy(registration, (it) => it !== undefined)
+
+    return await MemberModel.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          isRegistered: true,
+          ...registration,
+        },
+      },
+      { new: true },
+    )
   }
 
   async labelForgottenPassword(
@@ -205,6 +227,20 @@ export class MemberRepository implements Repository {
       id,
       {
         $set: _.pick(newCredentials, ['username', 'password']),
+      },
+      { new: true },
+    )
+  }
+
+  async update(
+    id: string,
+    associationId: string,
+    newContent: MemberUpdateDto,
+  ): Promise<Member | null> {
+    return await MemberModel.findOneAndUpdate(
+      { _id: id, association: associationId },
+      {
+        $set: newContent,
       },
       { new: true },
     )

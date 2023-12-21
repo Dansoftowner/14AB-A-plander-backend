@@ -158,6 +158,19 @@ export enum ApiErrorCode {
   /**
    * @openapi
    * components:
+   *    responses:
+   *      IdNumberReserved:
+   *        description: "The given id number is already in use inside the association. (errorCode: 'id-number-reserved')."
+   *        content:
+   *          application/json:
+   *            schema:
+   *             $ref: '#/components/schemas/Error'
+   */
+  ID_NUMBER_RESERVED = 'id-number-reserved',
+
+  /**
+   * @openapi
+   * components:
    *   responses:
    *    InvalidURL:
    *     description: "The given id-token pair is invalid (errorCode: 'invalid-url')."
@@ -206,6 +219,19 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   EMAIL_NOT_FOUND = 'email-not-found',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    RegisteredMemberAlter:
+   *     description: "The given member cannot be altered since it's registered (errorCode: 'registered-member-alter')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  REGISTERED_MEMBER_ALTER = 'registered-member-alter',
 
   /**
    * @openapi
