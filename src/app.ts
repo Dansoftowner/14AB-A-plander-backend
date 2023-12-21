@@ -44,13 +44,7 @@ export class App {
 
   private initializeMiddlewares() {
     this.expressApp.use(express.static('public'))
-    this.expressApp.use(
-      cors({
-        origin: config.get('frontend.host'),
-        credentials: true,
-        exposedHeaders: [config.get('jwt.headerName')],
-      }),
-    )
+    this.expressApp.use(this.buildCorsMiddleware())
     this.expressApp.use(helmet())
     if (config.get('logging.isHttpEnabled')) this.expressApp.use(morgan('tiny'))
     this.expressApp.use('/api', i18n)
@@ -87,5 +81,14 @@ export class App {
 
   private initializeErrorMiddleware() {
     this.expressApp.use(errorMiddleware)
+  }
+
+  private buildCorsMiddleware() {
+    return cors({
+      origin:
+        process.env.NODE_ENV === 'development' ? '*' : config.get('frontend.host'),
+      credentials: true,
+      exposedHeaders: [config.get('jwt.headerName')],
+    })
   }
 }
