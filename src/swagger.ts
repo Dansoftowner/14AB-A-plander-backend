@@ -11,15 +11,19 @@ const options: swaggerJsdoc.Options = {
     tags: [
       {
         name: 'Authentication',
-        description: 'Endpoints related to the authentication.',
       },
       {
         name: 'Associations',
-        description: 'Endpoints related to the associations.',
+      },
+      {
+        name: 'Inviting & registering members',
+      },
+      {
+        name: 'Restore forgotten password',
       },
       {
         name: 'Members',
-        description: 'Endpoints related to members.',
+        description: 'Endpoints related to fetching & altering members.',
       },
     ],
     components: {

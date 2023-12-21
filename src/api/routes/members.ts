@@ -197,7 +197,7 @@ export class MemberRoutes extends RoutesProvider {
      * /api/members:
      *  post:
      *    tags:
-     *      - Members
+     *      - Inviting & registering members
      *    description: |
      *       Invites a new member to join the association.
      *       - Only presidents have the permission to invite new members.
@@ -245,7 +245,7 @@ export class MemberRoutes extends RoutesProvider {
      * /api/members/register/{id}/{registrationToken}:
      *  get:
      *    tags:
-     *      - Members
+     *      - Inviting & registering members
      *    security: []
      *    description: |
      *       Basically this endpoint gives back the information that the president who invited
@@ -294,7 +294,7 @@ export class MemberRoutes extends RoutesProvider {
      * /api/members/register/{id}/{registrationToken}:
      *  post:
      *    tags:
-     *      - Members
+     *      - Inviting & registering members
      *    security: []
      *    description: |
      *       An invited member can register through this endpoint.
@@ -353,7 +353,7 @@ export class MemberRoutes extends RoutesProvider {
      * /api/members/forgotten-password:
      *  post:
      *    tags:
-     *      - Members
+     *      - Restore forgotten password
      *    security: []
      *    description: |
      *       A member who forgot his password can restore his password via this endpoint.
@@ -394,7 +394,7 @@ export class MemberRoutes extends RoutesProvider {
      * /api/members/forgotten-password/{id}/{restorationToken}:
      *  post:
      *    tags:
-     *      - Members
+     *      - Restore forgotten password
      *    security: []
      *    description: |
      *       A member who forgot his password and requested a restoration through the [`/api/members/forgotten-password`](#/Members/post_api_members_forgotten_password) endpoint
