@@ -29,7 +29,7 @@ export class App {
   }
 
   private requireCrucialConfig() {
-    ['mongo.uri', 'jwt.privateKey', 'frontend.host'].forEach((it) => {
+    ;['mongo.uri', 'jwt.privateKey', 'frontend.host'].forEach((it) => {
       if (!(config.has(it) && config.get(it)))
         throw new Error(`FATAL ERROR: ${it} config is not set.`)
     })
@@ -85,8 +85,7 @@ export class App {
 
   private buildCorsMiddleware() {
     return cors({
-      origin:
-        process.env.NODE_ENV === 'development' ? '*' : config.get('frontend.host'),
+      origin: (process.env.NODE_ENV === 'development') || config.get('frontend.host'),
       credentials: true,
       exposedHeaders: [config.get('jwt.headerName')],
     })
