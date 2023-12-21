@@ -1,6 +1,7 @@
 import { RoutesProvider } from '../../base/routes-provider'
 import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-password'
 import { MemberInviteDto } from '../../dto/member-invite'
+import { MemberPreferencesDto } from '../../dto/member-preferences'
 import { MemberRegistrationDto } from '../../dto/member-registration'
 import { MemberUpdateDto } from '../../dto/member-update'
 import { NewCredentialsDto } from '../../dto/new-credentials'
@@ -226,6 +227,13 @@ export class MemberRoutes extends RoutesProvider {
       '/members/me/preferences',
       auth,
       asyncErrorHandler((req, res) => controller.getMyPreferences(req, res)),
+    )
+
+    this.router.patch(
+      '/members/me/preferences',
+      auth,
+      validate(MemberPreferencesDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateMyPreferences(req, res)),
     )
 
     /**

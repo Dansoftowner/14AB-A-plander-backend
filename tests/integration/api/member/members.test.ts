@@ -1649,5 +1649,136 @@ describe('/api/members', () => {
         expect(res.body).toMatchObject({})
       })
     })
+
+    describe('PATCH /', () => {
+      let preferences: any
+
+      const sendRequest = async () =>
+        request(app)
+          .patch('/api/members/me/preferences')
+          .set(config.get('jwt.headerName'), await generateToken())
+          .send(preferences)
+
+      beforeEach(() => {
+        preferences = {
+          key1: 'value1',
+          key2: 'value2',
+        }
+      })
+
+      it('should return 401 if client is not logged in', async () => {
+        client = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return 404 response if client is not in the database', async () => {
+        await MemberModel.findByIdAndDelete(client._id)
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 400 response if a value is a nested object', async () => {
+        preferences.key3 = { other: 'value' }
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it('should return 400 response if too many keys are sent', async () => {
+        new Array(11).fill(null).forEach((_, i) => {
+          preferences[`key${i}`] = 'value'
+        })
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it('should return 400 response if a value is a nested object inside an array', async () => {
+        preferences.key3 = [{ other: 'value' }]
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(400)
+      })
+
+      it.each(['$key', 'key.key'])(
+        'should return 400 response if property names include forbidden characters',
+        async (key) => {
+          preferences[key] = 'value'
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
+
+      it('should add preferences to the member in database', async () => {
+        await sendRequest()
+
+        const preferencesInDb = (await MemberModel.findById(client._id))!.preferences
+
+        expect(_.pick(preferencesInDb, _.keys(preferences))).toMatchObject(preferences)
+      })
+
+      it('should add preferences to the member in database if no preferences were before', async () => {
+        await MemberModel.findByIdAndUpdate(client._id, {
+          $unset: ['preferences'],
+        })
+
+        await sendRequest()
+
+        const preferencesInDb = (await MemberModel.findById(client._id))!.preferences
+
+        expect(_.pick(preferencesInDb, _.keys(preferences))).toMatchObject(preferences)
+      })
+
+      it('should update preferences of the member in database', async () => {
+        await MemberModel.findByIdAndUpdate(client._id, {
+          $set: {
+            preferences: {
+              key1: 'toBeUpdated',
+            },
+          },
+        })
+
+        await sendRequest()
+
+        const preferencesInDb = (await MemberModel.findById(client._id))!.preferences
+
+        expect(preferencesInDb).toEqual(preferences)
+      })
+
+      it('should remove preferences of the member in database', async () => {
+        await MemberModel.findByIdAndUpdate(client._id, {
+          $set: {
+            preferences: {
+              key1: 'something',
+            },
+          },
+        })
+
+        preferences.key1 = null
+
+        await sendRequest()
+
+        const preferencesInDb = (await MemberModel.findById(client._id))!.preferences
+
+        expect(preferencesInDb).not.toHaveProperty('key1')
+      })
+
+      it('should return updated preferences in the payload', async () => {
+        const res = await sendRequest()
+
+        expect(res.status).toBe(200)
+        expect(_.pick(res.body, _.keys(preferences))).toMatchObject(preferences)
+      })
+    })
   })
 })
