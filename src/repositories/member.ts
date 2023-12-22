@@ -9,6 +9,7 @@ import { NewCredentialsDto } from '../dto/new-credentials'
 import { MemberUpdateDto } from '../dto/member-update'
 import { MemberRegistrationDto } from '../dto/member-registration'
 import { MemberInviteDto } from '../dto/member-invite'
+import { MemberPreferencesDto } from '../dto/member-preferences'
 
 export interface MemberQueryOptions {
   associationId: string
@@ -248,6 +249,38 @@ export class MemberRepository implements Repository {
 
   delete(id: string, associationId: string): Promise<Member | null> {
     return MemberModel.findOneAndDelete({ _id: id, association: associationId })
+  }
+
+  /**
+   * @returns null if member not found
+   * @returns undefined if member found but it has no preferences
+   */
+  async getPreferences(id: string): Promise<object | null | undefined> {
+    const member = await MemberModel.findById(id).select('preferences')
+    if (!member) return null
+
+    return member.preferences || undefined
+  }
+
+  async updatePreferences(
+    id: string,
+    preferences: MemberPreferencesDto,
+  ): Promise<object | null> {
+    const valuesToSet = _.pickBy(preferences, (it) => it !== null)
+    const fieldsToRemove = _.pickBy(preferences, (it) => it === null)
+
+    const member = await MemberModel.findByIdAndUpdate(
+      id,
+      {
+        $set: _.mapKeys(valuesToSet, (_, key) => `preferences.${key}`),
+        $unset: _.mapKeys(fieldsToRemove, (_, key) => `preferences.${key}`),
+      },
+      { new: true },
+    ).select('preferences')
+
+    if (!member) return null
+
+    return member.preferences!
   }
 
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
