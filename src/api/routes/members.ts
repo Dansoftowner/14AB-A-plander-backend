@@ -508,7 +508,7 @@ export class MemberRoutes extends RoutesProvider {
      *        schema:
      *         $ref: '#/components/schemas/MemberInvite'
      *    responses:
-     *      201:
+     *      202:
      *        description: Invitation proceeded. Returns the information about the invited member.
      *        content:
      *          application/json:
