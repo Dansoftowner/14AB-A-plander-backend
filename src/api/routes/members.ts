@@ -229,6 +229,46 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.getMyPreferences(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/members/me/preferences:
+     *  patch:
+     *    tags:
+     *      - Members
+     *    description: |
+     *      Allows to update the logged in member's preferences.
+     *
+     *      - If a preference already exists, it will be overwritten.
+     *      - If a preference does not exist, it will be created.
+     *      - Preferences can be removed by setting them to `null`.
+     *      - Maximum 10 properties can be specified per request.
+     *      - **Only scalar types (strings, numbers, booleans) and arrays that contain only scalar values are allowed for preferences.**
+     *      - Property names cannot include dots or dollar signs.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    responses:
+     *      200:
+     *        description: The preferences are updated.
+     *        content:
+     *          application/json:
+     *            schema:
+     *               description: The preferences of the logged in member (it has no predefined schema).
+     *               type: object
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      404:
+     *        description: This only occurs if the member is deleted from the database, but the token is still valid.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Error'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.patch(
       '/members/me/preferences',
       auth,
