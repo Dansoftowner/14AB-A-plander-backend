@@ -21,6 +21,7 @@ import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-passwo
 import { NewCredentialsDto } from '../../dto/new-credentials'
 import { MemberUpdateDto } from '../../dto/member-update'
 import { ValueReservedError } from '../../exception/value-reserved-error'
+import { MemberPreferencesDto } from '../../dto/member-preferences'
 
 export class MemberController implements Controller {
   async getMembers(req: Request, res: Response) {
@@ -131,6 +132,24 @@ export class MemberController implements Controller {
         throw new ApiError(422, ApiErrorCode.USERNAME_RESERVED)
       throw err
     }
+  }
+
+  async getMyPreferences(req: Request, res: Response) {
+    const prefs = await this.service(req).getPreferences()
+
+    if (!prefs) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+    res.status(200).send(prefs)
+  }
+
+  async updateMyPreferences(req: Request, res: Response) {
+    const payload = plainToInstance(MemberPreferencesDto, req.body)
+    
+    const prefs = await this.service(req).updatePreferences(payload)
+
+    if (!prefs) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+    res.status(200).send(prefs)
   }
 
   async updateMember(req: Request, res: Response) {

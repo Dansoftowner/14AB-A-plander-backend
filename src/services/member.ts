@@ -22,8 +22,10 @@ import { RegisteredMemberAlterError } from '../exception/member-errors'
 import { PresidentDeletionError } from '../exception/member-errors'
 import { NoOtherPresidentError } from '../exception/member-errors'
 import { ValueReservedError } from '../exception/value-reserved-error'
+import { MemberPreferencesDto } from '../dto/member-preferences'
 
 export class MemberService implements Service {
+  
   private clientInfo: ClientInfo
   private repository: MemberRepository
 
@@ -228,7 +230,11 @@ export class MemberService implements Service {
       }
 
     try {
-      const updatedMember = await this.repository.update(id, this.clientInfo.association, newContent)
+      const updatedMember = await this.repository.update(
+        id,
+        this.clientInfo.association,
+        newContent,
+      )
 
       return plainToInstance(MemberDto, updatedMember, {
         excludeExtraneousValues: true,
@@ -265,6 +271,16 @@ export class MemberService implements Service {
     const deleted = await this.repository.delete(id, this.clientInfo.association)
 
     return plainToInstance(MemberDto, deleted, { excludeExtraneousValues: true })
+  }
+
+  async getPreferences() {
+    const prefs = await this.repository.getPreferences(this.clientInfo._id)
+    if (prefs !== null) return prefs ?? {}
+    return null
+  }
+
+  async updatePreferences(preferences: MemberPreferencesDto) {
+    return await this.repository.updatePreferences(this.clientInfo._id, preferences)
   }
 
   private async hashToken(token: string): Promise<string> {
