@@ -487,6 +487,14 @@ export class MemberRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.getMemberByUsername(req, res)),
     )
 
+    this.router.patch(
+      '/members/transfer-my-roles/:id',
+      auth,
+      president,
+      password,
+      asyncErrorHandler((req, res) => controller.transferMyRoles(req, res)),
+    )
+
     /**
      * @openapi
      * /api/members:

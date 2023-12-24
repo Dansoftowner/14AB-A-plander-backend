@@ -1781,4 +1781,115 @@ describe('/api/members', () => {
       })
     })
   })
+
+  describe('/api/members/transfer-my-roles/{id}', () => {
+    describe('PATCH /', () => {
+      let id: string
+      let password: string
+      let copy: boolean | undefined
+
+      const sendRequest = async () =>
+        request(app)
+          .patch(`/api/members/transfer-my-roles/${id}`)
+          .set(config.get('jwt.headerName'), await generateToken())
+          .set(config.get('headers.currentPass'), password!)
+          .query({ copy })
+          .send()
+
+      beforeEach(() => {
+        id = companionMembers().find((it) => it.isRegistered && it !== client)!._id
+        password = 'Gizaac0Password'
+      })
+
+      it('should return 401 response if client is not logged in', async () => {
+        client = undefined
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return 403 response if client is not president', async () => {
+        client = regularMember
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(403)
+      })
+
+      it('should return 401 response if client provided the wrong password', async () => {
+        password = 'wrongPassword'
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(401)
+      })
+
+      it('should return error response if client is not in the database', async () => {
+        await MemberModel.findByIdAndDelete(client._id)
+
+        const res = await sendRequest()
+
+        expect(res.ok).not.toBe(true)
+      })
+
+      it('should return 404 response if member is not in the database', async () => {
+        id = new mongoose.Types.ObjectId().toString()
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 404 response if member is not in the same association', async () => {
+        id = members
+          .filter((it) => it.association !== client.association)
+          .find((it) => it.isRegistered)!._id
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should return 404 response if member is not registered', async () => {
+        id = companionMembers().find((it) => !it.isRegistered)!._id
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(404)
+      })
+
+      it('should transfer roles from client to member', async () => {
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(id)
+        const clientInDb = await MemberModel.findById(client._id)
+
+        expect(memberInDb!.roles).toEqual(client.roles)
+        expect(clientInDb!.roles).not.toEqual(client.roles)
+      })
+
+      it('should copy roles from client to member if `copy` query param is true', async () => {
+        copy = true
+
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(id)
+        const clientInDb = await MemberModel.findById(client._id)
+
+        expect(memberInDb!.roles).toEqual(clientInDb!.roles)
+        expect(clientInDb!.roles).toEqual(client.roles)
+      })
+
+      it('should return id and roles in response', async () => {
+        const res = await sendRequest()
+
+        expect(res.status).toBe(200)
+        expect(res.body).toMatchObject({
+          _id: id,
+          roles: client.roles,
+        })
+      })
+    })
+  })
 })
