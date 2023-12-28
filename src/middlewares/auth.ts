@@ -5,17 +5,28 @@ import { ApiError } from '../api/error/api-error'
 import { ApiErrorCode } from '../api/error/api-error-codes'
 import container from '../di'
 import { ClientInfo, verifyToken } from '../utils/jwt'
+import { MemberRepository } from '../repositories/member'
+import di from '../di'
+import asyncErrorHandler from './async-error-handler'
 
-export default (req: Request, res: Response, next: NextFunction) => {
-  const token = retrieveToken(req)
-  if (!token) throw new ApiError(401, ApiErrorCode.UNAUTHORIZED)
+export default asyncErrorHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const token = retrieveToken(req)
+    if (!token) throw new ApiError(401, ApiErrorCode.UNAUTHORIZED)
 
-  const jwtPayload = decodeJwt(token)
+    const jwtPayload = decodeJwt(token)
+    jwtPayload.roles = await fetchRoles(jwtPayload._id, jwtPayload.association)
 
-  req.scope = container.createScope()
-  req.scope.register({ clientInfo: asValue(jwtPayload) })
+    req.scope = container.createScope()
+    req.scope.register({ clientInfo: asValue(jwtPayload) })
 
-  next()
+    next()
+  },
+)
+
+function retrieveToken(req: Request): string | undefined {
+  const headerName: string = config.get('jwt.headerName')
+  return headerName ? req.header(headerName) : undefined
 }
 
 function decodeJwt(token: string): ClientInfo {
@@ -26,7 +37,13 @@ function decodeJwt(token: string): ClientInfo {
   }
 }
 
-function retrieveToken(req: Request): string | undefined {
-  const headerName: string = config.get('jwt.headerName')
-  return headerName ? req.header(headerName) : undefined
+async function fetchRoles(id: string, associationId: string): Promise<string[]> {
+  const memberRepository: MemberRepository = di.cradle.memberRepository
+
+  const member = await memberRepository.findById(id, {
+    associationId,
+    projection: 'roles',
+  })
+
+  return member?.roles ?? []
 }

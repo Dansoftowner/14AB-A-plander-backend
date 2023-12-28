@@ -312,7 +312,7 @@ export class MemberService implements Service {
       associationId: this.clientInfo.association,
       projection: this.adjustProjection(options.projection, requestedId).join(' '),
       sort: options.sort || 'name',
-      showUnregistered: this.clientInfo.roles.includes('president'),
+      showUnregistered: this.clientInfo.hasRole('president'),
     }
   }
 

@@ -18,7 +18,7 @@ describe('jwt token utility', () => {
     const token = execute()
 
     expect(_.keys(verifyToken(token))).toEqual(
-      expect.arrayContaining(['_id', 'association', 'roles']),
+      expect.arrayContaining(['_id', 'association']),
     )
   })
 
@@ -35,21 +35,5 @@ describe('jwt token utility', () => {
       'association',
       member.association.toHexString(),
     )
-  })
-
-  it('should store roles in token', () => {
-    member.roles = ['member', 'president']
-
-    const token = execute()
-
-    expect(verifyToken(token)).toHaveProperty('roles', member.roles)
-  })
-
-  it('should always contain member role', () => {
-    member.roles = []
-
-    const token = execute()
-
-    expect(verifyToken(token)).toHaveProperty('roles', ['member'])
   })
 })
