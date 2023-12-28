@@ -283,6 +283,40 @@ export class MemberRepository implements Repository {
     return member.preferences!
   }
 
+  async transferRoles(
+    associationId: string,
+    fromId: string,
+    toId: string,
+    copy: boolean,
+  ): Promise<Member | null> {
+    const sourceMember = await MemberModel.findOne({
+      _id: fromId,
+      isRegistered: true,
+      association: associationId,
+    })
+
+    if (!sourceMember) return null
+
+    const updatedMember = await MemberModel.findOneAndUpdate(
+      { _id: toId, isRegistered: true, association: associationId },
+      {
+        $set: {
+          roles: sourceMember!.roles,
+        },
+      },
+      { new: true },
+    )
+
+    if (!updatedMember) return null
+
+    if (!copy) {
+      sourceMember.roles = ['member']
+      await sourceMember.save()
+    }
+
+    return updatedMember
+  }
+
   private filterQuery(options: MemberQueryOptions): FilterQuery<Member> {
     const filterObj: FilterQuery<Member> = {
       association: options.associationId,

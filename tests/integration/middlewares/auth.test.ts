@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import i18n from '../../../src/middlewares/i18n'
 import auth from '../../../src/middlewares/auth'
 import errorMiddleware from '../../../src/middlewares/error'
+import mongoose from 'mongoose'
 
 describe('auth middleware', () => {
   const app = express()
@@ -19,8 +20,13 @@ describe('auth middleware', () => {
     app.use(errorMiddleware)
   }
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    await mongoose.connect(config.get('mongo.uri'))
     initializeApp()
+  })
+
+  afterAll(async () => {
+    await mongoose.connection.close()
   })
 
   let mockMember: object
@@ -38,7 +44,7 @@ describe('auth middleware', () => {
 
   beforeEach(() => {
     routeHandler.mockClear()
-    mockMember = { _id: '123' }
+    mockMember = { _id: new mongoose.Types.ObjectId().toHexString() }
     header = generateToken()
   })
 

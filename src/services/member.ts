@@ -25,7 +25,6 @@ import { ValueReservedError } from '../exception/value-reserved-error'
 import { MemberPreferencesDto } from '../dto/member-preferences'
 
 export class MemberService implements Service {
-  
   private clientInfo: ClientInfo
   private repository: MemberRepository
 
@@ -283,6 +282,17 @@ export class MemberService implements Service {
     return await this.repository.updatePreferences(this.clientInfo._id, preferences)
   }
 
+  async transferRoles(memberId: string, copy: boolean) {
+    const updatedMember = await this.repository.transferRoles(
+      this.clientInfo.association,
+      this.clientInfo._id,
+      memberId,
+      copy,
+    )
+
+    return plainToInstance(MemberDto, updatedMember, { excludeExtraneousValues: true })
+  }
+
   private async hashToken(token: string): Promise<string> {
     const salt = await bcrypt.genSalt(1)
     return await bcrypt.hash(token, salt)
@@ -302,7 +312,7 @@ export class MemberService implements Service {
       associationId: this.clientInfo.association,
       projection: this.adjustProjection(options.projection, requestedId).join(' '),
       sort: options.sort || 'name',
-      showUnregistered: this.clientInfo.roles.includes('president'),
+      showUnregistered: this.clientInfo.hasRole('president'),
     }
   }
 

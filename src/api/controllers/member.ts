@@ -144,7 +144,7 @@ export class MemberController implements Controller {
 
   async updateMyPreferences(req: Request, res: Response) {
     const payload = plainToInstance(MemberPreferencesDto, req.body)
-    
+
     const prefs = await this.service(req).updatePreferences(payload)
 
     if (!prefs) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
@@ -194,6 +194,17 @@ export class MemberController implements Controller {
         throw new ApiError(422, ApiErrorCode.NO_OTHER_PRESIDENTS)
       throw err
     }
+  }
+
+  async transferMyRoles(req: Request, res: Response) {
+    const id = req.params.id
+    const copy = req.query.copy === 'true'
+
+    const result = await this.service(req).transferRoles(id, copy)
+
+    if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+    res.status(200).send(instanceToPlain(result))
   }
 
   private service(req: Request): MemberService {

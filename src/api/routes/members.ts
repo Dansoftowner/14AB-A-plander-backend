@@ -489,6 +489,71 @@ export class MemberRoutes extends RoutesProvider {
 
     /**
      * @openapi
+     * /api/members/transfer-my-roles/{id}:
+     *  patch:
+     *    tags:
+     *     - Members
+     *    description: |
+     *      Presidents can transfer their roles to regular members through this endpoint.
+     *
+     *      - Only **presidents are permitted** to use this endpoint
+     *      - Although this is a patch request, the request body don't have to contain anything
+     *
+     *      **Authentication is required** before using this endpoint.
+     *      Also, because it is a sensitive operation, the **current password** of the
+     *      president **must be passed through the `x-current-pass` header**.
+     *    parameters:
+     *      - in: header
+     *        name: x-current-pass
+     *        description: The current password of the member.
+     *        schema:
+     *          type: string
+     *          required: true
+     *      - in: path
+     *        name: id
+     *        description: The id of the member that the president wants to transfer his roles to.
+     *        schema:
+     *          type: string
+     *          required: true
+     *      - in: query
+     *        name: copy
+     *        description: >
+     *             Determines whether the current president's roles should stay or not. If set to `true`,
+     *             the roles of the current president will stay.
+     *        schema:
+     *          type: boolean
+     *          required: false
+     *          default: false
+     *    responses:
+     *      200:
+     *        description: Transfer proceeded.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/RolesTransferResult'
+     *      400:
+     *        $ref: '#/components/responses/InvalidToken'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      403:
+     *        $ref: '#/components/responses/NotPresident'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.patch(
+      '/members/transfer-my-roles/:id',
+      auth,
+      president,
+      password,
+      asyncErrorHandler((req, res) => controller.transferMyRoles(req, res)),
+    )
+
+    /**
+     * @openapi
      * /api/members:
      *  post:
      *    tags:
