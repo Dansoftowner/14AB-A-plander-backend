@@ -17,7 +17,11 @@ import { ForgottenPasswordDto, NewPasswordDto } from '../dto/forgotten-password'
 import { NewCredentialsDto } from '../dto/new-credentials'
 import { MemberWithAssociationDto } from '../dto/member-with-association'
 import { MemberUpdateDto } from '../dto/member-update'
-import { NotPresidentError, UsernameReservedError } from '../exception/member-errors'
+import {
+  EmailReservedError,
+  NotPresidentError,
+  UsernameReservedError,
+} from '../exception/member-errors'
 import { RegisteredMemberAlterError } from '../exception/member-errors'
 import { PresidentDeletionError } from '../exception/member-errors'
 import { NoOtherPresidentError } from '../exception/member-errors'
@@ -186,16 +190,8 @@ export class MemberService implements Service {
   async updateCredentials(
     newCredentials: NewCredentialsDto,
   ): Promise<MemberDto | null> {
-    if (newCredentials.username) {
-      const { username } = newCredentials
-
-      const alreadyExists = await this.repository.existsWithUsername(
-        username,
-        this.clientInfo.association,
-      )
-
-      if (alreadyExists) throw new UsernameReservedError()
-    }
+    await this.requireUniqueUsername(newCredentials.username)
+    await this.requireUniqueEmail(newCredentials.email)
 
     if (newCredentials.password)
       newCredentials.password = await this.hashPassword(newCredentials.password)
@@ -291,6 +287,38 @@ export class MemberService implements Service {
     )
 
     return plainToInstance(MemberDto, updatedMember, { excludeExtraneousValues: true })
+  }
+
+  /**
+   * Utility method for throwing a `UsernameReservedError` if the given `username` is already taken.
+   *
+   * @param username
+   */
+  private async requireUniqueUsername(username: string | undefined) {
+    if (username) {
+      const alreadyExists = await this.repository.existsWithUsername(
+        username,
+        this.clientInfo.association,
+      )
+
+      if (alreadyExists) throw new UsernameReservedError()
+    }
+  }
+
+  /**
+   * Utility method for throwing an `EmailReservedError` if the given `email` is already taken.
+   *
+   * @param email
+   */
+  private async requireUniqueEmail(email: string | undefined) {
+    if (email) {
+      const alreadyExists = await this.repository.existsWithEmail(
+        email,
+        this.clientInfo.association,
+      )
+
+      if (alreadyExists) throw new EmailReservedError()
+    }
   }
 
   private async hashToken(token: string): Promise<string> {

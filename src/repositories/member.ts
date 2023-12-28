@@ -227,7 +227,7 @@ export class MemberRepository implements Repository {
     return await MemberModel.findByIdAndUpdate(
       id,
       {
-        $set: _.pick(newCredentials, ['username', 'password']),
+        $set: _.pick(newCredentials, ['email', 'username', 'password']),
       },
       { new: true },
     )
