@@ -6,6 +6,7 @@ import { ApiError } from '../api/error/api-error'
 import auth from './auth'
 import { AuthenticationService } from '../services/authentication'
 import { CredentialsDto } from '../dto/credentials'
+import asyncErrorHandler from './async-error-handler'
 
 /**
  * Can be applied to endpoints executing sensitive operations,
@@ -13,8 +14,8 @@ import { CredentialsDto } from '../dto/credentials'
  *
  * It must be used with the {@link auth} middleware together!
  */
-export default async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export default asyncErrorHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
     const credentials = assembleCredentials(req)
 
     const authService: AuthenticationService = req.scope!.cradle.authenticationService
@@ -23,10 +24,8 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     if (!passwordValid) throw new ApiError(401, ApiErrorCode.CURRENT_PASS_INVALID)
 
     next()
-  } catch (err) {
-    next(err)
-  }
-}
+  },
+)
 
 function assembleCredentials(req: Request): CredentialsDto {
   const clientInfo: ClientInfo = req.scope?.cradle.clientInfo
