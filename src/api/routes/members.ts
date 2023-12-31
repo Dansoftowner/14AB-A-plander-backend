@@ -149,8 +149,8 @@ export class MemberRoutes extends RoutesProvider {
      *    tags:
      *     - Members
      *    description: |
-     *      A member can update his credentials (username and/or password) via this endpoint.
-     *      Either username or password has to be provided.
+     *      A member can update his credentials (email and/or username and/or password) via this endpoint.
+     *      At least one value (email, username or password) has to be provided.
      *
      *      **Authentication is required** before using this endpoint.
      *      Also, because it is a sensitive operation, the **current password** of the
@@ -176,7 +176,13 @@ export class MemberRoutes extends RoutesProvider {
      *      401:
      *        $ref: '#/components/responses/Unauthorized'
      *      422:
-     *        $ref: '#/components/responses/UsernameReserved'
+     *        description: |
+     *              - The given email is already in use inside the association. (errorCode: 'email-reserved').
+     *              - The given username is already in use inside the association. (errorCode: 'username-reserved').
+     *        content:
+     *           application/json:
+     *              schema:
+     *                $ref: '#/components/schemas/Error'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:

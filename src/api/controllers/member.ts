@@ -3,6 +3,7 @@ import { Controller } from '../../base/controller'
 import { resolveOptions } from '../common-query-params'
 import { MemberService } from '../../services/member'
 import {
+  EmailReservedError,
   NoOtherPresidentError,
   UsernameReservedError,
 } from '../../exception/member-errors'
@@ -130,6 +131,8 @@ export class MemberController implements Controller {
     } catch (err) {
       if (err instanceof UsernameReservedError)
         throw new ApiError(422, ApiErrorCode.USERNAME_RESERVED)
+      if (err instanceof EmailReservedError)
+        throw new ApiError(422, ApiErrorCode.EMAIL_RESERVED)
       throw err
     }
   }

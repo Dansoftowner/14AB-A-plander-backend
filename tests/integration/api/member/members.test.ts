@@ -1151,6 +1151,7 @@ describe('/api/members', () => {
 
   describe('/me/credentials', () => {
     describe('PATCH /', () => {
+      let email: string | undefined
       let username: string | undefined
       let password: string | undefined
       let oldPassword: string
@@ -1160,9 +1161,10 @@ describe('/api/members', () => {
           .patch('/api/members/me/credentials')
           .set(config.get('jwt.headerName'), await generateToken())
           .set(config.get('headers.currentPass'), oldPassword!)
-          .send({ username, password })
+          .send({ email, username, password })
 
       beforeEach(async () => {
+        email = 'newEmail@new.com'
         username = 'NewUsername123'
         password = 'NewSafePassword123'
         oldPassword = 'Gizaac0Password'
@@ -1192,13 +1194,24 @@ describe('/api/members', () => {
         expect(res.status).toBe(401)
       })
 
-      it('should return 400 message if neither of username and password is specified', async () => {
-        username = password = undefined
+      it('should return 400 message if neither of email, username and password is specified', async () => {
+        email = username = password = undefined
 
         const res = await sendRequest()
 
         expect(res.status).toBe(400)
       })
+
+      it.each(['@mail.com', 'xsa2'])(
+        'it should return 400 message if invalid email is specified',
+        async (value) => {
+          email = value
+
+          const res = await sendRequest()
+
+          expect(res.status).toBe(400)
+        },
+      )
 
       it.each(['123', 'abc', '<?Sani>!'])(
         'should return 400 message if invalid username is specified',
@@ -1222,6 +1235,14 @@ describe('/api/members', () => {
         },
       )
 
+      it('should return 422 message if email is already in use', async () => {
+        email = companionMembers().find((it) => it != client)!.email
+
+        const res = await sendRequest()
+
+        expect(res.status).toBe(422)
+      })
+
       it('should return 422 message if username is already in use', async () => {
         username = companionMembers().find((it) => it != client)!.username
 
@@ -1230,8 +1251,18 @@ describe('/api/members', () => {
         expect(res.status).toBe(422)
       })
 
-      it('should update username', async () => {
-        password = undefined
+      it('should update email in database', async () => {
+        username = password = undefined
+
+        await sendRequest()
+
+        const memberInDb = await MemberModel.findById(client._id)
+
+        expect(memberInDb).toHaveProperty('email', email)
+      })
+
+      it('should update username in database', async () => {
+        email = password = undefined
 
         await sendRequest()
 
@@ -1241,7 +1272,7 @@ describe('/api/members', () => {
       })
 
       it('should update password', async () => {
-        username = undefined
+        email = username = undefined
 
         await sendRequest()
 
@@ -1250,11 +1281,12 @@ describe('/api/members', () => {
         expect(bcrypt.compareSync(password!, memberInDb!.password!)).toBe(true)
       })
 
-      it('should update both username and password', async () => {
+      it('should update email, username and password', async () => {
         await sendRequest()
 
         const memberInDb = await MemberModel.findById(client._id)
 
+        expect(memberInDb).toHaveProperty('email', email)
         expect(memberInDb).toHaveProperty('username', username)
         expect(bcrypt.compareSync(password!, memberInDb!.password!)).toBe(true)
       })

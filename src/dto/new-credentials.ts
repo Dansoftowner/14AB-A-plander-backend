@@ -8,6 +8,10 @@ import { JoiPassword, JoiUsername } from '../utils/joi'
  *    NewCredentials:
  *      type: object
  *      properties:
+ *        email:
+ *          type: string
+ *          description: 'The new email to update to'
+ *          example: 'newemail@alibaba.com'
  *        username:
  *          type: string
  *          description: 'The username to update to'
@@ -22,13 +26,15 @@ import { JoiPassword, JoiUsername } from '../utils/joi'
  *         - password
  */
 export class NewCredentialsDto {
+  email!: string
   username!: string
   password!: string
 
   static validationSchema(): ObjectSchema<NewCredentialsDto> {
     return Joi.object({
+      email: Joi.string().email(),
       username: JoiUsername(),
       password: JoiPassword(),
-    }).or('username', 'password')
+    }).or('email', 'username', 'password')
   }
 }

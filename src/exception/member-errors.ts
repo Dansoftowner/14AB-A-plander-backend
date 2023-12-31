@@ -1,4 +1,4 @@
-import { ValueReservedError } from "./value-reserved-error";
+import { ValueReservedError } from './value-reserved-error'
 
 /**
  * Thrown when a given operation is only allowed for presidents
@@ -21,7 +21,11 @@ export class PresidentDeletionError extends Error {}
 export class NoOtherPresidentError extends Error {}
 
 /**
- * Thrown when the client wants a password that'a already reserved
+ * Thrown when the client wants a password that's already reserved
  */
 export class UsernameReservedError extends ValueReservedError {}
 
+/**
+ * Thrown when the client wants an email that's already reserved
+ */
+export class EmailReservedError extends ValueReservedError {}
