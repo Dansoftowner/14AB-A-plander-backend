@@ -20,6 +20,10 @@ export class MemberRoutes extends RoutesProvider {
     super(memberController)
   }
 
+  override get prefix() {
+    return 'members'
+  }
+
   override initializeRoutes(controller: MemberController) {
     /**
      * @openapi
@@ -56,7 +60,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/members',
+      '/',
       auth,
       asyncErrorHandler((req, res) => controller.getMembers(req, res)),
     )
@@ -90,7 +94,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/members/me',
+      '/me',
       auth,
       asyncErrorHandler((req, res) => controller.getMe(req, res)),
     )
@@ -136,7 +140,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.patch(
-      '/members/me',
+      '/me',
       auth,
       validate(MemberUpdateDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.updateMe(req, res)),
@@ -189,7 +193,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.patch(
-      '/members/me/credentials',
+      '/me/credentials',
       auth,
       password,
       validate(NewCredentialsDto.validationSchema()),
@@ -230,7 +234,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/members/me/preferences',
+      '/me/preferences',
       auth,
       asyncErrorHandler((req, res) => controller.getMyPreferences(req, res)),
     )
@@ -276,7 +280,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.patch(
-      '/members/me/preferences',
+      '/me/preferences',
       auth,
       validate(MemberPreferencesDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.updateMyPreferences(req, res)),
@@ -329,7 +333,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/members/:id',
+      '/:id',
       auth,
       validateObjectid,
       asyncErrorHandler((req, res) => controller.getMemberById(req, res)),
@@ -381,7 +385,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.patch(
-      '/members/:id',
+      '/:id',
       auth,
       validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
       validate(MemberUpdateDto.validationSchema()),
@@ -440,7 +444,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.delete(
-      '/members/:id',
+      '/:id',
       auth,
       president,
       password,
@@ -488,7 +492,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/members/username/:username',
+      '/username/:username',
       auth,
       asyncErrorHandler((req, res) => controller.getMemberByUsername(req, res)),
     )
@@ -551,7 +555,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.patch(
-      '/members/transfer-my-roles/:id',
+      '/transfer-my-roles/:id',
       auth,
       president,
       password,
@@ -599,7 +603,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.post(
-      '/members',
+      '/',
       auth,
       president,
       validate(MemberInviteDto.validationSchema()),
@@ -650,7 +654,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/members/register/:id/:registrationToken',
+      '/register/:id/:registrationToken',
       validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
       asyncErrorHandler((req, res) => controller.getInvitedMember(req, res)),
     )
@@ -708,7 +712,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.post(
-      '/members/register/:id/:registrationToken',
+      '/register/:id/:registrationToken',
       validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
       validate(MemberRegistrationDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.registerMember(req, res)),
@@ -750,7 +754,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.post(
-      '/members/forgotten-password',
+      '/forgotten-password',
       validate(ForgottenPasswordDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.labelForgottenPassword(req, res)),
     )
@@ -800,7 +804,7 @@ export class MemberRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.post(
-      '/members/forgotten-password/:id/:restorationToken',
+      '/forgotten-password/:id/:restorationToken',
       validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
       validate(NewPasswordDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.restorePassword(req, res)),

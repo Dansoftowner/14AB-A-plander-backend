@@ -13,6 +13,10 @@ export abstract class RoutesProvider {
 
   protected abstract initializeRoutes(controller: Controller): void
 
+  public get prefix() {
+    return ''
+  }
+
   public get router() {
     return this._router
   }
