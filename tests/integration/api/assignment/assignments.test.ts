@@ -30,7 +30,7 @@ describe('/api/assignments', () => {
     client = await new MemberModel({
       roles: ['president'],
       association: '652f7b95fc13ae3ce86c7ce6',
-    }).save()
+    }).save({ validateBeforeSave: false })
 
     await AssignmentModel.insertMany(assignments)
 
@@ -46,5 +46,33 @@ describe('/api/assignments', () => {
     await mongoose.connection.close()
   })
 
-  describe('GET /', () => {})
+  describe('GET /', () => {
+    let start
+    let end
+
+    const sendRequest = async () => {
+      return request(app)
+        .get('/api/assignments')
+        .query({ start, end })
+        .set(config.get('jwt.headerName'), await generateToken())
+    }
+
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should contain metadata', async () => {
+      start = end = '2022-12-12'
+
+      const res = await sendRequest()
+
+      expect(res.body.metadata).toBeDefined()
+      expect(res.body.metadata).toHaveProperty('start', start)
+      expect(res.body.metadata).toHaveProperty('end', end)
+    })
+  })
 })

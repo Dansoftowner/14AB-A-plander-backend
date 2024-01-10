@@ -12,6 +12,9 @@ import { MemberController } from './api/controllers/member'
 import { MemberRoutes } from './api/routes/members'
 import { MemberService } from './services/member'
 import { MailService } from './services/mail'
+import { AssignmentController } from './api/controllers/assignment'
+import { AssignmentRoutes } from './api/routes/assignments'
+import { AssignmentService } from './services/assignment'
 
 const container = createContainer({
   injectionMode: InjectionMode.PROXY,
@@ -33,6 +36,10 @@ container.register({
   authenticationService: asClass(AuthenticationService),
   authenticationController: asClass(AuthenticationController),
   authenticationRoutes: asClass(AuthenticationRoutes),
+
+  assignmentController: asClass(AssignmentController),
+  assignmentRoutes: asClass(AssignmentRoutes),
+  assignmentService: asClass(AssignmentService).scoped(),
 
   mailService: asClass(MailService),
 })
