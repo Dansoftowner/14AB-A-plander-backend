@@ -16,7 +16,6 @@ const assignmentSchema = new Schema<Assignment>({
     required: true,
     minlength: 5,
     maxlength: 255,
-    unique: true,
   },
   location: {
     type: String,
