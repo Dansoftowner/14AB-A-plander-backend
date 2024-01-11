@@ -8,6 +8,7 @@ import container from '../../../../src/di'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import assignments from './dummy-assignments.json'
 import AssignmentModel from '../../../../src/models/assignment'
+import { endOfMonth, startOfMonth } from 'date-fns'
 
 describe('/api/assignments', () => {
   let app: Express
@@ -19,6 +20,9 @@ describe('/api/assignments', () => {
     const { generateToken: gen } = await import('../../../../src/utils/jwt')
     return gen(client as unknown as Member)
   }
+
+  const assignmentsOfAssociation = () =>
+    assignments.filter((it) => it.association == client.association)
 
   beforeAll(async () => {
     app = container.resolve('app').expressApp
@@ -47,15 +51,26 @@ describe('/api/assignments', () => {
   })
 
   describe('GET /', () => {
-    let start
-    let end
+    let start: string | undefined
+    let end: string | undefined
+    let projection: string | undefined
+    let orderBy: string | undefined
 
     const sendRequest = async () => {
       return request(app)
         .get('/api/assignments')
-        .query({ start, end })
+        .query({ start, end, projection, orderBy })
         .set(config.get('jwt.headerName'), await generateToken())
     }
+
+    beforeEach(() => {
+      start = '2022-01-01'
+      end = '2022-12-31'
+    })
+
+    afterEach(() => {
+      start = end = projection = orderBy = undefined
+    })
 
     it('should return 401 response if client is not logged in', async () => {
       client = undefined
@@ -66,13 +81,76 @@ describe('/api/assignments', () => {
     })
 
     it('should contain metadata', async () => {
-      start = end = '2022-12-12'
-
       const res = await sendRequest()
 
       expect(res.body.metadata).toBeDefined()
-      expect(res.body.metadata).toHaveProperty('start', start)
-      expect(res.body.metadata).toHaveProperty('end', end)
+      expect(res.body.metadata).toHaveProperty('start')
+      expect(res.body.metadata).toHaveProperty('end')
     })
+
+    it.each([
+      ['2022-01-01', '2022-12-31'],
+      ['2022-12-01', '2022-12-31'],
+      ['2023-04-01', '2023-04-30'],
+      ['2023-05-01', '2023-05-31'],
+    ])(
+      'should return assignments between the given boundaries',
+      async (startDatetime, endDatetime) => {
+        start = startDatetime
+        end = endDatetime
+
+        const expectedItems = assignmentsOfAssociation().filter(
+          (it) =>
+            new Date(it.start) >= new Date(start!) &&
+            new Date(it.end) <= new Date(end!),
+        )
+
+        const res = await sendRequest()
+
+        expect(res.body.items).toHaveLength(expectedItems.length)
+      },
+    )
+
+    it('should return assignments from the current month if no boundaries provided', async () => {
+      start = end = undefined
+
+      const res = await sendRequest()
+
+      expect(res.body.metadata.start).toBe(startOfMonth(new Date()).toISOString())
+      expect(res.body.metadata.end).toBe(endOfMonth(new Date()).toISOString())
+    })
+
+    it('should show only particular fields in lite projection mode', async () => {
+      projection = 'lite'
+
+      const res = await sendRequest()
+
+      expect(_.keys(res.body.items[0]).sort()).toEqual(
+        ['_id', 'title', 'start', 'end'].sort(),
+      )
+    })
+
+    it('should show all fields in full projection mode', async () => {
+      projection = 'full'
+
+      const res = await sendRequest()
+
+      expect(_.keys(res.body.items[0]).sort()).toEqual(
+        ['_id', 'title', 'start', 'end', 'location', 'assignees'].sort(),
+      )
+    })
+
+    it.each(['title', 'start', 'end', 'location'])(
+      'it should order the elements based on the given criteria',
+      async (field) => {
+        orderBy = field
+
+        const res = await sendRequest()
+
+        const recievedValues = res.body.items.map((it) => it[field])
+
+        expect(recievedValues).toEqual(recievedValues.sort())
+      },
+    )
   })
 })

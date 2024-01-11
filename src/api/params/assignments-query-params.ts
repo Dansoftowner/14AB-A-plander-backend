@@ -6,7 +6,7 @@ export interface AssignmentsQueryOptions {
   start: Date
   end: Date
   projection: 'lite' | 'full'
-  orderBy: string
+  sort: string
 }
 
 export function resolveOptions(req: Request): AssignmentsQueryOptions {
@@ -14,7 +14,7 @@ export function resolveOptions(req: Request): AssignmentsQueryOptions {
     start: extractStartDate(req),
     end: extractEndDate(req),
     projection: extractProjection(req) as 'lite' | 'full',
-    orderBy: extractSort(req, 'start')
+    sort: extractSort(req, 'start'),
   }
 }
 

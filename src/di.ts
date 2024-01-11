@@ -15,6 +15,7 @@ import { MailService } from './services/mail'
 import { AssignmentController } from './api/controllers/assignment'
 import { AssignmentRoutes } from './api/routes/assignments'
 import { AssignmentService } from './services/assignment'
+import { AssignmentRepository } from './repositories/assignment'
 
 const container = createContainer({
   injectionMode: InjectionMode.PROXY,
@@ -40,6 +41,7 @@ container.register({
   assignmentController: asClass(AssignmentController),
   assignmentRoutes: asClass(AssignmentRoutes),
   assignmentService: asClass(AssignmentService).scoped(),
+  assignmentRepository: asClass(AssignmentRepository),
 
   mailService: asClass(MailService),
 })
