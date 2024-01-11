@@ -62,7 +62,6 @@ export function extractProjection(req: Request): string {
  *      name: orderBy
  *      schema:
  *        type: string
- *        default: name
  *      description: Specifies the attribute used to sort the items.
  */
 export function extractSort(req: Request, defaultSort: string): string {

@@ -14,6 +14,37 @@ export class AssignmentRoutes extends RoutesProvider {
   }
 
   protected initializeRoutes(controller: AssignmentController): void {
+    /**
+     * @openapi
+     * /api/assignments:
+     *  get:
+     *    tags:
+     *      - Assignments
+     *    description: |
+     *      Fetches the assignments of the association.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - $ref: '#/components/parameters/startDateParam'
+     *      - $ref: '#/components/parameters/endDateParam'
+     *      - $ref: '#/components/parameters/projectionParam'
+     *      - $ref: '#/components/parameters/sortParam'
+     *    responses:
+     *      200:
+     *        description: Assignments fetched successfully.
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/AssignmentItems'
+     *      400:
+     *        $ref: '#/components/responses/InvalidToken'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.get(
       '/',
       auth,
