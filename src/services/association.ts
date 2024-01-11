@@ -6,7 +6,7 @@ import {
   AssociationRepository,
 } from '../repositories/association'
 import { AssociationDto } from '../dto/association'
-import { CommonQueryOptions } from '../api/common-query-params'
+import { CommonQueryOptions } from '../api/params/common-query-params'
 
 export default class AssociationService implements Service {
   private repository: AssociationRepository

@@ -10,7 +10,7 @@ import {
   SEARCH_PARAM_NAME,
   SORT_PARAM_NAME,
   resolveOptions,
-} from '../../../src/api/common-query-params'
+} from '../../../../src/api/params/common-query-params'
 
 describe('api common utils', () => {
   describe('pagination data extractor utility', () => {

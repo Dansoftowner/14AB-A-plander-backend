@@ -47,7 +47,7 @@ export function resolveOptions(req: Request): CommonQueryOptions {
  *         default: 'lite'
  *       description: Specifies the projection mode.
  */
-function extractProjection(req: Request): string {
+export function extractProjection(req: Request): string {
   let raw: string | undefined = req.query[PROJECTION_PARAM_NAME] as string
   if (!['lite', 'full'].includes(raw)) raw = undefined
   return raw || DEFAULT_PROJECTION
@@ -65,7 +65,7 @@ function extractProjection(req: Request): string {
  *        default: name
  *      description: Specifies the attribute used to sort the items.
  */
-function extractSort(req: Request, defaultSort: string): string {
+export function extractSort(req: Request, defaultSort: string): string {
   return (req.query[SORT_PARAM_NAME] as string) || defaultSort
 }
 
@@ -80,7 +80,7 @@ function extractSort(req: Request, defaultSort: string): string {
  *        type: string
  *      description: Performs a search based on the given value.
  */
-function extractSearchQuery(req: Request): string | undefined {
+export function extractSearchQuery(req: Request): string | undefined {
   return req.query[SEARCH_PARAM_NAME]?.toString()
 }
 
@@ -97,7 +97,7 @@ function extractSearchQuery(req: Request): string | undefined {
  *          default: 0
  *        description: The number of items to skip before starting to collect the result set.
  */
-function extractOffset(req: Request): number {
+export function extractOffset(req: Request): number {
   const raw = req.query[OFFSET_PARAM_NAME] as string
 
   let offsetNumber = parseInt(raw)
@@ -121,7 +121,7 @@ function extractOffset(req: Request): number {
  *        default: 10
  *      description: The maximum number of items to return.
  */
-function extractLimit(req: Request): number {
+export function extractLimit(req: Request): number {
   const raw = req.query[LIMIT_PARAM_NAME] as string
 
   let limitNumber = parseInt(raw)

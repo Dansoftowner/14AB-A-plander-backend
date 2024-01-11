@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Controller } from '../../base/controller'
-import { resolveDateQueryOptions } from '../date-query-params'
+import { resolveOptions } from '../params/assignments-query-params'
 import { AssignmentService } from '../../services/assignment'
 import { asValue } from 'awilix'
 import di from '../../di'
@@ -8,9 +8,9 @@ import { instanceToPlain } from 'class-transformer'
 
 export class AssignmentController implements Controller {
   async getAssignments(req: Request, res: Response) {
-    const dateIntervals = resolveDateQueryOptions(req)
+    const options = resolveOptions(req)
 
-    const result = await this.service(req).get(dateIntervals)
+    const result = await this.service(req).get(options)
 
     res.json(instanceToPlain(result))
   }
