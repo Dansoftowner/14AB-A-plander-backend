@@ -153,4 +153,81 @@ describe('/api/assignments', () => {
       },
     )
   })
+
+  describe('GET /:id', () => {
+    let id: string
+    let projection: string | undefined
+
+    const sendRequest = async () => {
+      return request(app)
+        .get(`/api/assignments/${id}`)
+        .query({ projection })
+        .set(config.get('jwt.headerName'), await generateToken())
+    }
+
+    beforeEach(() => {
+      id = assignmentsOfAssociation()[0]._id
+    })
+
+    afterEach(() => {
+      projection = undefined
+    })
+
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 400 response if the id is not a valid ObjectId', async () => {
+      id = '123'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 404 response if no assignment found with the given id', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if no assignment found with the given id in the association', async () => {
+      id = assignments.find((it) => it.association !== client.association)!._id
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return the assignment if the id is valid', async () => {
+      const res = await sendRequest()
+
+      expect(res.body).toBeDefined()
+      expect(res.body).toHaveProperty('_id', id)
+    })
+
+    it('should project only certain fields in lite projection mode', async () => {
+      projection = 'lite'
+
+      const res = await sendRequest()
+
+      expect(_.keys(res.body)).toEqual(['_id', 'title', 'start', 'end'])
+    })
+
+    it('should project all fields in full projection mode', async () => {
+      projection = 'full'
+
+      const res = await sendRequest()
+
+      expect(_.keys(res.body).sort()).toEqual(
+        ['_id', 'title', 'start', 'end', 'location', 'assignees'].sort(),
+      )
+    })
+  })
 })

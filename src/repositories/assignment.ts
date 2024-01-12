@@ -16,6 +16,14 @@ export class AssignmentRepository implements Repository {
     return AssignmentModel.find(this.filterQuery(options)).select(projection).sort(sort)
   }
 
+  findById(id: string, options: AssignmentsDbQueryOptions): Promise<Assignment> {
+    const { projection, associationId } = options
+
+    return AssignmentModel.findOne({ _id: id, association: associationId }).select(
+      projection,
+    )
+  }
+
   private filterQuery(options: AssignmentsDbQueryOptions): FilterQuery<Assignment> {
     const { start, end, associationId } = options
 

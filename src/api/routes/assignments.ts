@@ -2,6 +2,7 @@ import { Controller } from '../../base/controller'
 import { RoutesProvider } from '../../base/routes-provider'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
+import validateObjectId from '../../middlewares/validate-objectid'
 import { AssignmentController } from '../controllers/assignment'
 
 export class AssignmentRoutes extends RoutesProvider {
@@ -49,6 +50,56 @@ export class AssignmentRoutes extends RoutesProvider {
       '/',
       auth,
       asyncErrorHandler((req, res) => controller.getAssignments(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/assignments/{id}:
+     *  get:
+     *    tags:
+     *      - Assignments
+     *    description: |
+     *      Fetches the assignment based on the given *id* from the currently logged in member's association.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the assignment.
+     *      - $ref: '#/components/parameters/projectionParam'
+     *    responses:
+     *      200:
+     *        description: The assignment is fetched.
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/Assignment'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      400:
+     *        description: |
+     *          Either:
+     *          - The given id has invalid format (errorCode: 'invalid-object-id').
+     *          - The provided token is invalid (errorCode: 'invalid-token').
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/Error'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.get(
+      '/:id',
+      auth,
+      validateObjectId,
+      asyncErrorHandler((req, res) => controller.getAssignment(req, res)),
     )
 
     //this.router.get('/', controller.getAssignments)

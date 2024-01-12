@@ -8,6 +8,7 @@ import {
   AssignmentRepository,
   AssignmentsDbQueryOptions,
 } from '../repositories/assignment'
+import { AssignmentDto } from '../dto/assignment'
 
 export class AssignmentService implements Service {
   private clientInfo: ClientInfo
@@ -30,6 +31,15 @@ export class AssignmentService implements Service {
         enableImplicitConversion: true,
       },
     )
+  }
+
+  async getById(id: string, options: AssignmentsQueryOptions): Promise<AssignmentDto> {
+    const item = await this.repository.findById(id, this.toDbQuery(options))
+
+    return plainToInstance(AssignmentDto, item, {
+      excludeExtraneousValues: true,
+      enableImplicitConversion: true,
+    })
   }
 
   private toDbQuery(options: AssignmentsQueryOptions): AssignmentsDbQueryOptions {
