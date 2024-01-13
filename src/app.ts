@@ -59,7 +59,11 @@ export class App {
         const routeMiddlewares: RequestHandler[] = []
         if (!routes.isRateLimited) routeMiddlewares.push(rateLimiter)
 
-        this.expressApp.use('/api', routeMiddlewares, routes.router)
+        this.expressApp.use(
+          ['/api', routes.prefix].join('/'),
+          routeMiddlewares,
+          routes.router,
+        )
       }
     }
   }
@@ -85,7 +89,7 @@ export class App {
 
   private buildCorsMiddleware() {
     return cors({
-      origin: (process.env.NODE_ENV === 'development') || config.get('frontend.host'),
+      origin: process.env.NODE_ENV === 'development' || config.get('frontend.host'),
       credentials: true,
       exposedHeaders: [config.get('jwt.headerName')],
     })

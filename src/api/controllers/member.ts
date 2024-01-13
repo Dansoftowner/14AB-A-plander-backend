@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { Controller } from '../../base/controller'
-import { resolveOptions } from '../common-query-params'
+import { resolveOptions } from '../params/common-query-params'
 import { MemberService } from '../../services/member'
 import {
   EmailReservedError,

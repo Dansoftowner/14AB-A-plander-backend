@@ -9,6 +9,10 @@ export default class AssocationRoutes extends RoutesProvider {
     super(associationController)
   }
 
+  override get prefix() {
+    return 'associations'
+  }
+
   protected initializeRoutes(controller: AssociationController) {
     /**
      * @openapi
@@ -40,7 +44,7 @@ export default class AssocationRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/associations',
+      '/',
       asyncErrorHandler((req, res) => controller.getAssociations(req, res)),
     )
 
@@ -70,7 +74,7 @@ export default class AssocationRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/associations/mine',
+      '/mine',
       auth,
       asyncErrorHandler((req, res) => controller.getMyAssociation(req, res)),
     )
@@ -111,7 +115,7 @@ export default class AssocationRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/associations/:id',
+      '/:id',
       validateObjectId,
       asyncErrorHandler((req, res) => controller.getAssociationById(req, res)),
     )
