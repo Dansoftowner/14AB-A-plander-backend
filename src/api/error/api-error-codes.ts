@@ -258,4 +258,7 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   NO_OTHER_PRESIDENTS = 'no-other-presidents',
+
+  
+  ASSIGNEE_NOT_FOUND = 'assignee-not-found',
 }
