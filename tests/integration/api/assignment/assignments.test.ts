@@ -6,7 +6,7 @@ import mongoose from 'mongoose'
 import MemberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
-import assignments from './dummy-assignments.json'
+import assignments from '../../dummy-data/assignments.json'
 import AssignmentModel from '../../../../src/models/assignment'
 import { endOfMonth, startOfMonth } from 'date-fns'
 

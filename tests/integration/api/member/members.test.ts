@@ -12,7 +12,7 @@ import container from '../../../../src/di'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import RegistrationTokenModel from '../../../../src/models/registration-token'
 import RestorationTokenModel from '../../../../src/models/restoration-token'
-import members from './dummy-members.json'
+import members from '../../dummy-data/members.json'
 import AssociationModel from '../../../../src/models/association'
 
 const { mock: nodemailerMock } = nodemailer as unknown as NodemailerMock
