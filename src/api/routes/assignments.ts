@@ -105,6 +105,40 @@ export class AssignmentRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.getAssignment(req, res)),
     )
 
+    /**
+     * @openapi
+     * /api/assignments:
+     *  post:
+     *    tags:
+     *      - Assignments
+     *    description: |
+     *       Allows **presidents** to insert new assignments to the association.
+     *
+     *       **Authentication is required** before using this endpoint.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/AssignmentInsertion'
+     *    responses:
+     *      201:
+     *        description: Insertion proceeded. Returns the information about the created assignment.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Assignment'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      403:
+     *       $ref: '#/components/responses/NotPresident'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
     this.router.post(
       '/',
       auth,

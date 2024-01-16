@@ -350,17 +350,29 @@ describe('/api/assignments', () => {
     })
 
     it('should save assignment into database', async () => {
-      const res = await sendRequest()
+      await sendRequest()
 
       const assignment = await AssignmentModel.findOne({ title })
 
       expect(assignment).not.toBeNull()
       expect(assignment).toHaveProperty('title', title)
       expect(assignment).toHaveProperty('location', location)
-      expect(assignment).toHaveProperty('start', start)
-      expect(assignment).toHaveProperty('end', end)
+      expect(assignment).toHaveProperty('start', new Date(start!))
+      expect(assignment).toHaveProperty('end', new Date(end!))
       expect(assignment!.assignees).toHaveLength(assignees!.length)
-      expect(assignment!.assignees.map((it) => it._id)).toEqual(assignees)
+      expect(assignment!.assignees.map((it) => it._id.toHexString())).toEqual(assignees)
+    })
+
+    it('should return the saved assignment', async () => {
+      const res = await sendRequest()
+
+      expect(res.body).toBeDefined()
+      expect(res.body).toHaveProperty('title', title)
+      expect(res.body).toHaveProperty('location', location)
+      expect(res.body).toHaveProperty('start', start!)
+      expect(res.body).toHaveProperty('end', end!)
+      expect(res.body.assignees).toHaveLength(assignees!.length)
+      expect(res.body.assignees.map((it) => it._id)).toEqual(assignees)
     })
   })
 })
