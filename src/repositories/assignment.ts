@@ -1,6 +1,11 @@
+import _ from 'lodash'
 import { FilterQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import AssignmentModel, { Assignment } from '../models/assignment'
+import MemberModel, { Member } from '../models/member'
+import { AssignmentInsertionDto } from '../dto/assignment-insertion'
+import { AssigneeNotFoundError } from '../exception/assignment-errors'
+import { isIterable } from '../utils/iterables'
 
 export interface AssignmentsDbQueryOptions {
   start: Date
@@ -22,6 +27,32 @@ export class AssignmentRepository implements Repository {
     return AssignmentModel.findOne({ _id: id, association: associationId }).select(
       projection,
     )
+  }
+
+  /**
+   * @throws AssigneeNotFound
+   */
+  async insert(
+    associationId: string,
+    insertion: AssignmentInsertionDto,
+  ): Promise<Assignment> {
+    const assignment = new AssignmentModel({
+      association: associationId,
+      ...insertion,
+      assignees: [],
+    })
+
+    if (isIterable(insertion.assignees))
+      for (const assigneeId of insertion.assignees) {
+        const member = await MemberModel.findOne({
+          association: associationId,
+          _id: assigneeId,
+        })
+        if (!member) throw new AssigneeNotFoundError()
+        assignment.assignees.push(_.pick(member, ['_id', 'name']))
+      }
+
+    return await assignment.save()
   }
 
   private filterQuery(options: AssignmentsDbQueryOptions): FilterQuery<Assignment> {

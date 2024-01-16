@@ -6,14 +6,20 @@ import mongoose from 'mongoose'
 import MemberModel, { Member } from '../../../../src/models/member'
 import container from '../../../../src/di'
 import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
-import assignments from './dummy-assignments.json'
-import AssignmentModel from '../../../../src/models/assignment'
+import assignments from '../../dummy-data/assignments.json'
+import members from '../../dummy-data/members.json'
+import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
 import { endOfMonth, startOfMonth } from 'date-fns'
 
 describe('/api/assignments', () => {
   let app: Express
 
   let client
+
+  const presidentMember = members.find((it) => it.roles?.includes('president'))
+  const regularMember = members
+    .filter((it) => it.association === presidentMember!.association)
+    .find((it) => !it.roles?.includes('president'))
 
   const generateToken = async () => {
     if (!client) return ''
@@ -24,6 +30,9 @@ describe('/api/assignments', () => {
   const assignmentsOfAssociation = () =>
     assignments.filter((it) => it.association == client.association)
 
+  const membersOfAssociation = () =>
+    members.filter((it) => it.association == client.association)
+
   beforeAll(async () => {
     app = container.resolve('app').expressApp
     await MemberModel.deleteMany({})
@@ -31,11 +40,9 @@ describe('/api/assignments', () => {
   })
 
   beforeEach(async () => {
-    client = await new MemberModel({
-      roles: ['president'],
-      association: '652f7b95fc13ae3ce86c7ce6',
-    }).save({ validateBeforeSave: false })
+    client = presidentMember
 
+    await MemberModel.insertMany(members)
     await AssignmentModel.insertMany(assignments)
 
     rateLimiterStore.resetAll()
@@ -228,6 +235,144 @@ describe('/api/assignments', () => {
       expect(_.keys(res.body).sort()).toEqual(
         ['_id', 'title', 'start', 'end', 'location', 'assignees'].sort(),
       )
+    })
+  })
+
+  describe('POST /', () => {
+    let title: string | undefined
+    let start: string | undefined
+    let end: string | undefined
+    let location: string | undefined
+    let assignees: string[] | undefined
+
+    const sendRequest = async () => {
+      return request(app)
+        .post('/api/assignments')
+        .send({ title, start, end, location, assignees })
+        .set(config.get('jwt.headerName'), await generateToken())
+    }
+
+    beforeEach(() => {
+      title = 'Test Assignment'
+      start = '2022-01-01T12:00:00.000Z'
+      end = '2022-01-01T13:00:00.000Z'
+      location = 'Test Location'
+      assignees = membersOfAssociation()
+        .map((it) => it._id)
+        .slice(0, 2)
+    })
+
+    afterEach(() => {
+      title = start = end = location = assignees = undefined
+    })
+
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 403 response if client is not president', async () => {
+      client = regularMember
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should return 400 response if the title is not provided', async () => {
+      title = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the start is not provided', async () => {
+      start = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the end is not provided', async () => {
+      end = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the start is greater than the end', async () => {
+      start = '2022-01-02T12:00:00.000Z'
+      end = '2022-01-02T11:00:00.000Z'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the location is not provided', async () => {
+      location = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the assignees contains invalid id', async () => {
+      assignees = ['123']
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the assignees contains duplicate id', async () => {
+      const assignee = membersOfAssociation()[0]
+      assignees = new Array(2).fill(assignee._id)
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the assignees contains id of a member not in the association', async () => {
+      const assignee = members.find((it) => it.association !== client.association)
+      assignees = [assignee!._id]
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should save assignment into database', async () => {
+      await sendRequest()
+
+      const assignment = await AssignmentModel.findOne({ title })
+
+      expect(assignment).not.toBeNull()
+      expect(assignment).toHaveProperty('title', title)
+      expect(assignment).toHaveProperty('location', location)
+      expect(assignment).toHaveProperty('start', new Date(start!))
+      expect(assignment).toHaveProperty('end', new Date(end!))
+      expect(assignment!.assignees).toHaveLength(assignees!.length)
+      expect(assignment!.assignees.map((it) => it._id.toHexString())).toEqual(assignees)
+    })
+
+    it('should return the saved assignment', async () => {
+      const res = await sendRequest()
+
+      expect(res.body).toBeDefined()
+      expect(res.body).toHaveProperty('title', title)
+      expect(res.body).toHaveProperty('location', location)
+      expect(res.body).toHaveProperty('start', start!)
+      expect(res.body).toHaveProperty('end', end!)
+      expect(res.body.assignees).toHaveLength(assignees!.length)
+      expect(res.body.assignees.map((it) => it._id)).toEqual(assignees)
     })
   })
 })

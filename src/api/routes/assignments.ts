@@ -1,7 +1,10 @@
 import { Controller } from '../../base/controller'
 import { RoutesProvider } from '../../base/routes-provider'
+import { AssignmentInsertionDto } from '../../dto/assignment-insertion'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
+import president from '../../middlewares/president'
+import validate from '../../middlewares/validate'
 import validateObjectId from '../../middlewares/validate-objectid'
 import { AssignmentController } from '../controllers/assignment'
 
@@ -100,6 +103,48 @@ export class AssignmentRoutes extends RoutesProvider {
       auth,
       validateObjectId,
       asyncErrorHandler((req, res) => controller.getAssignment(req, res)),
+    )
+
+    /**
+     * @openapi
+     * /api/assignments:
+     *  post:
+     *    tags:
+     *      - Assignments
+     *    description: |
+     *       Allows **presidents** to insert new assignments to the association.
+     *
+     *       **Authentication is required** before using this endpoint.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/AssignmentInsertion'
+     *    responses:
+     *      201:
+     *        description: Insertion proceeded. Returns the information about the created assignment.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Assignment'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      403:
+     *       $ref: '#/components/responses/NotPresident'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.post(
+      '/',
+      auth,
+      president,
+      validate(AssignmentInsertionDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.createAssignment(req, res)),
     )
 
     //this.router.get('/', controller.getAssignments)

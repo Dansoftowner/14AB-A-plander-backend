@@ -9,6 +9,7 @@ import {
   AssignmentsDbQueryOptions,
 } from '../repositories/assignment'
 import { AssignmentDto } from '../dto/assignment'
+import { AssignmentInsertionDto } from '../dto/assignment-insertion'
 
 export class AssignmentService implements Service {
   private clientInfo: ClientInfo
@@ -33,8 +34,23 @@ export class AssignmentService implements Service {
     )
   }
 
-  async getById(id: string, options: AssignmentsQueryOptions): Promise<AssignmentDto> {
+  async getById(
+    id: string,
+    options: AssignmentsQueryOptions,
+  ): Promise<AssignmentDto | null> {
     const item = await this.repository.findById(id, this.toDbQuery(options))
+
+    return plainToInstance(AssignmentDto, item, {
+      excludeExtraneousValues: true,
+      enableImplicitConversion: true,
+    })
+  }
+
+  /**
+   * @throws AssigneeNotFound
+   */
+  async create(insertion: AssignmentInsertionDto): Promise<AssignmentDto> {
+    const item = await this.repository.insert(this.clientInfo.association, insertion)
 
     return plainToInstance(AssignmentDto, item, {
       excludeExtraneousValues: true,
