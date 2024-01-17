@@ -1,6 +1,7 @@
 import { Controller } from '../../base/controller'
 import { RoutesProvider } from '../../base/routes-provider'
 import { AssignmentInsertionDto } from '../../dto/assignment-insertion'
+import { AssignmentUpdateDto } from '../../dto/assignment-update'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import president from '../../middlewares/president'
@@ -147,8 +148,15 @@ export class AssignmentRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.createAssignment(req, res)),
     )
 
-    //this.router.get('/', controller.getAssignments)
-    //this.router.post('/', controller.createAssignment)
+    this.router.patch(
+      '/:id',
+      auth,
+      validateObjectId,
+      president,
+      validate(AssignmentUpdateDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateAssignment(req, res)),
+    )
+
     //this.router.put('/:id', controller.updateAssignment)
     //this.router.delete('/:id', controller.deleteAssignment)
   }

@@ -10,6 +10,7 @@ import {
 } from '../repositories/assignment'
 import { AssignmentDto } from '../dto/assignment'
 import { AssignmentInsertionDto } from '../dto/assignment-insertion'
+import { AssignmentUpdateDto } from '../dto/assignment-update'
 
 export class AssignmentService implements Service {
   private clientInfo: ClientInfo
@@ -51,6 +52,18 @@ export class AssignmentService implements Service {
    */
   async create(insertion: AssignmentInsertionDto): Promise<AssignmentDto> {
     const item = await this.repository.insert(this.clientInfo.association, insertion)
+
+    return plainToInstance(AssignmentDto, item, {
+      excludeExtraneousValues: true,
+      enableImplicitConversion: true,
+    })
+  }
+
+  /**
+   * @throws AssigneeNotFound
+   */
+  async update(id: string, update: AssignmentUpdateDto) {
+    const item = await this.repository.update(this.clientInfo.association, id, update)
 
     return plainToInstance(AssignmentDto, item, {
       excludeExtraneousValues: true,

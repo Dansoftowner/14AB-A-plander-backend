@@ -375,4 +375,72 @@ describe('/api/assignments', () => {
       expect(res.body.assignees.map((it) => it._id)).toEqual(assignees)
     })
   })
+
+  describe('PATCH /:id', () => {
+    let id: string
+    let title: string | undefined
+    let start: string | undefined
+    let end: string | undefined
+    let location: string | undefined
+    let assignees: string[] | undefined
+  
+    const sendRequest = async () => {
+      return request(app)
+        .patch(`/api/assignments/${id}`)
+        .send({ title, start, end, location, assignees })
+        .set(config.get('jwt.headerName'), await generateToken())
+    }
+  
+    beforeEach(() => {
+      id = assignmentsOfAssociation()[0]._id
+    })
+  
+    afterEach(() => {
+      title = start = end = location = assignees = undefined
+    })
+  
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+      
+      const res = await sendRequest()
+  
+      expect(res.status).toBe(401)
+    })
+  
+    it('should return 403 response if client is not president', async () => {
+      client = regularMember
+  
+      const res = await sendRequest()
+  
+      expect(res.status).toBe(403)
+    })
+  
+    it('should return 400 response if id is invalid', async () => {
+      id = 'invalid'
+  
+      const res = await sendRequest()
+  
+      expect(res.status).toBe(400)
+    })
+  
+    it('should update the assignment with the provided fields', async () => {
+      title = 'New Title'
+      location = 'New Location'
+  
+      await sendRequest()
+  
+      const assignment = await AssignmentModel.findById(id)
+  
+      expect(assignment!.title).toBe(title)
+      expect(assignment!.location).toBe(location)
+    })
+  
+    it('should return the updated assignment', async () => {
+      title = 'New Title'
+  
+      const res = await sendRequest()
+  
+      expect(res.body.title).toBe(title)
+    })
+  })
 })
