@@ -101,4 +101,8 @@ export class AssignmentRepository implements Repository {
       },
     }
   }
+
+  private ensureTimeBoundariesIntegrity({ start, end }) {
+    throw new Error('Not implemented')
+  }
 }
