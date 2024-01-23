@@ -9,7 +9,7 @@ import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import assignments from '../../dummy-data/assignments.json'
 import members from '../../dummy-data/members.json'
 import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
-import { endOfMonth, startOfMonth } from 'date-fns'
+import { add, endOfMonth, startOfMonth } from 'date-fns'
 
 describe('/api/assignments', () => {
   let app: Express
@@ -383,63 +383,92 @@ describe('/api/assignments', () => {
     let end: string | undefined
     let location: string | undefined
     let assignees: string[] | undefined
-  
+
     const sendRequest = async () => {
       return request(app)
         .patch(`/api/assignments/${id}`)
         .send({ title, start, end, location, assignees })
         .set(config.get('jwt.headerName'), await generateToken())
     }
-  
+
     beforeEach(() => {
       id = assignmentsOfAssociation()[0]._id
     })
-  
+
     afterEach(() => {
       title = start = end = location = assignees = undefined
     })
-  
+
     it('should return 401 response if client is not logged in', async () => {
       client = undefined
-      
+
       const res = await sendRequest()
-  
+
       expect(res.status).toBe(401)
     })
-  
+
     it('should return 403 response if client is not president', async () => {
       client = regularMember
-  
+
       const res = await sendRequest()
-  
+
       expect(res.status).toBe(403)
     })
-  
+
     it('should return 400 response if id is invalid', async () => {
       id = 'invalid'
-  
+
       const res = await sendRequest()
-  
+
       expect(res.status).toBe(400)
     })
-  
+
     it('should update the assignment with the provided fields', async () => {
       title = 'New Title'
       location = 'New Location'
-  
+      start = new Date().toISOString()
+      end = add(start, { hours: 2 }).toISOString()
+
       await sendRequest()
-  
+
       const assignment = await AssignmentModel.findById(id)
-  
+
       expect(assignment!.title).toBe(title)
       expect(assignment!.location).toBe(location)
+      expect(assignment!.start!.toISOString()).toBe(start)
+      expect(assignment!.end!.toISOString()).toBe(end)
     })
-  
+
+    it('should remove assignees', async () => {
+      assignees = []
+
+      await sendRequest()
+
+      const assignment = await AssignmentModel.findById(id)
+
+      expect(assignment!.assignees).toHaveLength(0)
+    })
+
+    it('should update assignees', async () => {
+      const rawAssignees = membersOfAssociation().slice(1, 3)
+
+      assignees = rawAssignees.map((it) => it._id)
+
+      await sendRequest()
+
+      const assignment = await AssignmentModel.findById(id)
+
+      expect(assignment!.assignees).toHaveLength(assignees!.length)
+      expect(assignment!.assignees).toEqual(
+        rawAssignees.map((it) => _.pick(it, ['_id', 'name'])),
+      )
+    })
+
     it('should return the updated assignment', async () => {
       title = 'New Title'
-  
+
       const res = await sendRequest()
-  
+
       expect(res.body.title).toBe(title)
     })
   })
