@@ -1,4 +1,4 @@
-import mongoose, { Date, Schema, Types } from 'mongoose'
+import mongoose, { Schema, Types } from 'mongoose'
 
 export interface Assignment {
   _id: Types.ObjectId
