@@ -378,11 +378,11 @@ describe('/api/assignments', () => {
 
   describe('PATCH /:id', () => {
     let id: string
-    let title: string | undefined
-    let start: string | undefined
-    let end: string | undefined
-    let location: string | undefined
-    let assignees: string[] | undefined
+    let title: string | null | undefined
+    let start: string | null | undefined
+    let end: string | null | undefined
+    let location: string | null | undefined
+    let assignees: string[] | null | undefined
 
     const sendRequest = async () => {
       return request(app)
@@ -423,6 +423,41 @@ describe('/api/assignments', () => {
       expect(res.status).toBe(400)
     })
 
+    it('should return 400 response if start is null', async () => {
+      start = null
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if end is null', async () => {
+      end = null
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if start is greater than the end', async () => {
+      start = '2022-01-02T12:00:00.000Z'
+      end = '2022-01-02T11:00:00.000Z'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 422 response if start is greater than the end stored in database', async () => {
+      start = add(assignments.find((it) => it._id === id)!.end, {
+        hours: 1,
+      }).toISOString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
+    })
+
     it('should update the assignment with the provided fields', async () => {
       title = 'New Title'
       location = 'New Location'
@@ -459,8 +494,11 @@ describe('/api/assignments', () => {
       const assignment = await AssignmentModel.findById(id)
 
       expect(assignment!.assignees).toHaveLength(assignees!.length)
-      expect(assignment!.assignees).toEqual(
-        rawAssignees.map((it) => _.pick(it, ['_id', 'name'])),
+      expect(assignment!.assignees.map((it) => it._id.toHexString()).sort()).toEqual(
+        rawAssignees.map((it) => it._id).sort(),
+      )
+      expect(assignment!.assignees.map((it) => it.name).sort()).toEqual(
+        rawAssignees.map((it) => it.name).sort(),
       )
     })
 
