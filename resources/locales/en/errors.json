@@ -15,5 +15,6 @@
     "current-pass-required": "Specifying current password is required!",
     "current-pass-invalid": "The given password does not match the current password!",
     "email-not-found": "The given email address is not associated with any account!",
-    "assignee-not-found": "Didn't find the assignee member with the given id!"
+    "assignee-not-found": "Didn't find the assignee member with the given id!",
+    "invalid-assignment-boundaries": "Start time must be less than the end time!"
 }

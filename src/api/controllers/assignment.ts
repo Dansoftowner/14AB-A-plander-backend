@@ -8,7 +8,10 @@ import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { ApiError } from '../error/api-error'
 import { ApiErrorCode } from '../error/api-error-codes'
 import { AssignmentInsertionDto } from '../../dto/assignment-insertion'
-import { AssigneeNotFoundError } from '../../exception/assignment-errors'
+import {
+  AssigneeNotFoundError,
+  InvalidTimeBoundariesError,
+} from '../../exception/assignment-errors'
 import { AssignmentUpdateDto } from '../../dto/assignment-update'
 
 export class AssignmentController implements Controller {
@@ -58,6 +61,8 @@ export class AssignmentController implements Controller {
     } catch (e) {
       if (e instanceof AssigneeNotFoundError)
         throw new ApiError(400, ApiErrorCode.ASSIGNEE_NOT_FOUND)
+      if (e instanceof InvalidTimeBoundariesError)
+        throw new ApiError(422, ApiErrorCode.INVALID_ASSIGNMENT_BOUNDARIES)
       throw e
     }
   }

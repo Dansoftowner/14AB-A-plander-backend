@@ -8,7 +8,7 @@ import {
   AssigneeNotFoundError,
   InvalidTimeBoundariesError,
 } from '../exception/assignment-errors'
-import { isIterable } from '../utils/commons'
+import { isIterable, notFalsy } from '../utils/commons'
 import { AssignmentUpdateDto } from '../dto/assignment-update'
 
 export interface AssignmentsDbQueryOptions {
@@ -49,33 +49,39 @@ export class AssignmentRepository implements Repository {
     return await assignment.save()
   }
 
-  async update(associationId: string, id: string, update: AssignmentUpdateDto) {
-    const updateQuery: UpdateQuery<Assignment> = {
-      $set: {
-        ..._.pick(update, ['title', 'start', 'end', 'location']),
-      },
-    }
+  async update(
+    associationId: string,
+    id: string,
+    update: AssignmentUpdateDto,
+  ): Promise<Assignment | null> {
+    const assignment = await AssignmentModel.findOne({
+      _id: id,
+      association: associationId,
+    })
+
+    if (!assignment) return null
+
+    this.ensureTimeBoundariesIntegrity(
+      notFalsy(update.start, assignment.start),
+      notFalsy(update.end, assignment.end),
+    )
+
+    for (const prop of ['title', 'start', 'end', 'location'])
+      if (update[prop]) assignment[prop] = update[prop]
 
     if (update.assignees)
-      updateQuery.$set!.assignees = await this.populateAssignees(
+      assignment.assignees = await this.populateAssignees(
         associationId,
         update.assignees,
       )
 
-    return await AssignmentModel.findOneAndUpdate(
-      {
-        _id: id,
-        association: associationId,
-      },
-      updateQuery,
-      { new: true },
-    )
+    return await assignment.save()
   }
 
   private async populateAssignees(
     associationId: string,
     assignees: string[],
-  ): Promise<Member[]> {
+  ): Promise<any[]> {
     const members: Member[] = []
     if (isIterable(assignees))
       for (const assigneeId of assignees) {
@@ -105,7 +111,7 @@ export class AssignmentRepository implements Repository {
     }
   }
 
-  private ensureTimeBoundariesIntegrity({ start, end }) {
-    if (start < end) throw new InvalidTimeBoundariesError()
+  private ensureTimeBoundariesIntegrity(start: Date, end: Date) {
+    if (start > end) throw new InvalidTimeBoundariesError()
   }
 }

@@ -1,12 +1,14 @@
 import Joi from 'joi'
 import { JoiObjectId } from '../utils/joi'
+import { Type } from 'class-transformer'
 
 export class AssignmentUpdateDto {
   title?: string
   location?: string
-  start?: Date
-  end?: Date
   assignees?: string[]
+
+  @Type(() => Date) start?: Date
+  @Type(() => Date) end?: Date
 
   static validationSchema() {
     return Joi.object({

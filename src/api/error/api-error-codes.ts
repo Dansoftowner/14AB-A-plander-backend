@@ -259,6 +259,18 @@ export enum ApiErrorCode {
    */
   NO_OTHER_PRESIDENTS = 'no-other-presidents',
 
-  
   ASSIGNEE_NOT_FOUND = 'assignee-not-found',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    InvalidAssignmentBoundaries:
+   *     description: "Invalid time boundaries passed for the assignment (the start > end or end < start) (errorCode: 'invalid-assignment-boundaries')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  INVALID_ASSIGNMENT_BOUNDARIES = 'invalid-assignment-boundaries',
 }
