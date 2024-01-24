@@ -4,8 +4,11 @@ import { Repository } from '../base/repository'
 import AssignmentModel, { Assignment } from '../models/assignment'
 import MemberModel, { Member } from '../models/member'
 import { AssignmentInsertionDto } from '../dto/assignment-insertion'
-import { AssigneeNotFoundError } from '../exception/assignment-errors'
-import { isIterable } from '../utils/iterables'
+import {
+  AssigneeNotFoundError,
+  InvalidTimeBoundariesError,
+} from '../exception/assignment-errors'
+import { isIterable } from '../utils/commons'
 import { AssignmentUpdateDto } from '../dto/assignment-update'
 
 export interface AssignmentsDbQueryOptions {
@@ -103,6 +106,6 @@ export class AssignmentRepository implements Repository {
   }
 
   private ensureTimeBoundariesIntegrity({ start, end }) {
-    throw new Error('Not implemented')
+    if (start < end) throw new InvalidTimeBoundariesError()
   }
 }
