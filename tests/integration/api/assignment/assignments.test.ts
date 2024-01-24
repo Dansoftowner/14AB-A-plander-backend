@@ -415,6 +415,14 @@ describe('/api/assignments', () => {
       expect(res.status).toBe(403)
     })
 
+    it('should return 404 response if the given assignment does not exist', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
     it('should return 400 response if id is invalid', async () => {
       id = 'invalid'
 

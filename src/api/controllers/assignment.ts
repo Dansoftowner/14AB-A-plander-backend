@@ -52,6 +52,8 @@ export class AssignmentController implements Controller {
     try {
       const result = await this.service(req).update(id, payload)
 
+      if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
       res.status(200).send(result)
     } catch (e) {
       if (e instanceof AssigneeNotFoundError)
