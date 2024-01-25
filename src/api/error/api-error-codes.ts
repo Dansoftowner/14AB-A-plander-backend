@@ -259,6 +259,17 @@ export enum ApiErrorCode {
    */
   NO_OTHER_PRESIDENTS = 'no-other-presidents',
 
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    AssigneeNotFound:
+   *     description: "Occurs when the client tries to add non-existent member(s) to an assignment (errorCode: 'assignee-not-found')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
   ASSIGNEE_NOT_FOUND = 'assignee-not-found',
 
   /**
@@ -266,7 +277,11 @@ export enum ApiErrorCode {
    * components:
    *   responses:
    *    InvalidAssignmentBoundaries:
-   *     description: "Invalid time boundaries passed for the assignment (the start > end or end < start) (errorCode: 'invalid-assignment-boundaries')."
+   *     description: |
+   *          Invalid time boundaries passed for the assignment (the start > end or end < start) (errorCode: 'invalid-assignment-boundaries').
+   *
+   *          Occurs when the client wants to update the start or end time of the assignment but it violates the other boundary stored
+   *          in the database.
    *     content:
    *       application/json:
    *         schema:
