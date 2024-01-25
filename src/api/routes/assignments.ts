@@ -207,5 +207,50 @@ export class AssignmentRoutes extends RoutesProvider {
       validate(AssignmentUpdateDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.updateAssignment(req, res)),
     )
+
+    /**
+     * @openapi
+     * /api/assignments/{id}:
+     *  delete:
+     *    tags:
+     *      - Assignments
+     *    description: |
+     *      Allows **presidents** to delete assignments.
+     *
+     *      **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the assignment.
+     *    responses:
+     *      200:
+     *        description: Deletion proceeded. The details of the deleted assignment are returned.
+     *        content:
+     *          application/json:
+     *            schema:
+     *                $ref: '#/components/schemas/Assignment'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      403:
+     *       $ref: '#/components/responses/NotPresident'
+     *      404:
+     *        $ref: '#/components/responses/NotFound'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.delete(
+      '/:id',
+      auth,
+      president,
+      validateObjectId,
+      asyncErrorHandler((req, res) => controller.deleteAssignment(req, res)),
+    )
   }
 }

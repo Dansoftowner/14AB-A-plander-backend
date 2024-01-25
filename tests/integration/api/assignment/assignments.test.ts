@@ -518,4 +518,58 @@ describe('/api/assignments', () => {
       expect(res.body.title).toBe(title)
     })
   })
+
+  describe('DELETE /:id', () => {
+    let id: string
+
+    const sendRequest = async () => {
+      return request(app)
+        .delete(`/api/assignments/${id}`)
+        .set(config.get('jwt.headerName'), await generateToken())
+    }
+
+    beforeEach(() => {
+      id = assignmentsOfAssociation()[0]._id
+    })
+
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 403 response if client is not president', async () => {
+      client = regularMember
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should return 404 response if the given assignment does not exist', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 400 response if id is invalid', async () => {
+      id = 'invalid'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should delete the assignment', async () => {
+      await sendRequest()
+
+      const assignment = await AssignmentModel.findById(id)
+
+      expect(assignment).toBeNull()
+    })
+  })
 })

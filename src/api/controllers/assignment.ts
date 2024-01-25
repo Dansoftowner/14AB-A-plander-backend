@@ -57,7 +57,7 @@ export class AssignmentController implements Controller {
 
       if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
-      res.status(200).send(result)
+      res.status(200).send(instanceToPlain(result))
     } catch (e) {
       if (e instanceof AssigneeNotFoundError)
         throw new ApiError(400, ApiErrorCode.ASSIGNEE_NOT_FOUND)
@@ -65,6 +65,16 @@ export class AssignmentController implements Controller {
         throw new ApiError(422, ApiErrorCode.INVALID_ASSIGNMENT_BOUNDARIES)
       throw e
     }
+  }
+
+  async deleteAssignment(req: Request, res: Response) {
+    const id = req.params.id
+
+    const result = await this.service(req).delete(id)
+
+    if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+    res.status(200).send(instanceToPlain(result))
   }
 
   private service(req: Request): AssignmentService {
