@@ -288,4 +288,43 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   INVALID_ASSIGNMENT_BOUNDARIES = 'invalid-assignment-boundaries',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    ReportAlreadyExists:
+   *     description: "Cannot submit a report for an assignment that already has a report (errorCode: 'report-already-exists')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  REPORT_ALREADY_EXISTS = 'report-already-exists',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    ReporterIsNotAssignee:
+   *     description: "Cannot create a report for an assignment that the client is not an assignee of (errorCode: 'reporter-is-not-assignee')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  REPORTER_IS_NOT_ASSIGNEE = 'reporter-is-not-assignee',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    AssignmentNotFound:
+   *     description: "The given assignment doesn't exist (errorCode: 'assignment-not-found')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  ASSIGNMENT_NOT_FOUND = 'assignment-not-found',
 }
