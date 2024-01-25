@@ -49,6 +49,10 @@ export class AssignmentRepository implements Repository {
     return await assignment.save()
   }
 
+  /**
+   * @throws AssigneeNotFound
+   * @throws InvalidTimeBoundariesError
+   */
   async update(
     associationId: string,
     id: string,
@@ -76,6 +80,13 @@ export class AssignmentRepository implements Repository {
       )
 
     return await assignment.save()
+  }
+
+  delete(associationId: string, id: string): Promise<Assignment | null> {
+    return AssignmentModel.findOneAndDelete({
+      association: associationId,
+      _id: id,
+    })
   }
 
   private async populateAssignees(

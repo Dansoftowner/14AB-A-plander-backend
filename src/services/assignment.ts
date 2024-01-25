@@ -61,9 +61,19 @@ export class AssignmentService implements Service {
 
   /**
    * @throws AssigneeNotFound
+   * @throws InvalidTimeBoundariesError
    */
   async update(id: string, update: AssignmentUpdateDto) {
     const item = await this.repository.update(this.clientInfo.association, id, update)
+
+    return plainToInstance(AssignmentDto, item, {
+      excludeExtraneousValues: true,
+      enableImplicitConversion: true,
+    })
+  }
+
+  async delete(id: string): Promise<AssignmentDto | null> {
+    const item = await this.repository.delete(this.clientInfo.association, id)
 
     return plainToInstance(AssignmentDto, item, {
       excludeExtraneousValues: true,
