@@ -5,6 +5,7 @@ type DutyMethod = 'vehicle' | 'bicycle' | 'pedestrian'
 export interface Report {
   _id: Types.ObjectId
   assignment: Types.ObjectId
+  member: Types.ObjectId
   method: DutyMethod
   purpose: string
   licensePlateNumber: string | null
@@ -20,7 +21,12 @@ const reportSchema = new Schema<Report>({
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'Assignment',
-    index: true,
+    unique: true,
+  },
+  member: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'Member',
   },
   method: {
     type: String,
@@ -67,6 +73,12 @@ const reportSchema = new Schema<Report>({
     type: String,
     minlength: 5,
     maxlength: 255,
+    validate: [
+      function (this: Report) {
+        return this.externalOrganization
+      },
+      'External organization has to be provided if external representative is specified!',
+    ],
   },
   description: {
     type: String,
