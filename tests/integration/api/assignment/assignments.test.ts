@@ -9,7 +9,7 @@ import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import assignments from '../../dummy-data/assignments.json'
 import members from '../../dummy-data/members.json'
 import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
-import { endOfMonth, startOfMonth } from 'date-fns'
+import { add, endOfMonth, startOfMonth } from 'date-fns'
 
 describe('/api/assignments', () => {
   let app: Express
@@ -373,6 +373,149 @@ describe('/api/assignments', () => {
       expect(res.body).toHaveProperty('end', end!)
       expect(res.body.assignees).toHaveLength(assignees!.length)
       expect(res.body.assignees.map((it) => it._id)).toEqual(assignees)
+    })
+  })
+
+  describe('PATCH /:id', () => {
+    let id: string
+    let title: string | null | undefined
+    let start: string | null | undefined
+    let end: string | null | undefined
+    let location: string | null | undefined
+    let assignees: string[] | null | undefined
+
+    const sendRequest = async () => {
+      return request(app)
+        .patch(`/api/assignments/${id}`)
+        .send({ title, start, end, location, assignees })
+        .set(config.get('jwt.headerName'), await generateToken())
+    }
+
+    beforeEach(() => {
+      id = assignmentsOfAssociation()[0]._id
+    })
+
+    afterEach(() => {
+      title = start = end = location = assignees = undefined
+    })
+
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 403 response if client is not president', async () => {
+      client = regularMember
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
+    })
+
+    it('should return 404 response if the given assignment does not exist', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 400 response if id is invalid', async () => {
+      id = 'invalid'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if start is null', async () => {
+      start = null
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if end is null', async () => {
+      end = null
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if start is greater than the end', async () => {
+      start = '2022-01-02T12:00:00.000Z'
+      end = '2022-01-02T11:00:00.000Z'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 422 response if start is greater than the end stored in database', async () => {
+      start = add(assignments.find((it) => it._id === id)!.end, {
+        hours: 1,
+      }).toISOString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
+    })
+
+    it('should update the assignment with the provided fields', async () => {
+      title = 'New Title'
+      location = 'New Location'
+      start = new Date().toISOString()
+      end = add(start, { hours: 2 }).toISOString()
+
+      await sendRequest()
+
+      const assignment = await AssignmentModel.findById(id)
+
+      expect(assignment!.title).toBe(title)
+      expect(assignment!.location).toBe(location)
+      expect(assignment!.start!.toISOString()).toBe(start)
+      expect(assignment!.end!.toISOString()).toBe(end)
+    })
+
+    it('should remove assignees', async () => {
+      assignees = []
+
+      await sendRequest()
+
+      const assignment = await AssignmentModel.findById(id)
+
+      expect(assignment!.assignees).toHaveLength(0)
+    })
+
+    it('should update assignees', async () => {
+      const rawAssignees = membersOfAssociation().slice(1, 3)
+
+      assignees = rawAssignees.map((it) => it._id)
+
+      await sendRequest()
+
+      const assignment = await AssignmentModel.findById(id)
+
+      expect(assignment!.assignees).toHaveLength(assignees!.length)
+      expect(assignment!.assignees.map((it) => it._id.toHexString()).sort()).toEqual(
+        rawAssignees.map((it) => it._id).sort(),
+      )
+      expect(assignment!.assignees.map((it) => it.name).sort()).toEqual(
+        rawAssignees.map((it) => it.name).sort(),
+      )
+    })
+
+    it('should return the updated assignment', async () => {
+      title = 'New Title'
+
+      const res = await sendRequest()
+
+      expect(res.body.title).toBe(title)
     })
   })
 })

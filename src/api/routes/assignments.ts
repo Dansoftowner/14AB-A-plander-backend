@@ -1,6 +1,7 @@
 import { Controller } from '../../base/controller'
 import { RoutesProvider } from '../../base/routes-provider'
 import { AssignmentInsertionDto } from '../../dto/assignment-insertion'
+import { AssignmentUpdateDto } from '../../dto/assignment-update'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import president from '../../middlewares/president'
@@ -26,6 +27,10 @@ export class AssignmentRoutes extends RoutesProvider {
      *      - Assignments
      *    description: |
      *      Fetches the assignments of the association.
+     *
+     *      Two projection modes:
+     *        - `lite` - Show only `_id`, `title`, `start`, `end`
+     *        - `full` - Show all fields
      *
      *      **Authentication is required** before using this endpoint.
      *    parameters:
@@ -63,6 +68,10 @@ export class AssignmentRoutes extends RoutesProvider {
      *      - Assignments
      *    description: |
      *      Fetches the assignment based on the given *id* from the currently logged in member's association.
+     *
+     *      Two projection modes:
+     *        - `lite` - Show only `_id`, `title`, `start`, `end`
+     *        - `full` - Show all fields
      *
      *      **Authentication is required** before using this endpoint.
      *    parameters:
@@ -147,9 +156,56 @@ export class AssignmentRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.createAssignment(req, res)),
     )
 
-    //this.router.get('/', controller.getAssignments)
-    //this.router.post('/', controller.createAssignment)
-    //this.router.put('/:id', controller.updateAssignment)
-    //this.router.delete('/:id', controller.deleteAssignment)
+    /**
+     * @openapi
+     * /api/assignments/{id}:
+     *  patch:
+     *    tags:
+     *      - Assignments
+     *    description: |
+     *       Allows **presidents** to update assignments.
+     *
+     *       **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the assignment.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/AssignmentUpdate'
+     *    responses:
+     *      200:
+     *        description: Update proceeded. Returns the information about the updated assignment.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Assignment'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      403:
+     *       $ref: '#/components/responses/NotPresident'
+     *      422:
+     *       $ref: '#/components/responses/InvalidAssignmentBoundaries'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.patch(
+      '/:id',
+      auth,
+      validateObjectId,
+      president,
+      validate(AssignmentUpdateDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateAssignment(req, res)),
+    )
   }
 }

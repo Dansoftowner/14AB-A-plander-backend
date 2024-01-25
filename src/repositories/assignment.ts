@@ -1,11 +1,15 @@
 import _ from 'lodash'
-import { FilterQuery } from 'mongoose'
+import { FilterQuery, UpdateQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import AssignmentModel, { Assignment } from '../models/assignment'
 import MemberModel, { Member } from '../models/member'
 import { AssignmentInsertionDto } from '../dto/assignment-insertion'
-import { AssigneeNotFoundError } from '../exception/assignment-errors'
-import { isIterable } from '../utils/iterables'
+import {
+  AssigneeNotFoundError,
+  InvalidTimeBoundariesError,
+} from '../exception/assignment-errors'
+import { isIterable, notFalsy } from '../utils/commons'
+import { AssignmentUpdateDto } from '../dto/assignment-update'
 
 export interface AssignmentsDbQueryOptions {
   start: Date
@@ -39,20 +43,56 @@ export class AssignmentRepository implements Repository {
     const assignment = new AssignmentModel({
       association: associationId,
       ...insertion,
-      assignees: [],
+      assignees: await this.populateAssignees(associationId, insertion.assignees),
     })
 
-    if (isIterable(insertion.assignees))
-      for (const assigneeId of insertion.assignees) {
+    return await assignment.save()
+  }
+
+  async update(
+    associationId: string,
+    id: string,
+    update: AssignmentUpdateDto,
+  ): Promise<Assignment | null> {
+    const assignment = await AssignmentModel.findOne({
+      _id: id,
+      association: associationId,
+    })
+
+    if (!assignment) return null
+
+    this.ensureTimeBoundariesIntegrity(
+      notFalsy(update.start, assignment.start),
+      notFalsy(update.end, assignment.end),
+    )
+
+    for (const prop of ['title', 'start', 'end', 'location'])
+      if (update[prop]) assignment[prop] = update[prop]
+
+    if (update.assignees)
+      assignment.assignees = await this.populateAssignees(
+        associationId,
+        update.assignees,
+      )
+
+    return await assignment.save()
+  }
+
+  private async populateAssignees(
+    associationId: string,
+    assignees: string[],
+  ): Promise<any[]> {
+    const members: Member[] = []
+    if (isIterable(assignees))
+      for (const assigneeId of assignees) {
         const member = await MemberModel.findOne({
           association: associationId,
           _id: assigneeId,
         })
         if (!member) throw new AssigneeNotFoundError()
-        assignment.assignees.push(_.pick(member, ['_id', 'name']))
+        members.push(_.pick(member, ['_id', 'name']))
       }
-
-    return await assignment.save()
+    return members
   }
 
   private filterQuery(options: AssignmentsDbQueryOptions): FilterQuery<Assignment> {
@@ -69,5 +109,9 @@ export class AssignmentRepository implements Repository {
         $lte: end,
       },
     }
+  }
+
+  private ensureTimeBoundariesIntegrity(start: Date, end: Date) {
+    if (start > end) throw new InvalidTimeBoundariesError()
   }
 }

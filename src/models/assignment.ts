@@ -1,4 +1,4 @@
-import mongoose, { Date, Schema, Types } from 'mongoose'
+import mongoose, { Schema, Types } from 'mongoose'
 
 export interface Assignment {
   _id: Types.ObjectId
@@ -32,10 +32,22 @@ const assignmentSchema = new Schema<Assignment>({
   start: {
     type: Date,
     required: true,
+    validate: [
+      function (this: Assignment, value: Date) {
+        return this.end >= value
+      },
+      'Start time must be less than end time!',
+    ],
   },
   end: {
     type: Date,
     required: true,
+    validate: [
+      function (this: Assignment, value: Date) {
+        return this.start <= value
+      },
+      'End time must be greater than start time!',
+    ],
   },
   assignees: [
     {
