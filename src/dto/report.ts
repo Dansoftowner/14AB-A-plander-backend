@@ -114,6 +114,9 @@ export class ReportDto {
   @Expose()
   description?: string
 
+  @Expose()
+  submitted!: Date
+
   static validationSchema() {
     return Joi.object({
       assignment: JoiObjectId().required(),

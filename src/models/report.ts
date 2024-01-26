@@ -14,6 +14,7 @@ export interface Report {
   externalOrganization: string | null
   externalRepresentative: string | null
   description: string | null
+  submitted: Date
 }
 
 const reportSchema = new Schema<Report>({
@@ -84,6 +85,10 @@ const reportSchema = new Schema<Report>({
     type: String,
     minlength: 5,
     maxlength: 1240,
+  },
+  submitted: {
+    type: Date,
+    default: Date.now,
   },
 })
 
