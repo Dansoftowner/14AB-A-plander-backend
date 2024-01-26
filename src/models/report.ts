@@ -14,7 +14,7 @@ export interface Report {
   externalOrganization: string | null
   externalRepresentative: string | null
   description: string | null
-  submitted: Date
+  submittedAt: Date
 }
 
 const reportSchema = new Schema<Report>({
@@ -86,7 +86,7 @@ const reportSchema = new Schema<Report>({
     minlength: 5,
     maxlength: 1240,
   },
-  submitted: {
+  submittedAt: {
     type: Date,
     default: Date.now,
   },
