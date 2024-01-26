@@ -16,12 +16,17 @@ import { JoiObjectId } from '../utils/joi'
  *         _id:
  *           type: string
  *           description: Unique identifier of the report
- *           example: 655f15d623380f3b6a0f7b28
+ *           example: '655f15d623380f3b6a0f7b28'
  *           readOnly: true
  *         assignment:
  *           type: string
  *           description: ID of the assignment the report belongs to
- *           example:
+ *           example: '652fc6f2fc13ae3c0c6c8ab5'
+ *         member:
+ *           type: string
+ *           description: ID of the assignment the report belongs to
+ *           example: '652f866cfc13ae3ce86c7ce7'
+ *           readOnly: true
  *         method:
  *           schema:
  *              type: string
@@ -72,10 +77,16 @@ import { JoiObjectId } from '../utils/joi'
  */
 export class ReportDto {
   @Expose()
+  @Type(() => String)
   _id!: string
 
   @Expose()
+  @Type(() => String)
   assignment!: string
+
+  @Expose()
+  @Type(() => String)
+  member!: string
 
   @Expose()
   method!: string
@@ -112,11 +123,14 @@ export class ReportDto {
       startKm: Joi.number().min(0),
       endKm: Joi.number().min(0).greater(Joi.ref('startKm')),
       externalOrganization: Joi.string().min(5).max(255),
-      externalRepresentative: Joi.string().min(5).max(255).when('externalOrganization', {
-        is: Joi.exist(),
-        then: Joi.required(),
-        otherwise: Joi.forbidden(),
-      }),
+      externalRepresentative: Joi.string()
+        .min(5)
+        .max(255)
+        .when('externalOrganization', {
+          is: Joi.exist(),
+          then: Joi.required(),
+          otherwise: Joi.forbidden(),
+        }),
       description: Joi.string().min(5).max(1240),
     })
   }

@@ -49,7 +49,7 @@ const reportSchema = new Schema<Report>({
     min: 0,
     validate: [
       function (this: Report, value: number) {
-        return this.endKm ? value <= this.endKm : true
+        return this.endKm === null || value <= this.endKm
       },
       'End km must be greater than start km!',
     ],
@@ -59,7 +59,7 @@ const reportSchema = new Schema<Report>({
     min: 0,
     validate: [
       function (this: Report, value: number) {
-        return this.startKm && this.startKm <= value
+        return this.startKm === null || this.startKm <= value
       },
       'End km must be greater than start km!',
     ],

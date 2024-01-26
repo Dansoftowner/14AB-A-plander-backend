@@ -284,7 +284,7 @@ describe('/api/reports', () => {
 
       const savedReport = await ReportModel.findOne({ assignment })
 
-      expect(savedReport).toBeDefined()
+      expect(savedReport).not.toBeNull()
       expect(savedReport!.member.toHexString()).toBe(client._id)
       expect(savedReport!.assignment.toHexString()).toBe(assignment)
       expect(savedReport!.method).toBe(method)
@@ -309,14 +309,17 @@ describe('/api/reports', () => {
       const savedReport = await ReportModel.findOne({ assignment })
 
       expect(res.body).toBeDefined()
-      expect(res.body).toEqual(
-        expect.objectContaining({
-          ...savedReport,
-          _id: savedReport!._id.toHexString(),
-          member: savedReport!.member.toHexString(),
-          assignment: savedReport!.assignment.toHexString(),
-        }),
-      )
+      expect(res.body).toHaveProperty('_id', savedReport!._id.toHexString())
+      expect(res.body).toHaveProperty('assignment', assignment)
+      expect(res.body).toHaveProperty('member', client._id)
+      expect(res.body).toHaveProperty('method', method)
+      expect(res.body).toHaveProperty('purpose', purpose)
+      expect(res.body).toHaveProperty('licensePlateNumber', licensePlateNumber)
+      expect(res.body).toHaveProperty('startKm', startKm)
+      expect(res.body).toHaveProperty('endKm', endKm)
+      expect(res.body).toHaveProperty('externalOrganization', externalOrganization)
+      expect(res.body).toHaveProperty('externalRepresentative', externalRepresentative)
+      expect(res.body).toHaveProperty('description', description)
     })
   })
 
