@@ -7,6 +7,7 @@ import {
   ReportAlreadyExistsError,
   ReporterIsNotAssigneeError,
 } from '../exception/report-errors'
+import mongoose from 'mongoose'
 
 export class ReportRepository implements Repository {
   /**
@@ -41,5 +42,9 @@ export class ReportRepository implements Repository {
     })
 
     return await report.save()
+  }
+
+  findById(id: string | mongoose.Types.ObjectId): Promise<Report | null> {
+    return ReportModel.findById(id)
   }
 }

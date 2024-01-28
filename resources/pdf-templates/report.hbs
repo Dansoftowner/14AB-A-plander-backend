@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+
+    <style>
+      body { font-family: 'Tahoma'; } 
+      
+      .container { margin: auto; width: 500px; }
+      
+      .container h2 { text-align: center; font-weight: bold; margin-bottom: 5px;} 
+      
+      .box {
+         width: 100%;
+         border: solid 2px black; border-radius: 5px; padding: 10px;
+      }
+
+      .box p {
+        font-weight: bold;
+      }
+
+      .box p span {
+        font-weight: normal;
+      } 
+
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <h2>Szolgálati lap</h2>
+      <div class='box'>
+        <p>Egyesület neve:</p>
+        <p>Egyesület címe:</p>
+        <p>Szolgálat helye: <span>{{assignment.location}}</span></p>
+        <hr/>
+        <p>Szolgálat kezdete: <span>{{assignment.start}}</span></p>
+        <p>Szolgálat vége: <span>{{assignment.start}}</span></p>
+        <p>Szolgálati idő: <span></span></p>
+        <hr/>
+        <p>Szolgálatot teljesítők neve, OPSZ ig.száma:</p>
+        <ul>
+            {{#each assignment.assignees}}
+                <li>{{this}}</li>
+            {{/each}}
+        </ul>
+        <p>Össz.: {{assignment.assignees.length}}</p>
+        <hr/>
+        <p>Szolgálat módja: <span></span>
+        </p>
+        <p>Szolgálatot ellátó gépkocsi rendszáma: <span>{{report.licensePlateNumber}}</span></p>
+        <p>Km óra állása induláskor: {{report.startKm}} Érkezéskor: {{report.endKm}}</p>
+        <p>Megtett km: </p>
+        <hr/>
+        <p>
+            Szolgálat típusa: 
+            
+            {{#if report.independent}}
+                <span>Önálló</span>
+                {{#else}}
+                    <span>Közös</span>
+                {{/else}}
+            {{/if}}
+        </p>
+
+        {{#unless report.independent}}
+            <p>Külső szerv: <span>{{report.externalOrganization}}</span></p>
+            <p>Külső szervezet képviselője: <span>{{report.externalRepresentative}}</span></p>
+        {{/unless}}
+
+        <p>Szolgálat fajtája: <span>{{report.purpose}}</span></p>
+        <hr/>
+        {{#if report.description}}
+            <p>Ha történt valami rendkívüli esemény, annak rövid leírása:</p>
+            <pre>{{report.description}}</pre>
+        {{/if}}
+      </div>
+    </div>
+
+  </body>
+</html>

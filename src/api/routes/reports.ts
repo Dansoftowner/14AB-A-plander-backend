@@ -63,5 +63,11 @@ export class ReportRoutes extends RoutesProvider {
       validate(ReportDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.createReport(req, res)),
     )
+
+    this.router.get(
+      '/:id/pdf',
+      auth,
+      asyncErrorHandler((req, res) => controller.getReportPdf(req, res)),
+    )
   }
 }
