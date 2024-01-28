@@ -35,11 +35,10 @@ export class ReportController implements Controller {
     const reportId = req.params.id
 
     try {
-      const { stream, close } = await this.service(req).getPdf(reportId)
+      const pdfStream = await this.service(req).getPdf(reportId)
 
       res.set('Content-Type', 'application/pdf')
-      res.on('finish', close)
-      stream.pipe(res)
+      pdfStream.pipe(res)
     } catch (ex) {
       if (ex instanceof ReportNotFoundError)
         throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)

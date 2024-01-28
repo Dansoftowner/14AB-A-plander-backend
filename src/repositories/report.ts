@@ -44,7 +44,42 @@ export class ReportRepository implements Repository {
     return await report.save()
   }
 
-  findById(id: string | mongoose.Types.ObjectId): Promise<Report | null> {
-    return ReportModel.findById(id)
+  /**
+   * Fetches a single report along with the assignment and association data.
+   *
+   * @param id the id of the report
+   */
+  async fatFindById(id: string | mongoose.Types.ObjectId): Promise<any> {
+    const array = await ReportModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id.toString()) } },
+      {
+        $lookup: {
+          from: 'assignments',
+          localField: 'assignment',
+          foreignField: '_id',
+          as: 'assignment',
+        },
+      },
+      {
+        $lookup: {
+          from: 'associations',
+          localField: 'assignment.association',
+          foreignField: '_id',
+          as: 'association',
+        },
+      },
+      {
+        $unwind: {
+          path: '$assignment',
+        },
+      },
+      {
+        $unwind: {
+          path: '$association',
+        },
+      },
+    ])
+
+    return array.length ? array[0] : null
   }
 }

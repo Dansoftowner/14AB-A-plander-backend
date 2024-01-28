@@ -10,27 +10,20 @@ import { Readable } from 'stream'
 import { AssignmentRepository } from '../repositories/assignment'
 import { ReportNotFoundError } from '../exception/report-errors'
 import { AssociationRepository } from '../repositories/association'
+import { differenceInHours } from 'date-fns'
+import { convertHtmlToPdf } from '../utils/pdf'
 
 export class ReportService implements Service {
   private clientInfo: ClientInfo
-  private reportRepository: ReportRepository
-  private assignmentRepository: AssignmentRepository
-  private associationRepository: AssociationRepository
+  private report: ReportRepository
 
-  constructor({
-    clientInfo,
-    reportRepository,
-    assignmentRepository,
-    associationRepository,
-  }) {
+  constructor({ clientInfo, reportRepository }) {
     this.clientInfo = clientInfo
-    this.reportRepository = reportRepository
-    this.assignmentRepository = assignmentRepository
-    this.associationRepository = associationRepository
+    this.report = reportRepository
   }
 
   async create(payload: ReportDto): Promise<ReportDto> {
-    const created = await this.reportRepository.create(
+    const created = await this.report.create(
       this.clientInfo.association,
       this.clientInfo._id,
       payload,
@@ -41,10 +34,8 @@ export class ReportService implements Service {
     })
   }
 
-  async getPdf(
-    reportId: string,
-  ): Promise<{ stream: Readable; close: () => Promise<void> }> {
-    const { report, assignment, association } = await this.fetchReport(reportId)
+  async getPdf(reportId: string): Promise<Readable> {
+    const report = await this.report.fatFindById(reportId)
 
     // assembling HTML for the report
     const rawTemplate = readFileSync('./resources/pdf-templates/report.hbs')
@@ -52,9 +43,14 @@ export class ReportService implements Service {
 
     const html = template(
       {
-        association,
-        assignment,
         report,
+        association: report.association,
+        assignment: report.assignment,
+        serviceDuration: differenceInHours( // TODO: use handlebars helpers instead?
+          report.assignment.start,
+          report.assignment.end,
+        ),
+        kmSpan: report.endKm - report.startKm,
       },
       {
         allowProtoPropertiesByDefault: true,
@@ -62,36 +58,6 @@ export class ReportService implements Service {
       },
     )
 
-    // export html to PDF
-    const browser = await puppeteer.launch({ headless: 'new' })
-    const page = await browser.newPage()
-
-    await page.setContent(html, { waitUntil: 'domcontentloaded' })
-
-    const stream = await page.createPDFStream({ format: 'A4' })
-
-    return {
-      stream,
-      close: async () => {
-        await page.close()
-        await browser.close()
-      },
-    }
-  }
-
-  private async fetchReport(reportId: string) {
-    const report = await this.reportRepository.findById(reportId)
-    if (!report) throw new ReportNotFoundError()
-
-    const assignment = await this.assignmentRepository.findById(report.assignment, {
-      associationId: this.clientInfo.association,
-    })
-
-    const association = await this.associationRepository.findById(
-      assignment.association,
-      {},
-    )
-
-    return { report, assignment, association }
+    return await convertHtmlToPdf(html, { format: 'A4' })
   }
 }
