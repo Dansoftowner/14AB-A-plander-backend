@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose'
+import mongoose, { FilterQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import associationModel, { Association } from '../models/association'
 import { sanitizeForRegex as s } from '../utils/sanitize'
@@ -30,7 +30,7 @@ export class AssociationRepository implements Repository {
   }
 
   async findById(
-    id: string,
+    id: string | mongoose.Types.ObjectId,
     { projection }: AssociationQueryOptions,
   ): Promise<Association> {
     return await associationModel.findById(id).select(projection!)
