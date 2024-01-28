@@ -6,7 +6,7 @@
     <style>
       body { font-family: 'Tahoma'; } 
       
-      .container { margin: auto; width: 500px; }
+      .container { margin: 10px; max-width: 95%; }
       
       .container h2 { text-align: center; font-weight: bold; margin-bottom: 5px;} 
       
@@ -23,24 +23,28 @@
         font-weight: normal;
       } 
 
+      .multiline {
+        white-space: pre-wrap
+      }
+
     </style>
   </head>
   <body>
     <div class='container'>
       <h2>Szolgálati lap</h2>
       <div class='box'>
-        <p>Egyesület neve:</p>
-        <p>Egyesület címe:</p>
+        <p>Egyesület neve: <span>{{association.name}}</span></p>
+        <p>Egyesület címe: <span>{{association.location}}</span></p>
         <p>Szolgálat helye: <span>{{assignment.location}}</span></p>
         <hr/>
         <p>Szolgálat kezdete: <span>{{assignment.start}}</span></p>
         <p>Szolgálat vége: <span>{{assignment.start}}</span></p>
-        <p>Szolgálati idő: <span></span></p>
+        <p>Szolgálati idő: <span>{{serviceDuration}} óra</span></p>
         <hr/>
         <p>Szolgálatot teljesítők neve, OPSZ ig.száma:</p>
         <ul>
             {{#each assignment.assignees}}
-                <li>{{this}}</li>
+                <li>{{this.name}}</li>
             {{/each}}
         </ul>
         <p>Össz.: {{assignment.assignees.length}}</p>
@@ -48,8 +52,8 @@
         <p>Szolgálat módja: <span></span>
         </p>
         <p>Szolgálatot ellátó gépkocsi rendszáma: <span>{{report.licensePlateNumber}}</span></p>
-        <p>Km óra állása induláskor: {{report.startKm}} Érkezéskor: {{report.endKm}}</p>
-        <p>Megtett km: </p>
+        <p>Km óra állása induláskor: <span>{{report.startKm}}</span> Érkezéskor: <span>{{report.endKm}}</span></p>
+        <p>Megtett km: <span>{{kmSpan}}</span></p>
         <hr/>
         <p>
             Szolgálat típusa: 
@@ -71,7 +75,7 @@
         <hr/>
         {{#if report.description}}
             <p>Ha történt valami rendkívüli esemény, annak rövid leírása:</p>
-            <pre>{{report.description}}</pre>
+            <div class="multiline">{{report.description}}</div>
         {{/if}}
       </div>
     </div>
