@@ -37,3 +37,4 @@
 - [ts-jest](https://www.npmjs.com/package/ts-jest)
 - [supertest](https://www.npmjs.com/package/supertest)
 - [nodemailer-mock](https://www.npmjs.com/package/nodemailer-mock)
+- [pdf.js-extract](https://www.npmjs.com/package/pdf.js-extract)
