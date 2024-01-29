@@ -12,7 +12,7 @@ export class ReportRoutes extends RoutesProvider {
   }
 
   override get prefix(): string {
-    return 'reports'
+    return '/assignments/:assignmentId/report'
   }
 
   protected initializeRoutes(controller: ReportController): void {
@@ -65,7 +65,7 @@ export class ReportRoutes extends RoutesProvider {
     )
 
     this.router.get(
-      '/:id/pdf',
+      '/pdf',
       auth,
       asyncErrorHandler((req, res) => controller.getReportPdf(req, res)),
     )

@@ -13,7 +13,7 @@ import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
 import ReportModel from '../../../../src/models/report'
 import { add, endOfMonth, startOfMonth } from 'date-fns'
 
-describe('/api/reports', () => {
+describe('/api/assignments/{id}/report', () => {
   let app: Express
 
   let client
@@ -79,9 +79,8 @@ describe('/api/reports', () => {
 
     const sendRequest = async () => {
       return request(app)
-        .post('/api/reports')
+        .post(`/api/assignments/${assignment}/report`)
         .send({
-          assignment,
           method,
           purpose,
           licensePlateNumber,

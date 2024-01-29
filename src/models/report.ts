@@ -4,7 +4,6 @@ type DutyMethod = 'vehicle' | 'bicycle' | 'pedestrian'
 
 export interface Report {
   _id: Types.ObjectId
-  assignment: Types.ObjectId
   member: Types.ObjectId
   method: DutyMethod
   purpose: string
@@ -18,12 +17,6 @@ export interface Report {
 }
 
 const reportSchema = new Schema<Report>({
-  assignment: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'Assignment',
-    unique: true,
-  },
   member: {
     type: Schema.Types.ObjectId,
     required: true,
