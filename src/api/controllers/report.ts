@@ -40,6 +40,8 @@ export class ReportController implements Controller {
       if (!pdfStream) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
       res.set('Content-Type', 'application/pdf')
+      res.set('Content-Disposition', 'attachment')
+      
       pdfStream.pipe(res)
     } catch (ex) {
       if (ex instanceof ReportNotFoundError)
