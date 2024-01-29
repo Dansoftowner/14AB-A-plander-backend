@@ -59,8 +59,9 @@ const assignmentSchema = new Schema<Assignment>({
   report: {
     type: Schema.Types.ObjectId,
     ref: 'Report',
-    unique: true,
   },
 })
+
+assignmentSchema.index({ report: 1 }, { unique: true, sparse: true })
 
 export default mongoose.model('Assignment', assignmentSchema, 'assignments')
