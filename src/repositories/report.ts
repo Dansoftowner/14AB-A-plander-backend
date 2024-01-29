@@ -5,6 +5,7 @@ import { ReportDto } from '../dto/report'
 import {
   AssignmentNotFoundError,
   ReportAlreadyExistsError,
+  ReportNotFoundError,
   ReporterIsNotAssigneeError,
 } from '../exception/report-errors'
 import mongoose from 'mongoose'
@@ -12,7 +13,6 @@ import assignment from '../models/assignment'
 import { ClientInfo } from '../utils/jwt'
 
 export class ReportRepository implements Repository {
-
   /**
    * @throws AssignmentNotFoundError
    * @throws SubmitterIsNotAssigneeError
@@ -54,10 +54,16 @@ export class ReportRepository implements Repository {
    * Fetches the assignment populated with the association and assignment.
    *
    * @param assignmentId the id of the assignment
+   * @throws ReportNotFoundError
    */
-  async findAssignmentById(assignmentId: string): Promise<any> {
-    return await AssignmentModel.findById(assignmentId)
+  async findAssignmentWithReport(assignmentId: string): Promise<any> {
+    const assignment = await AssignmentModel.findById(assignmentId)
       .populate('association')
-      .populate('assignment')
+      .populate('report')
+
+    if (assignment && !assignment.report) 
+      throw new ReportNotFoundError()
+
+    return assignment
   }
 }

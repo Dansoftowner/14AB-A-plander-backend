@@ -11,7 +11,7 @@ import members from '../../dummy-data/members.json'
 import reports from '../../dummy-data/reports.json'
 import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
 import ReportModel from '../../../../src/models/report'
-import { add, endOfMonth, startOfMonth } from 'date-fns'
+import { PDFExtract } from 'pdf.js-extract'
 
 describe('/api/assignments/:id/report', () => {
   let app: Express
@@ -65,6 +65,84 @@ describe('/api/assignments/:id/report', () => {
   describe('GET /', () => {})
 
   describe('GET /:id', () => {})
+
+  describe('GET /pdf', () => {
+    let id: string
+
+    const sendRequest = async () => {
+      return request(app)
+        .get(`/api/assignments/${id}/report/pdf`)
+        .set(config.get('jwt.headerName'), await generateToken())
+        .responseType('blob')
+    }
+
+    beforeEach(async () => {
+      id = assignmentsOfAssociation()[0]._id
+    })
+
+    it('should return 401 if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 400 response if assignment id is invalid', async () => {
+      id = '123'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 404 response if assignment does not exist', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if report does not exist', async () => {
+      await AssignmentModel.findByIdAndUpdate(id, { report: null })
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should indicate pdf in Content-Type', async () => {
+      const res = await sendRequest()
+
+      expect(res.get('Content-Type')).toBe('application/pdf')
+    })
+
+    it('pdf should contain at least 1 page', async () => {
+      const res = await sendRequest()
+
+      const pdfStructure = await new PDFExtract().extractBuffer(res.body)
+
+      expect(pdfStructure.pages.length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('pdf should contain crucial information about the report', async () => {
+      const res = await sendRequest()
+
+      const pdfStructure = await new PDFExtract().extractBuffer(res.body)
+      const pdfText = pdfStructure.pages
+        .map((it) => it.content.map(({ str }) => str).join(' '))
+        .join(' ')
+
+      const assignment: any = await AssignmentModel.findById(id).populate('report')
+
+      expect(pdfText.includes(assignment!.report!.purpose)).toBeTruthy()
+      expect(pdfText.includes(assignment!.report!.description)).toBeTruthy()
+      expect(
+        assignment!.assignees.every(({ name }) => pdfText.includes(name)),
+      ).toBeTruthy()
+    })
+  })
 
   describe('POST /', () => {
     let assignment: string | undefined

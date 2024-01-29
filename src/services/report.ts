@@ -35,31 +35,45 @@ export class ReportService implements Service {
     })
   }
 
-  async getPdf(assignmentId: string): Promise<Readable> {
-    const assignment = await this.repository.findAssignmentById(assignmentId)
-
+  /**
+   * @throws ReportNotFoundError if the assignment has no report
+   */
+  async getPdf(assignmentId: string): Promise<Readable | null> {
     // assembling HTML for the report
     const rawTemplate = readFileSync('./resources/pdf-templates/report.hbs')
     const template = handlebars.compile(rawTemplate.toString())
 
-    const html = template(
-      {
+    const pdfInfo = await this.loadPdfInformation(assignmentId)
+    if (!pdfInfo) return null
+
+    const html = template(pdfInfo, {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
+    })
+
+    return await convertHtmlToPdf(html, { format: 'A4' })
+  }
+
+  /**
+   * Loads all information needed for the PDF report.
+   *
+   * @param assignmentId the id of the given assignment
+   * @returns the object that can be directly passed to the templating engine
+   * @throws ReportNotFoundError if the assignment has no report
+   */
+  private async loadPdfInformation(assignmentId: string): Promise<object> {
+    const assignment = await this.repository.findAssignmentWithReport(assignmentId)
+
+    return (
+      assignment && {
         assignment,
         association: assignment.association,
         report: assignment.report,
-        // TODO: use handlebars helpers instead?
-        serviceDuration: differenceInHours(
-          assignment.start,
-          assignment.end,
-        ),
-        kmSpan: assignment.report.endKm - assignment.report.startKm,
-      },
-      {
-        allowProtoPropertiesByDefault: true,
-        allowProtoMethodsByDefault: true,
-      },
-    )
 
-    return await convertHtmlToPdf(html, { format: 'A4' })
+        // Calculation:
+        serviceDuration: differenceInHours(assignment.start, assignment.end),
+        kmSpan: assignment.report.endKm - assignment.report.startKm,
+      }
+    )
   }
 }

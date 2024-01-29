@@ -19,5 +19,6 @@
     "invalid-assignment-boundaries": "A kezdőidő kisebb kell legyen mint a befejezőidő!",
     "report-already-exists": "A megadott beosztáshoz már létezik jelentés!",
     "reporter-is-not-assignee": "Csak egy beosztott készíthet jelentést!",
-    "assignment-not-found": "A beosztás nem létezik!"
+    "assignment-not-found": "A beosztás nem létezik!",
+    "report-not-exist": "A szolgálathoz még nem készült jelentés!"
 }

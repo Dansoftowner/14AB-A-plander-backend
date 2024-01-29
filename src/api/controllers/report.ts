@@ -37,16 +37,13 @@ export class ReportController implements Controller {
 
     try {
       const pdfStream = await this.service(req).getPdf(assignmentId)
+      if (!pdfStream) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
       res.set('Content-Type', 'application/pdf')
       pdfStream.pipe(res)
     } catch (ex) {
       if (ex instanceof ReportNotFoundError)
-        throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
-
-      // shouldn't happen
-      if (ex instanceof AssignmentNotFoundError)
-        throw new ApiError(422, ApiErrorCode.ASSIGNMENT_NOT_FOUND)
+        throw new ApiError(404, ApiErrorCode.REPORT_DOES_NOT_EXIST)
       throw ex
     }
   }

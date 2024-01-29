@@ -327,4 +327,17 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   ASSIGNMENT_NOT_FOUND = 'assignment-not-found',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    ReportDoesNotExist:
+   *     description: "The assignment doesn't have a report yet (errorCode: 'report-does-not-exist')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  REPORT_DOES_NOT_EXIST = 'report-not-exist',
 }
