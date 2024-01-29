@@ -4,7 +4,7 @@ import { ReportDto } from '../../dto/report'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import validate from '../../middlewares/validate'
-import { validateObjectId } from '../../middlewares/validate-objectid'
+import validateObjectId from '../../middlewares/validate-objectid'
 import { ReportController } from '../controllers/report'
 
 export class ReportRoutes extends RoutesProvider {
@@ -13,13 +13,13 @@ export class ReportRoutes extends RoutesProvider {
   }
 
   override get prefix(): string {
-    return '/assignments/:id/report'
+    return 'assignments'
   }
 
   protected initializeRoutes(controller: ReportController): void {
     /**
      * @openapi
-     * /api/reports:
+     * /api/assignments/{id}/report:
      *  post:
      *    tags:
      *      - Reports
@@ -30,6 +30,13 @@ export class ReportRoutes extends RoutesProvider {
      *       - **However, only one report can be submitted for a particular assignment.** Additional reports are rejected.
      *
      *       **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *          description: The unique id of the assignment.
      *    requestBody:
      *      required: true
      *      content:
@@ -59,7 +66,7 @@ export class ReportRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.post(
-      '/',
+      '/:id/report',
       auth,
       validateObjectId,
       validate(ReportDto.validationSchema()),
@@ -67,7 +74,7 @@ export class ReportRoutes extends RoutesProvider {
     )
 
     this.router.get(
-      '/pdf',
+      '/:id/report/pdf',
       auth,
       validateObjectId,
       asyncErrorHandler((req, res) => controller.getReportPdf(req, res)),

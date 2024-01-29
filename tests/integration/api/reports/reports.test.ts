@@ -13,7 +13,7 @@ import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
 import ReportModel from '../../../../src/models/report'
 import { add, endOfMonth, startOfMonth } from 'date-fns'
 
-describe('/api/assignments/{id}/report', () => {
+describe('/api/assignments/:id/report', () => {
   let app: Express
 
   let client
@@ -114,7 +114,7 @@ describe('/api/assignments/{id}/report', () => {
 
       client = assigneesOfAssignment()![0]
 
-      await ReportModel.deleteOne({ assignment })
+      await AssignmentModel.findByIdAndUpdate(assignment, { report: null })
     })
 
     it('should return 401 response if client is not logged in', async () => {
@@ -158,7 +158,9 @@ describe('/api/assignments/{id}/report', () => {
     })
 
     it('should return 409 response if the assignment already has a report', async () => {
-      await AssignmentModel.findByIdAndUpdate(assignment, { report: new mongoose.Types.ObjectId() })
+      await AssignmentModel.findByIdAndUpdate(assignment, {
+        report: new mongoose.Types.ObjectId(),
+      })
 
       const res = await sendRequest()
 
@@ -282,10 +284,9 @@ describe('/api/assignments/{id}/report', () => {
       await sendRequest()
 
       const assignmentInDb = await AssignmentModel.findById(assignment)
-      const savedReport = await ReportModel.findOne({ assignment })
+      const savedReport = await ReportModel.findOne({ _id: assignmentInDb!.report })
 
       expect(savedReport).not.toBeNull()
-      expect(assignmentInDb!.report).toEqual(savedReport!._id)
       expect(savedReport!.member.toHexString()).toBe(client._id)
       expect(savedReport!.method).toBe(method)
       expect(savedReport!.purpose).toBe(purpose)
@@ -306,7 +307,8 @@ describe('/api/assignments/{id}/report', () => {
     it('should return the saved report', async () => {
       const res = await sendRequest()
 
-      const savedReport = await ReportModel.findOne({ assignment })
+      const assignmentInDb = await AssignmentModel.findById(assignment)
+      const savedReport = await ReportModel.findOne({ _id: assignmentInDb!.report })
 
       expect(res.body).toBeDefined()
       expect(res.body).toHaveProperty('_id', savedReport!._id.toHexString())
