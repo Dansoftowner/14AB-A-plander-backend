@@ -14,10 +14,11 @@ import { ApiError } from '../error/api-error'
 
 export class ReportController implements Controller {
   async createReport(req: Request, res: Response) {
+    const assignmentId = req.params.id
     const payload = plainToInstance(ReportDto, req.body)
 
     try {
-      const result = await this.service(req).create(payload)
+      const result = await this.service(req).create(assignmentId, payload)
 
       res.status(201).send(instanceToPlain(result))
     } catch (ex) {
@@ -32,10 +33,10 @@ export class ReportController implements Controller {
   }
 
   async getReportPdf(req: Request, res: Response) {
-    const reportId = req.params.id
+    const assignmentId = req.params.id
 
     try {
-      const pdfStream = await this.service(req).getPdf(reportId)
+      const pdfStream = await this.service(req).getPdf(assignmentId)
 
       res.set('Content-Type', 'application/pdf')
       pdfStream.pipe(res)

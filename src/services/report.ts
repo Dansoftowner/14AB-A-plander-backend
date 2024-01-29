@@ -15,16 +15,17 @@ import { convertHtmlToPdf } from '../utils/pdf'
 
 export class ReportService implements Service {
   private clientInfo: ClientInfo
-  private report: ReportRepository
+  private repository: ReportRepository
 
   constructor({ clientInfo, reportRepository }) {
     this.clientInfo = clientInfo
-    this.report = reportRepository
+    this.repository = reportRepository
   }
 
-  async create(payload: ReportDto): Promise<ReportDto> {
-    const created = await this.report.create(
+  async create(assignmentId: string, payload: ReportDto): Promise<ReportDto> {
+    const created = await this.repository.create(
       this.clientInfo.association,
+      assignmentId,
       this.clientInfo._id,
       payload,
     )
@@ -34,8 +35,8 @@ export class ReportService implements Service {
     })
   }
 
-  async getPdf(reportId: string): Promise<Readable> {
-    const report = await this.report.fatFindById(reportId)
+  async getPdf(assignmentId: string): Promise<Readable> {
+    const assignment = await this.repository.findAssignmentById(assignmentId)
 
     // assembling HTML for the report
     const rawTemplate = readFileSync('./resources/pdf-templates/report.hbs')
@@ -43,14 +44,15 @@ export class ReportService implements Service {
 
     const html = template(
       {
-        report,
-        association: report.association,
-        assignment: report.assignment,
-        serviceDuration: differenceInHours( // TODO: use handlebars helpers instead?
-          report.assignment.start,
-          report.assignment.end,
+        assignment,
+        association: assignment.association,
+        report: assignment.report,
+        // TODO: use handlebars helpers instead?
+        serviceDuration: differenceInHours(
+          assignment.start,
+          assignment.end,
         ),
-        kmSpan: report.endKm - report.startKm,
+        kmSpan: assignment.report.endKm - assignment.report.startKm,
       },
       {
         allowProtoPropertiesByDefault: true,

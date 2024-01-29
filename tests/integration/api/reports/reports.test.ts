@@ -158,7 +158,7 @@ describe('/api/assignments/{id}/report', () => {
     })
 
     it('should return 409 response if the assignment already has a report', async () => {
-      new ReportModel({ assignment }).save({ validateBeforeSave: false })
+      await AssignmentModel.findByIdAndUpdate(assignment, { report: new mongoose.Types.ObjectId() })
 
       const res = await sendRequest()
 
@@ -281,11 +281,12 @@ describe('/api/assignments/{id}/report', () => {
     it('should save report into database', async () => {
       await sendRequest()
 
+      const assignmentInDb = await AssignmentModel.findById(assignment)
       const savedReport = await ReportModel.findOne({ assignment })
 
       expect(savedReport).not.toBeNull()
+      expect(assignmentInDb!.report).toEqual(savedReport!._id)
       expect(savedReport!.member.toHexString()).toBe(client._id)
-      expect(savedReport!.assignment.toHexString()).toBe(assignment)
       expect(savedReport!.method).toBe(method)
       expect(savedReport!.purpose).toBe(purpose)
       expect(savedReport!.licensePlateNumber).toBe(licensePlateNumber)
@@ -309,7 +310,6 @@ describe('/api/assignments/{id}/report', () => {
 
       expect(res.body).toBeDefined()
       expect(res.body).toHaveProperty('_id', savedReport!._id.toHexString())
-      expect(res.body).toHaveProperty('assignment', assignment)
       expect(res.body).toHaveProperty('member', client._id)
       expect(res.body).toHaveProperty('method', method)
       expect(res.body).toHaveProperty('purpose', purpose)

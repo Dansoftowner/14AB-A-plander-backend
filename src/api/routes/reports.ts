@@ -4,6 +4,7 @@ import { ReportDto } from '../../dto/report'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import validate from '../../middlewares/validate'
+import { validateObjectId } from '../../middlewares/validate-objectid'
 import { ReportController } from '../controllers/report'
 
 export class ReportRoutes extends RoutesProvider {
@@ -12,7 +13,7 @@ export class ReportRoutes extends RoutesProvider {
   }
 
   override get prefix(): string {
-    return '/assignments/:assignmentId/report'
+    return '/assignments/:id/report'
   }
 
   protected initializeRoutes(controller: ReportController): void {
@@ -60,6 +61,7 @@ export class ReportRoutes extends RoutesProvider {
     this.router.post(
       '/',
       auth,
+      validateObjectId,
       validate(ReportDto.validationSchema()),
       asyncErrorHandler((req, res) => controller.createReport(req, res)),
     )
@@ -67,6 +69,7 @@ export class ReportRoutes extends RoutesProvider {
     this.router.get(
       '/pdf',
       auth,
+      validateObjectId,
       asyncErrorHandler((req, res) => controller.getReportPdf(req, res)),
     )
   }

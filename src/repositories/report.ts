@@ -8,19 +8,23 @@ import {
   ReporterIsNotAssigneeError,
 } from '../exception/report-errors'
 import mongoose from 'mongoose'
+import assignment from '../models/assignment'
+import { ClientInfo } from '../utils/jwt'
 
 export class ReportRepository implements Repository {
+
   /**
    * @throws AssignmentNotFoundError
    * @throws SubmitterIsNotAssigneeError
    */
   async create(
     associationId: string,
+    assignmentId: string,
     memberId: string,
     payload: ReportDto,
   ): Promise<Report> {
     const targetAssignment = await AssignmentModel.findOne({
-      _id: payload.assignment,
+      _id: assignmentId,
       association: associationId,
     })
 
@@ -31,55 +35,29 @@ export class ReportRepository implements Repository {
     )
 
     if (!memberAssignee) throw new ReporterIsNotAssigneeError()
-
-    const reportExists = await ReportModel.exists({ assignment: payload.assignment })
-    if (reportExists) throw new ReportAlreadyExistsError()
+    if (targetAssignment.report) throw new ReportAlreadyExistsError()
 
     const report = new ReportModel({
       ...payload,
       member: memberId,
-      assignment: payload.assignment,
     })
 
-    return await report.save()
+    targetAssignment.report = report._id
+
+    await report.save()
+    await targetAssignment.save()
+
+    return report
   }
 
   /**
-   * Fetches a single report along with the assignment and association data.
+   * Fetches the assignment populated with the association and assignment.
    *
-   * @param id the id of the report
+   * @param assignmentId the id of the assignment
    */
-  async fatFindById(id: string | mongoose.Types.ObjectId): Promise<any> {
-    const array = await ReportModel.aggregate([
-      { $match: { _id: new mongoose.Types.ObjectId(id.toString()) } },
-      {
-        $lookup: {
-          from: 'assignments',
-          localField: 'assignment',
-          foreignField: '_id',
-          as: 'assignment',
-        },
-      },
-      {
-        $lookup: {
-          from: 'associations',
-          localField: 'assignment.association',
-          foreignField: '_id',
-          as: 'association',
-        },
-      },
-      {
-        $unwind: {
-          path: '$assignment',
-        },
-      },
-      {
-        $unwind: {
-          path: '$association',
-        },
-      },
-    ])
-
-    return array.length ? array[0] : null
+  async findAssignmentById(assignmentId: string): Promise<any> {
+    return await AssignmentModel.findById(assignmentId)
+      .populate('association')
+      .populate('assignment')
   }
 }
