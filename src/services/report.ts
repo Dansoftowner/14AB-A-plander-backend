@@ -63,7 +63,10 @@ export class ReportService implements Service {
    * @throws ReportNotFoundError if the assignment has no report
    */
   private async loadPdfInformation(assignmentId: string): Promise<object> {
-    const assignment = await this.repository.findAssignmentWithReport(assignmentId)
+    const assignment = await this.repository.findAssignmentWithReport(
+      this.clientInfo.association,
+      assignmentId,
+    )
 
     return (
       assignment && {
