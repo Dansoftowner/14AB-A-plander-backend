@@ -8,6 +8,7 @@ export interface Assignment {
   start: Date
   end: Date
   assignees: Array<{ _id: Types.ObjectId; name: string }>
+  report: Types.ObjectId
 }
 
 const assignmentSchema = new Schema<Assignment>({
@@ -53,6 +54,12 @@ const assignmentSchema = new Schema<Assignment>({
       name: String,
     },
   ],
+  report: {
+    type: Schema.Types.ObjectId,
+    ref: 'Report',
+  },
 })
+
+assignmentSchema.index({ report: 1 }, { unique: true, sparse: true })
 
 export default mongoose.model('Assignment', assignmentSchema, 'assignments')

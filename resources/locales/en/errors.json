@@ -16,5 +16,9 @@
     "current-pass-invalid": "The given password does not match the current password!",
     "email-not-found": "The given email address is not associated with any account!",
     "assignee-not-found": "Didn't find the assignee member with the given id!",
-    "invalid-assignment-boundaries": "Start time must be less than the end time!"
+    "invalid-assignment-boundaries": "Start time must be less than the end time!",
+    "report-already-exists": "Cannot submit report for an assignment that already has a report!",
+    "reporter-is-not-assignee": "Cannot create a report for an assignment that the client is not an assignee of!",
+    "assignment-not-found": "The given assignment doesn't exist!",
+    "report-not-exist": "The assignment doesn't have a report yet!"
 }

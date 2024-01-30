@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { FilterQuery, UpdateQuery } from 'mongoose'
+import mongoose, { FilterQuery, UpdateQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import AssignmentModel, { Assignment } from '../models/assignment'
 import MemberModel, { Member } from '../models/member'
@@ -12,24 +12,29 @@ import { isIterable, notFalsy } from '../utils/commons'
 import { AssignmentUpdateDto } from '../dto/assignment-update'
 
 export interface AssignmentsDbQueryOptions {
-  start: Date
-  end: Date
-  projection: string
-  sort: string
-  associationId: string
+  start?: Date
+  end?: Date
+  projection?: string
+  sort?: string
+  associationId: string | mongoose.Types.ObjectId
 }
 
 export class AssignmentRepository implements Repository {
   get(options: AssignmentsDbQueryOptions): Promise<Assignment[]> {
     const { projection, sort } = options
-    return AssignmentModel.find(this.filterQuery(options)).select(projection).sort(sort)
+    return AssignmentModel.find(this.filterQuery(options))
+      .select(projection!)
+      .sort(sort)
   }
 
-  findById(id: string, options: AssignmentsDbQueryOptions): Promise<Assignment> {
+  findById(
+    id: string | mongoose.Types.ObjectId,
+    options: AssignmentsDbQueryOptions,
+  ): Promise<Assignment> {
     const { projection, associationId } = options
 
     return AssignmentModel.findOne({ _id: id, association: associationId }).select(
-      projection,
+      projection!,
     )
   }
 
@@ -37,7 +42,7 @@ export class AssignmentRepository implements Repository {
    * @throws AssigneeNotFound
    */
   async insert(
-    associationId: string,
+    associationId: string | mongoose.Types.ObjectId,
     insertion: AssignmentInsertionDto,
   ): Promise<Assignment> {
     const assignment = new AssignmentModel({
@@ -54,8 +59,8 @@ export class AssignmentRepository implements Repository {
    * @throws InvalidTimeBoundariesError
    */
   async update(
-    associationId: string,
-    id: string,
+    associationId: string | mongoose.Types.ObjectId,
+    id: string | mongoose.Types.ObjectId,
     update: AssignmentUpdateDto,
   ): Promise<Assignment | null> {
     const assignment = await AssignmentModel.findOne({
@@ -82,7 +87,10 @@ export class AssignmentRepository implements Repository {
     return await assignment.save()
   }
 
-  delete(associationId: string, id: string): Promise<Assignment | null> {
+  delete(
+    associationId: string | mongoose.Types.ObjectId,
+    id: string | mongoose.Types.ObjectId,
+  ): Promise<Assignment | null> {
     return AssignmentModel.findOneAndDelete({
       association: associationId,
       _id: id,
@@ -90,7 +98,7 @@ export class AssignmentRepository implements Repository {
   }
 
   private async populateAssignees(
-    associationId: string,
+    associationId: string | mongoose.Types.ObjectId,
     assignees: string[],
   ): Promise<any[]> {
     const members: Member[] = []

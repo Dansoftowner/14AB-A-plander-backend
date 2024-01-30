@@ -25,6 +25,7 @@
 - [nodemailer](https://www.npmjs.com/package/nodemailer)
 - [nodemailer-express-handlebars](https://www.npmjs.com/package/nodemailer-express-handlebars)
 - [date-fns](https://www.npmjs.com/package/date-fns)
+- [puppeteer](https://www.npmjs.com/package/puppeteer)
 
 ## Fejlesztési
 
@@ -36,3 +37,4 @@
 - [ts-jest](https://www.npmjs.com/package/ts-jest)
 - [supertest](https://www.npmjs.com/package/supertest)
 - [nodemailer-mock](https://www.npmjs.com/package/nodemailer-mock)
+- [pdf.js-extract](https://www.npmjs.com/package/pdf.js-extract)
