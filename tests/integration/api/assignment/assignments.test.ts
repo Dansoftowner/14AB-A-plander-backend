@@ -282,14 +282,6 @@ describe('/api/assignments', () => {
       expect(res.status).toBe(403)
     })
 
-    it('should return 400 response if the title is not provided', async () => {
-      title = undefined
-
-      const res = await sendRequest()
-
-      expect(res.status).toBe(400)
-    })
-
     it('should return 400 response if the start is not provided', async () => {
       start = undefined
 
@@ -309,14 +301,6 @@ describe('/api/assignments', () => {
     it('should return 400 response if the start is greater than the end', async () => {
       start = '2022-01-02T12:00:00.000Z'
       end = '2022-01-02T11:00:00.000Z'
-
-      const res = await sendRequest()
-
-      expect(res.status).toBe(400)
-    })
-
-    it('should return 400 response if the location is not provided', async () => {
-      location = undefined
 
       const res = await sendRequest()
 

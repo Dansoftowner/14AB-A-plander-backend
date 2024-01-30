@@ -8,18 +8,20 @@ import { JoiObjectId } from '../utils/joi'
  *   AssignmentInsertion:
  *     type: object
  *     required:
- *       - title
- *       - location
  *       - start
  *       - end
  *     properties:
  *       title:
  *         type: string
  *         description: The title of the assignment.
+ *         minLength: 5
+ *         maxLength: 255
  *         example: Gyerkőc fesztivál járőrözés
  *       location:
  *         type: string
  *         description: A string that identifies the geographical place.
+ *         minLength: 2
+ *         maxLength: 255
  *         example: 'Széchenyi tér'
  *       start:
  *         type: string
@@ -48,8 +50,8 @@ export class AssignmentInsertionDto {
 
   static validationSchema() {
     return Joi.object({
-      title: Joi.string().required(),
-      location: Joi.string().required(),
+      title: Joi.string().min(5).max(255),
+      location: Joi.string().min(2).max(255),
       start: Joi.date().required(),
       end: Joi.date().greater(Joi.ref('start')).required(),
       assignees: Joi.array().items(JoiObjectId()).unique(),

@@ -13,14 +13,12 @@ export interface Assignment {
 const assignmentSchema = new Schema<Assignment>({
   title: {
     type: String,
-    required: true,
     minlength: 5,
     maxlength: 255,
   },
   location: {
     type: String,
-    required: true,
-    minlength: 5,
+    minlength: 2,
     maxlength: 255,
   },
   association: {
