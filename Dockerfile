@@ -1,6 +1,8 @@
 # Plander Koyeb deployment purposes
 # Needed because of puppeteer's requirements
 
+# According to https://www.koyeb.com/tutorials/deploy-a-web-scraper-using-puppeteer-node-and-docker
+
 FROM node:lts-alpine
 
 WORKDIR /app
@@ -22,7 +24,5 @@ COPY . /app
 
 RUN npm install
 RUN npm run build
-
-# EXPOSE 3000
 
 CMD ["npm", "start"]
