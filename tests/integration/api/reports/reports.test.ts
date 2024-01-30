@@ -62,9 +62,68 @@ describe('/api/assignments/:id/report', () => {
     await mongoose.connection.close()
   })
 
-  describe('GET /', () => {})
+  describe('GET /:id', () => {
+    let id: string
 
-  describe('GET /:id', () => {})
+    const sendRequest = async () => {
+      return request(app)
+        .get(`/api/assignments/${id}/report`)
+        .set(config.get('jwt.headerName'), await generateToken())
+    }
+
+    beforeEach(async () => {
+      id = assignmentsOfAssociation()[0]._id
+    })
+
+    it('should return 401 if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 400 response if assignment id is invalid', async () => {
+      id = '123'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 404 response if assignment does not exist', async () => {
+      id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if assignment does not exist in the association', async () => {
+      id = assignments.find((it) => it.association !== client.association)!._id
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if report does not exist', async () => {
+      await AssignmentModel.findByIdAndUpdate(id, { report: null })
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return the report if the id is valid', async () => {
+      const res = await sendRequest()
+
+      const report = (await AssignmentModel.findById(id))?.report
+
+      expect(res.body).toBeDefined()
+      expect(res.body).toHaveProperty('_id', report?._id?.toHexString())
+    })
+  })
 
   describe('GET /pdf', () => {
     let id: string
@@ -98,6 +157,14 @@ describe('/api/assignments/:id/report', () => {
 
     it('should return 404 response if assignment does not exist', async () => {
       id = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if assignment does not exist in the association', async () => {
+      id = assignments.find((it) => it.association !== client.association)!._id
 
       const res = await sendRequest()
 
@@ -401,6 +468,4 @@ describe('/api/assignments/:id/report', () => {
       expect(res.body).toHaveProperty('description', description)
     })
   })
-
-  describe('PATCH /:id', () => {})
 })

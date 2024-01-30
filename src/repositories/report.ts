@@ -51,6 +51,23 @@ export class ReportRepository implements Repository {
   }
 
   /**
+   *
+   * @throws ReportNotFoundError
+   */
+  async get(associationId: string, assignmentId: string): Promise<Report | null> {
+    const targetAssignment = await AssignmentModel.findOne({
+      _id: assignmentId,
+      association: associationId,
+    }).populate('report')
+
+    if (!targetAssignment) return null
+
+    if (!targetAssignment.report) throw new ReportNotFoundError()
+
+    return targetAssignment.report as unknown as Report
+  }
+
+  /**
    * Fetches the assignment populated with the association and assignment.
    *
    * @param assignmentId the id of the assignment

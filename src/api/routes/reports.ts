@@ -75,6 +75,55 @@ export class ReportRoutes extends RoutesProvider {
 
     /**
      * @openapi
+     * /api/assignments/{id}/report:
+     *  get:
+     *    tags:
+     *      - Reports
+     *    description: |
+     *       Fetches the report that is mapped to the given assignment.
+     *
+     *       **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *        description: The unique id of the assignment.
+     *    responses:
+     *      200:
+     *        description: Request was successfull. Returns the information about the report.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Report'
+     *      400:
+     *        $ref: '#/components/responses/InvalidObjectId'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      404:
+     *        description: |
+     *          Either the assignment or the report doesn't exist.
+     *
+     *          Error code might be `missing-resource` or `report-not-exist`.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Error'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.get(
+      '/:id/report', 
+      auth, 
+      validateObjectId,
+      asyncErrorHandler((req, res) => controller.getReport(req, res)),
+    )
+
+    /**
+     * @openapi
      * /api/assignments/{id}/report/pdf:
      *  get:
      *    tags:

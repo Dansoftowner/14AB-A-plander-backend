@@ -39,6 +39,20 @@ export class ReportService implements Service {
   /**
    * @throws ReportNotFoundError if the assignment has no report
    */
+  async get(assignmentId: string): Promise<ReportDto | null> { 
+    const report = await this.repository.get(
+      this.clientInfo.association,
+      assignmentId,
+    )
+
+    return plainToInstance(ReportDto, report, {
+      excludeExtraneousValues: true
+    })
+  }
+
+  /**
+   * @throws ReportNotFoundError if the assignment has no report
+   */
   async getPdf(assignmentId: string): Promise<Readable | null> {
     // assembling HTML for the report
     const rawTemplate = readFileSync('./resources/pdf-templates/report.hbs')

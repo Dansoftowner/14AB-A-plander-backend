@@ -32,6 +32,21 @@ export class ReportController implements Controller {
     }
   }
 
+  async getReport(req: Request, res: Response) {
+    const assignmentId = req.params.id
+
+    try {
+      const report = await this.service(req).get(assignmentId)
+      if (!report) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+      res.status(200).send(report)
+    } catch (ex) {
+      if (ex instanceof ReportNotFoundError)
+        throw new ApiError(404, ApiErrorCode.REPORT_DOES_NOT_EXIST)
+      throw ex
+    }
+  }
+
   async getReportPdf(req: Request, res: Response) {
     const assignmentId = req.params.id
 
