@@ -10,8 +10,9 @@ import { Readable } from 'stream'
 import { AssignmentRepository } from '../repositories/assignment'
 import { ReportNotFoundError } from '../exception/report-errors'
 import { AssociationRepository } from '../repositories/association'
-import { differenceInHours } from 'date-fns'
+import { differenceInHours, format } from 'date-fns'
 import { convertHtmlToPdf } from '../utils/pdf'
+import i18n from '../utils/i18n'
 
 export class ReportService implements Service {
   private clientInfo: ClientInfo
@@ -71,8 +72,14 @@ export class ReportService implements Service {
         report: assignment.report,
 
         // Calculation:
-        serviceDuration: differenceInHours(assignment.start, assignment.end),
+        serviceDuration: differenceInHours(assignment.end, assignment.start),
         kmSpan: assignment.report.endKm - assignment.report.startKm,
+
+        start: format(assignment.start, 'yyyy.MM.dd HH:mm'),
+        end: format(assignment.end, 'yyyy.MM.dd HH:mm'),
+
+        method: i18n.getResource('hu', 'report', assignment.report.method),
+        isVehicle: assignment.report.vehicle === 'vehicle',
       }
     )
   }

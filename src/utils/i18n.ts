@@ -11,7 +11,7 @@ i18next
       addPath: 'resources/locales/{{lng}}/{{ns}}.missing.json',
     },
     fallbackLng: 'en',
-    ns: ['errors', 'validation'],
+    ns: ['errors', 'validation', 'report'],
     preload: ['en', 'hu'],
   })
 
