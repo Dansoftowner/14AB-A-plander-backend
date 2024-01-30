@@ -54,9 +54,11 @@ export class ReportController implements Controller {
       const pdfStream = await this.service(req).getPdf(assignmentId)
       if (!pdfStream) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
+      const filename = `report_${assignmentId}.pdf`
+
       res.set({
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment;filename=report_${assignmentId}.pdf`,
+        'Content-Disposition': `attachment;filename=${filename}`,
       })
 
       pdfStream.pipe(res)
