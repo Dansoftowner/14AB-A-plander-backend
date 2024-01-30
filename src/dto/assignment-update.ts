@@ -12,10 +12,14 @@ import { Type } from 'class-transformer'
  *       title:
  *         type: string
  *         description: The title of the assignment.
+ *         minLength: 5
+ *         maxLength: 255
  *         example: Gyerkőc fesztivál járőrözés
  *       location:
  *         type: string
  *         description: A string that identifies the geographical place.
+ *         minLength: 2
+ *         maxLength: 255
  *         example: 'Széchenyi tér'
  *       start:
  *         type: string
@@ -45,8 +49,8 @@ export class AssignmentUpdateDto {
 
   static validationSchema() {
     return Joi.object({
-      title: Joi.string(),
-      location: Joi.string(),
+      title: Joi.string().min(5).max(255),
+      location: Joi.string().min(2).max(255),
       start: Joi.date(),
       end: Joi.date().greater(Joi.ref('start')),
       assignees: Joi.array().items(JoiObjectId()).unique(),
