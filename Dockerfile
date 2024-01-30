@@ -1,3 +1,6 @@
+# Plander Koyeb deployment purposes
+# Needed because of puppeteer's requirements
+
 FROM node:lts-alpine
 
 WORKDIR /app
@@ -13,7 +16,7 @@ RUN apk update && apk add --no-cache nmap && \
       ttf-freefont \
       nss
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+# ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 COPY . /app
 
