@@ -2,6 +2,7 @@ import _ from 'lodash'
 import mongoose, { FilterQuery, UpdateQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import AssignmentModel, { Assignment } from '../models/assignment'
+import ReportModel from '../models/report'
 import MemberModel, { Member } from '../models/member'
 import { AssignmentInsertionDto } from '../dto/assignment-insertion'
 import {
@@ -87,14 +88,18 @@ export class AssignmentRepository implements Repository {
     return await assignment.save()
   }
 
-  delete(
+  async delete(
     associationId: string | mongoose.Types.ObjectId,
     id: string | mongoose.Types.ObjectId,
   ): Promise<Assignment | null> {
-    return AssignmentModel.findOneAndDelete({
+    const assignment = await AssignmentModel.findOneAndDelete({
       association: associationId,
       _id: id,
     })
+
+    await ReportModel.findByIdAndDelete(assignment?.report)
+
+    return assignment
   }
 
   private async populateAssignees(

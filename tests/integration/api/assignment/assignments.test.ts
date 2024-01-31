@@ -9,6 +9,7 @@ import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
 import assignments from '../../dummy-data/assignments.json'
 import members from '../../dummy-data/members.json'
 import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
+import ReportModel from '../../../../src/models/report'
 import { add, endOfMonth, startOfMonth } from 'date-fns'
 
 describe('/api/assignments', () => {
@@ -554,6 +555,19 @@ describe('/api/assignments', () => {
       const assignment = await AssignmentModel.findById(id)
 
       expect(assignment).toBeNull()
+    })
+
+    it('should delete the report associated with the assignment', async () => {
+      let { _id: reportId } = await new ReportModel().save({
+        validateBeforeSave: false,
+      })
+      await AssignmentModel.findByIdAndUpdate(id, { report: reportId })
+
+      await sendRequest()
+
+      const report = await ReportModel.findById(reportId)
+
+      expect(report).toBeNull()
     })
   })
 })
