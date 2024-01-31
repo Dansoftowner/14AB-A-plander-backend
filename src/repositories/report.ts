@@ -52,6 +52,15 @@ export class ReportRepository implements Repository {
     return report
   }
 
+  async update(
+    associationId: string,
+    assignmentId: string,
+    memberId: string,
+    payload: ReportDto,
+  ): Promise<Report> {
+    return Promise.reject()
+  }
+
   /**
    *
    * @throws ReportNotFoundError

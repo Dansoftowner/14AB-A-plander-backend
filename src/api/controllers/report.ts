@@ -72,6 +72,23 @@ export class ReportController implements Controller {
     }
   }
 
+  async updateReport(req: Request, res: Response) {
+    const assignmentId = req.params.id
+    const payload = plainToInstance(ReportDto, req.body)
+
+    try {
+      const result = await this.service(req).update(assignmentId, payload)
+
+      if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+      res.status(200).send(instanceToPlain(result))
+    } catch (ex) {
+      if (ex instanceof ReportNotFoundError)
+        throw new ApiError(404, ApiErrorCode.REPORT_DOES_NOT_EXIST)
+      throw ex
+    }
+  }
+
   private service(req: Request): ReportService {
     return req.scope!.resolve('reportService')
   }

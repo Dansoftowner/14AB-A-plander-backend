@@ -13,6 +13,8 @@ import { AssociationRepository } from '../repositories/association'
 import { differenceInHours, format } from 'date-fns'
 import { convertHtmlToPdf } from '../utils/pdf'
 import i18n from '../utils/i18n'
+import { AssignmentDto } from '../dto/assignment'
+import { ReportUpdateDto } from '../dto/report-update'
 
 export class ReportService implements Service {
   private clientInfo: ClientInfo
@@ -39,14 +41,11 @@ export class ReportService implements Service {
   /**
    * @throws ReportNotFoundError if the assignment has no report
    */
-  async get(assignmentId: string): Promise<ReportDto | null> { 
-    const report = await this.repository.get(
-      this.clientInfo.association,
-      assignmentId,
-    )
+  async get(assignmentId: string): Promise<ReportDto | null> {
+    const report = await this.repository.get(this.clientInfo.association, assignmentId)
 
     return plainToInstance(ReportDto, report, {
-      excludeExtraneousValues: true
+      excludeExtraneousValues: true,
     })
   }
 
@@ -67,6 +66,19 @@ export class ReportService implements Service {
     })
 
     return await convertHtmlToPdf(html, { format: 'A4' })
+  }
+
+  async update(assignmentId: string, payload: ReportUpdateDto): Promise<AssignmentDto> {
+    const updated = await this.repository.update(
+      this.clientInfo.association,
+      assignmentId,
+      this.clientInfo._id,
+      payload,
+    )
+
+    return plainToInstance(AssignmentDto, updated, {
+      excludeExtraneousValues: true,
+    })
   }
 
   /**
