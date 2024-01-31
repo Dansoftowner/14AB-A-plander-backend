@@ -1,6 +1,7 @@
 import { Controller } from '../../base/controller'
 import { RoutesProvider } from '../../base/routes-provider'
 import { ReportDto } from '../../dto/report'
+import { ReportUpdateDto } from '../../dto/report-update'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import validate from '../../middlewares/validate'
@@ -172,6 +173,63 @@ export class ReportRoutes extends RoutesProvider {
       auth,
       validateObjectId,
       asyncErrorHandler((req, res) => controller.getReportPdf(req, res)),
+    )
+
+
+    // TODO: update swagger docs
+    /**
+     * @openapi
+     * /api/assignments/{id}/report:
+     *  post:
+     *    tags:
+     *      - Reports
+     *    description: |
+     *       Allows a member **who earlier submitted** a report to update it.
+     *
+     *       **Authentication is required** before using this endpoint.
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        schema:
+     *          type: string
+     *          required: true
+     *        description: The unique id of the assignment.
+     *    requestBody:
+     *      required: true
+     *      content:
+     *       application/json:
+     *        schema:
+     *         $ref: '#/components/schemas/Report'
+     *    responses:
+     *      201:
+     *        description: Insertion proceeded. Returns the information about the submitted report.
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Report'
+     *      400:
+     *        $ref: '#/components/responses/InvalidPayload'
+     *      401:
+     *        $ref: '#/components/responses/Unauthorized'
+     *      403:
+     *       $ref: '#/components/responses/ReporterIsNotAssignee'
+     *      404:
+     *       $ref: '#/components/responses/NotFound'
+     *      409:
+     *       $ref: '#/components/responses/ReportAlreadyExists'
+     *      422:
+     *       $ref: '#/components/responses/AssignmentNotOver'
+     *      429:
+     *        $ref: '#/components/responses/SurpassedRateLimit'
+     *      5XX:
+     *        $ref: '#/components/responses/InternalServerError'
+     */
+    this.router.patch(
+      '/:id/report',
+      auth,
+      validateObjectId,
+      validate(ReportUpdateDto.validationSchema()),
+      asyncErrorHandler((req, res) => controller.updateReport(req, res)),
     )
   }
 }

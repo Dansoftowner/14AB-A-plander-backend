@@ -6,21 +6,13 @@ import { JoiObjectId } from '../utils/joi'
  * @openapi
  * components:
  *   schemas:
- *     Report:
+ *     ReportUpdate:
  *       type: object
- *       required:
- *          - method
- *          - purpose
  *       properties:
  *         _id:
  *           type: string
  *           description: Unique identifier of the report
  *           example: '655f15d623380f3b6a0f7b28'
- *           readOnly: true
- *         member:
- *           type: string
- *           description: ID of the assignment the report belongs to
- *           example: '652f866cfc13ae3ce86c7ce7'
  *           readOnly: true
  *         method:
  *           schema:
@@ -70,48 +62,23 @@ import { JoiObjectId } from '../utils/joi'
  *           maxLength: 1240
  *           description: Description of remarkable events occured.
  */
-export class ReportDto {
-  @Expose()
-  @Type(() => String)
+export class ReportUpdateDto {
   _id!: string
-
-  @Expose()
-  @Type(() => String)
   member!: string
-
-  @Expose()
   method!: string
-
-  @Expose()
   purpose!: string
-
-  @Expose()
   licensePlateNumber?: string
-
-  @Expose()
-  @Type(() => Number)
   startKm?: number
-
-  @Expose()
-  @Type(() => Number)
   endKm?: number
-
-  @Expose()
   externalOrganization?: string
-
-  @Expose()
   externalRepresentative?: string
-
-  @Expose()
   description?: string
-
-  @Expose()
   submitted!: Date
 
   static validationSchema() {
     return Joi.object({
-      method: Joi.string().required().valid('bicycle', 'vehicle', 'pedestrian'),
-      purpose: Joi.string().required().min(5).max(255),
+      method: Joi.string().valid('bicycle', 'vehicle', 'pedestrian'),
+      purpose: Joi.string().min(5).max(255),
       licensePlateNumber: Joi.string().min(5).max(255),
       startKm: Joi.number().min(0),
       endKm: Joi.number().min(0).greater(Joi.ref('startKm')),
@@ -122,7 +89,7 @@ export class ReportDto {
         .when('externalOrganization', {
           is: Joi.exist(),
           then: Joi.required(),
-          otherwise: Joi.forbidden(),
+          otherwise: Joi.allow(),
         }),
       description: Joi.string().min(5).max(1240),
     })
