@@ -319,14 +319,14 @@ export enum ApiErrorCode {
    * @openapi
    * components:
    *   responses:
-   *    AssignmentNotFound:
-   *     description: "The given assignment doesn't exist (errorCode: 'assignment-not-found')."
+   *    AssignmentNotOver:
+   *     description: "The given assignment is not over yet therefore report cannot be submitted for it (errorCode: 'assignment-not-over')."
    *     content:
    *       application/json:
    *         schema:
    *           $ref: '#/components/schemas/Error'
    */
-  ASSIGNMENT_NOT_FOUND = 'assignment-not-found',
+  ASSIGNMENT_NOT_OVER = 'assignment-not-over',
 
   /**
    * @openapi

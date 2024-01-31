@@ -12,6 +12,7 @@ import reports from '../../dummy-data/reports.json'
 import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
 import ReportModel from '../../../../src/models/report'
 import { PDFExtract } from 'pdf.js-extract'
+import { addHours } from 'date-fns'
 
 describe('/api/assignments/:id/report', () => {
   let app: Express
@@ -286,20 +287,20 @@ describe('/api/assignments/:id/report', () => {
       expect(res.status).toBe(400)
     })
 
-    it('should return 422 response if no assignment is found with the given id', async () => {
+    it('should return 404 response if no assignment is found with the given id', async () => {
       assignment = new mongoose.Types.ObjectId().toHexString()
 
       const res = await sendRequest()
 
-      expect(res.status).toBe(422)
+      expect(res.status).toBe(404)
     })
 
-    it('should return 422 response if the assignment is not in the association of the client', async () => {
+    it('should return 404 response if the assignment is not in the association of the client', async () => {
       assignment = assignments.find((it) => it.association !== client.association)!._id
 
       const res = await sendRequest()
 
-      expect(res.status).toBe(422)
+      expect(res.status).toBe(404)
     })
 
     it('should return 409 response if the assignment already has a report', async () => {
@@ -310,6 +311,17 @@ describe('/api/assignments/:id/report', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(409)
+    })
+
+    it('should return 422 response if assignment is not finished yet', async () => {
+      await AssignmentModel.findByIdAndUpdate(assignment, {
+        start: new Date(),
+        end: addHours(new Date(), 1),
+      })
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
     })
 
     it('should return 400 response if method is not provided', async () => {

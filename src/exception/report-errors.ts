@@ -17,3 +17,8 @@ export class ReportAlreadyExistsError extends Error {}
  * Thrown when a client wants to fetch a report that doesn't exist
  */
 export class ReportNotFoundError extends Error {}
+
+/**
+ * Thrown when a client wants to submit a report for an assignment that is not over yet
+ */
+export class AssignmentIsNotOverError extends Error {}

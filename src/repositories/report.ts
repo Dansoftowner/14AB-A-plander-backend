@@ -3,6 +3,7 @@ import AssignmentModel from '../models/assignment'
 import { Repository } from '../base/repository'
 import { ReportDto } from '../dto/report'
 import {
+  AssignmentIsNotOverError,
   AssignmentNotFoundError,
   ReportAlreadyExistsError,
   ReportNotFoundError,
@@ -29,6 +30,7 @@ export class ReportRepository implements Repository {
     })
 
     if (!targetAssignment) throw new AssignmentNotFoundError()
+    if (targetAssignment.end > new Date()) throw new AssignmentIsNotOverError()
 
     const memberAssignee = targetAssignment.assignees.find(
       (it) => it._id.toHexString() === memberId,

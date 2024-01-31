@@ -4,6 +4,7 @@ import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { ReportDto } from '../../dto/report'
 import { ReportService } from '../../services/report'
 import {
+  AssignmentIsNotOverError,
   AssignmentNotFoundError,
   ReportAlreadyExistsError,
   ReportNotFoundError,
@@ -22,12 +23,14 @@ export class ReportController implements Controller {
 
       res.status(201).send(instanceToPlain(result))
     } catch (ex) {
+      if (ex instanceof AssignmentIsNotOverError)
+        throw new ApiError(422, ApiErrorCode.ASSIGNMENT_NOT_OVER)
       if (ex instanceof ReportAlreadyExistsError)
         throw new ApiError(409, ApiErrorCode.REPORT_ALREADY_EXISTS)
       if (ex instanceof ReporterIsNotAssigneeError)
         throw new ApiError(403, ApiErrorCode.REPORTER_IS_NOT_ASSIGNEE)
       if (ex instanceof AssignmentNotFoundError)
-        throw new ApiError(422, ApiErrorCode.ASSIGNMENT_NOT_FOUND)
+        throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
       throw ex
     }
   }
