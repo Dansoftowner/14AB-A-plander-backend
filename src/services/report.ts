@@ -39,14 +39,11 @@ export class ReportService implements Service {
   /**
    * @throws ReportNotFoundError if the assignment has no report
    */
-  async get(assignmentId: string): Promise<ReportDto | null> { 
-    const report = await this.repository.get(
-      this.clientInfo.association,
-      assignmentId,
-    )
+  async get(assignmentId: string): Promise<ReportDto | null> {
+    const report = await this.repository.get(this.clientInfo.association, assignmentId)
 
     return plainToInstance(ReportDto, report, {
-      excludeExtraneousValues: true
+      excludeExtraneousValues: true,
     })
   }
 
@@ -96,7 +93,7 @@ export class ReportService implements Service {
         end: format(assignment.end, 'yyyy.MM.dd HH:mm'),
 
         method: i18n.getResource('hu', 'report', assignment.report.method),
-        isVehicle: assignment.report.vehicle === 'vehicle',
+        isVehicle: assignment.report.method === 'vehicle',
       }
     )
   }
