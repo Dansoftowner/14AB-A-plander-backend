@@ -216,6 +216,8 @@ export class AssignmentRoutes extends RoutesProvider {
      *      - Assignments
      *    description: |
      *      Allows **presidents** to delete assignments.
+     * 
+     *      > Note: if there is a report submitted for the assignment, it will be deleted as well.
      *
      *      **Authentication is required** before using this endpoint.
      *    parameters:

@@ -56,10 +56,12 @@ export class ReportRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/Unauthorized'
      *      403:
      *       $ref: '#/components/responses/ReporterIsNotAssignee'
+     *      404:
+     *       $ref: '#/components/responses/NotFound'
      *      409:
      *       $ref: '#/components/responses/ReportAlreadyExists'
      *      422:
-     *       $ref: '#/components/responses/AssignmentNotFound'
+     *       $ref: '#/components/responses/AssignmentNotOver'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:
@@ -116,8 +118,8 @@ export class ReportRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/InternalServerError'
      */
     this.router.get(
-      '/:id/report', 
-      auth, 
+      '/:id/report',
+      auth,
       validateObjectId,
       asyncErrorHandler((req, res) => controller.getReport(req, res)),
     )
