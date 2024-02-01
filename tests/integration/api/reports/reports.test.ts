@@ -16,7 +16,6 @@ import { addHours, subDays } from 'date-fns'
 
 describe('/api/assignments/:id/report', () => {
   let app: Express
-
   let client
 
   const presidentMember = members.find((it) => it.roles?.includes('president'))
@@ -62,6 +61,24 @@ describe('/api/assignments/:id/report', () => {
   afterAll(async () => {
     await mongoose.connection.close()
   })
+
+  let assignmentId: string | null | undefined
+
+  const assigneesOfAssignment = () =>
+    assignments
+      .find((it) => it._id === assignmentId)
+      ?.assignees?.map((it) => members.find((m) => m._id === it._id))
+
+  const nonAssigneeMember = () =>
+    membersOfAssociation().find((it) => !assigneesOfAssignment()!.includes(it))
+
+  const authorOfAssignment = async (): Promise<string> => {
+    const assignmentInDb = (await AssignmentModel.findById(assignmentId!).populate(
+      'report',
+    )) as unknown as any
+
+    return assignmentInDb.report.member
+  }
 
   describe('GET /:id', () => {
     let id: string
@@ -127,17 +144,15 @@ describe('/api/assignments/:id/report', () => {
   })
 
   describe('GET /pdf', () => {
-    let id: string
-
     const sendRequest = async () => {
       return request(app)
-        .get(`/api/assignments/${id}/report/pdf`)
+        .get(`/api/assignments/${assignmentId}/report/pdf`)
         .set(config.get('jwt.headerName'), await generateToken())
         .responseType('blob')
     }
 
     beforeEach(async () => {
-      id = assignmentsOfAssociation()[0]._id
+      assignmentId = assignmentsOfAssociation()[0]._id
     })
 
     it('should return 401 if client is not logged in', async () => {
@@ -149,7 +164,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 400 response if assignment id is invalid', async () => {
-      id = '123'
+      assignmentId = '123'
 
       const res = await sendRequest()
 
@@ -157,7 +172,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 404 response if assignment does not exist', async () => {
-      id = new mongoose.Types.ObjectId().toHexString()
+      assignmentId = new mongoose.Types.ObjectId().toHexString()
 
       const res = await sendRequest()
 
@@ -165,7 +180,9 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 404 response if assignment does not exist in the association', async () => {
-      id = assignments.find((it) => it.association !== client.association)!._id
+      assignmentId = assignments.find(
+        (it) => it.association !== client.association,
+      )!._id
 
       const res = await sendRequest()
 
@@ -173,7 +190,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 404 response if report does not exist', async () => {
-      await AssignmentModel.findByIdAndUpdate(id, { report: null })
+      await AssignmentModel.findByIdAndUpdate(assignmentId, { report: null })
 
       const res = await sendRequest()
 
@@ -202,7 +219,8 @@ describe('/api/assignments/:id/report', () => {
         .map((it) => it.content.map(({ str }) => str).join(' '))
         .join(' ')
 
-      const assignment: any = await AssignmentModel.findById(id).populate('report')
+      const assignment: any =
+        await AssignmentModel.findById(assignmentId).populate('report')
 
       expect(pdfText.includes(assignment!.report!.purpose)).toBeTruthy()
       expect(pdfText.includes(assignment!.report!.description)).toBeTruthy()
@@ -213,7 +231,6 @@ describe('/api/assignments/:id/report', () => {
   })
 
   describe('POST /', () => {
-    let assignment: string | undefined
     let method: string | undefined
     let purpose: string | undefined
     let licensePlateNumber: string | undefined
@@ -225,7 +242,7 @@ describe('/api/assignments/:id/report', () => {
 
     const sendRequest = async () => {
       return request(app)
-        .post(`/api/assignments/${assignment}/report`)
+        .post(`/api/assignments/${assignmentId}/report`)
         .send({
           method,
           purpose,
@@ -239,16 +256,8 @@ describe('/api/assignments/:id/report', () => {
         .set(config.get('jwt.headerName'), await generateToken())
     }
 
-    const assigneesOfAssignment = () =>
-      assignments
-        .find((it) => it._id === assignment)
-        ?.assignees?.map((it) => members.find((m) => m._id === it._id))
-
-    const nonAssigneeMember = () =>
-      membersOfAssociation().find((it) => !assigneesOfAssignment()!.includes(it))
-
     beforeEach(async () => {
-      assignment = assignmentsOfAssociation()[0]._id
+      assignmentId = assignmentsOfAssociation()[0]._id
       method = 'vehicle'
       purpose = 'Securing events'
       licensePlateNumber = 'ddf-123'
@@ -260,7 +269,7 @@ describe('/api/assignments/:id/report', () => {
 
       client = assigneesOfAssignment()![0]
 
-      await AssignmentModel.findByIdAndUpdate(assignment, { report: null })
+      await AssignmentModel.findByIdAndUpdate(assignmentId, { report: null })
     })
 
     it('should return 401 response if client is not logged in', async () => {
@@ -280,7 +289,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 404 response if no assignment is found with the given id', async () => {
-      assignment = new mongoose.Types.ObjectId().toHexString()
+      assignmentId = new mongoose.Types.ObjectId().toHexString()
 
       const res = await sendRequest()
 
@@ -288,7 +297,9 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 404 response if the assignment is not in the association of the client', async () => {
-      assignment = assignments.find((it) => it.association !== client.association)!._id
+      assignmentId = assignments.find(
+        (it) => it.association !== client.association,
+      )!._id
 
       const res = await sendRequest()
 
@@ -296,7 +307,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 409 response if the assignment already has a report', async () => {
-      await AssignmentModel.findByIdAndUpdate(assignment, {
+      await AssignmentModel.findByIdAndUpdate(assignmentId, {
         report: new mongoose.Types.ObjectId(),
       })
 
@@ -306,7 +317,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 422 response if assignment is not finished yet', async () => {
-      await AssignmentModel.findByIdAndUpdate(assignment, {
+      await AssignmentModel.findByIdAndUpdate(assignmentId, {
         start: new Date(),
         end: addHours(new Date(), 1),
       })
@@ -432,7 +443,7 @@ describe('/api/assignments/:id/report', () => {
     it('should save report into database', async () => {
       await sendRequest()
 
-      const assignmentInDb = await AssignmentModel.findById(assignment)
+      const assignmentInDb = await AssignmentModel.findById(assignmentId)
       const savedReport = await ReportModel.findOne({ _id: assignmentInDb!.report })
 
       expect(savedReport).not.toBeNull()
@@ -456,7 +467,7 @@ describe('/api/assignments/:id/report', () => {
     it('should return the saved report', async () => {
       const res = await sendRequest()
 
-      const assignmentInDb = await AssignmentModel.findById(assignment)
+      const assignmentInDb = await AssignmentModel.findById(assignmentId)
       const savedReport = await ReportModel.findOne({ _id: assignmentInDb!.report })
 
       expect(res.body).toBeDefined()
@@ -474,7 +485,6 @@ describe('/api/assignments/:id/report', () => {
   })
 
   describe('PATCH /', () => {
-    let assignment: string | null | undefined
     let method: string | null | undefined
     let purpose: string | null | undefined
     let licensePlateNumber: string | null | undefined
@@ -486,7 +496,7 @@ describe('/api/assignments/:id/report', () => {
 
     const sendRequest = async () => {
       return request(app)
-        .patch(`/api/assignments/${assignment}/report`)
+        .patch(`/api/assignments/${assignmentId}/report`)
         .send({
           method,
           purpose,
@@ -502,14 +512,14 @@ describe('/api/assignments/:id/report', () => {
 
     const assigneesOfAssignment = () =>
       assignments
-        .find((it) => it._id === assignment)
+        .find((it) => it._id === assignmentId)
         ?.assignees?.map((it) => members.find((m) => m._id === it._id))
 
     const nonAssigneeMember = () =>
       membersOfAssociation().find((it) => !assigneesOfAssignment()!.includes(it))
 
     beforeEach(async () => {
-      assignment = assignmentsOfAssociation()[0]._id
+      assignmentId = assignmentsOfAssociation()[0]._id
       method = 'vehicle'
       purpose = 'Securing events'
       licensePlateNumber = 'ddf-123'
@@ -539,11 +549,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 403 response if client is not the author of the report', async () => {
-      const assignmentInDb = (await AssignmentModel.findById(assignment).populate(
-        'report',
-      )) as unknown as any
-
-      const author = assignmentInDb!.report!.member!.toHexString()
+      const author = await authorOfAssignment()
 
       client = assigneesOfAssignment()!.find((it) => it!._id !== author)!
 
@@ -553,7 +559,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 404 response if no assignment is found with the given id', async () => {
-      assignment = new mongoose.Types.ObjectId().toHexString()
+      assignmentId = new mongoose.Types.ObjectId().toHexString()
 
       const res = await sendRequest()
 
@@ -561,7 +567,9 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 404 response if the assignment is not in the association of the client', async () => {
-      assignment = assignments.find((it) => it.association !== client.association)!._id
+      assignmentId = assignments.find(
+        (it) => it.association !== client.association,
+      )!._id
 
       const res = await sendRequest()
 
@@ -569,7 +577,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 404 response if report is not associated with the assignment', async () => {
-      await AssignmentModel.findByIdAndUpdate(assignment, { report: null })
+      await AssignmentModel.findByIdAndUpdate(assignmentId, { report: null })
 
       const res = await sendRequest()
 
@@ -577,7 +585,7 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 422 response if the report is older than 3 days', async () => {
-      const reportId = (await AssignmentModel.findById(assignment))!.report
+      const reportId = (await AssignmentModel.findById(assignmentId))!.report
 
       await ReportModel.findByIdAndUpdate(reportId, {
         submittedAt: subDays(new Date(), 3),
@@ -688,7 +696,7 @@ describe('/api/assignments/:id/report', () => {
     it('should update report in database', async () => {
       await sendRequest()
 
-      const assignmentInDb = await AssignmentModel.findById(assignment)
+      const assignmentInDb = await AssignmentModel.findById(assignmentId)
       const savedReport = await ReportModel.findOne({ _id: assignmentInDb!.report })
 
       expect(savedReport).not.toBeNull()
@@ -711,7 +719,7 @@ describe('/api/assignments/:id/report', () => {
     it('should return the updated report', async () => {
       const res = await sendRequest()
 
-      const assignmentInDb = await AssignmentModel.findById(assignment)
+      const assignmentInDb = await AssignmentModel.findById(assignmentId)
       const savedReport = await ReportModel.findOne({ _id: assignmentInDb!.report })
 
       expect(res.body).toBeDefined()
@@ -725,6 +733,36 @@ describe('/api/assignments/:id/report', () => {
       expect(res.body).toHaveProperty('externalOrganization', externalOrganization)
       expect(res.body).toHaveProperty('externalRepresentative', externalRepresentative)
       expect(res.body).toHaveProperty('description', description)
+    })
+  })
+
+  describe('DELETE /', () => {
+    const sendRequest = async () => {
+      return request(app)
+        .delete(`/api/assignments/${assignmentId}/report`)
+        .set(config.get('jwt.headerName'), await generateToken())
+    }
+
+    beforeEach(async () => {
+      assignmentId = assignments[0]._id
+    })
+
+    it('should return 401 response if client is not logged in', async () => {
+      client = undefined
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(401)
+    })
+
+    it('should return 403 response if client is not the author of the report', async () => {
+      const author = await authorOfAssignment()
+
+      client = assigneesOfAssignment()!.find((it) => it!._id !== author)
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(403)
     })
   })
 })
