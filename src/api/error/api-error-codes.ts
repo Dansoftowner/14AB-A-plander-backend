@@ -340,4 +340,30 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   REPORT_DOES_NOT_EXIST = 'report-not-exist',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    ReportCannotBeUpdated:
+   *     description: "The report is too old to be updated (errorCode: 'report-cannot-be-updated')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  REPORT_CANNOT_BE_UPDATED = 'report-cannot-be-updated',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    ReportUpdaterNotAuthor:
+   *     description: "The report is too old to be updated (errorCode: 'report-updater-not-author')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  REPORT_UPDATER_NOT_AUTHOR = 'report-updater-not-author',
 }

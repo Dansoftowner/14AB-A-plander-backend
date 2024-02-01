@@ -7,7 +7,9 @@ import {
   AssignmentIsNotOverError,
   AssignmentNotFoundError,
   ReportAlreadyExistsError,
+  ReportCannotBeUpdatedError,
   ReportNotFoundError,
+  ReportUpdaterIsNotAuthorError,
   ReporterIsNotAssigneeError,
 } from '../../exception/report-errors'
 import { ApiErrorCode } from '../error/api-error-codes'
@@ -83,6 +85,10 @@ export class ReportController implements Controller {
 
       res.status(200).send(instanceToPlain(result))
     } catch (ex) {
+      if (ex instanceof ReportCannotBeUpdatedError)
+        throw new ApiError(422, ApiErrorCode.REPORT_CANNOT_BE_UPDATED)
+      if (ex instanceof ReportUpdaterIsNotAuthorError)
+        throw new ApiError(403, ApiErrorCode.REPORT_UPDATER_NOT_AUTHOR)
       if (ex instanceof ReportNotFoundError)
         throw new ApiError(404, ApiErrorCode.REPORT_DOES_NOT_EXIST)
       throw ex

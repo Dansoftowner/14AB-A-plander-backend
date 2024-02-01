@@ -20,5 +20,7 @@
     "report-already-exists": "A megadott beosztáshoz már létezik jelentés!",
     "reporter-is-not-assignee": "Csak egy beosztott készíthet jelentést!",
     "assignment-not-over": "A szolgálat még nem járt le, így jelentés nem küldhető!",
-    "report-not-exist": "A szolgálathoz még nem készült jelentés!"
+    "report-not-exist": "A szolgálathoz még nem készült jelentés!",
+    "report-cannot-be-updated": "3 napnál régebbi jelentést nem lehet módosítani!",
+    "report-updater-not-author": "A jelentést csak az módosíthatja, aki beküldte!"
 }

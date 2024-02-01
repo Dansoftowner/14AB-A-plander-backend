@@ -12,7 +12,7 @@ import reports from '../../dummy-data/reports.json'
 import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
 import ReportModel from '../../../../src/models/report'
 import { PDFExtract } from 'pdf.js-extract'
-import { addHours } from 'date-fns'
+import { addHours, subDays } from 'date-fns'
 
 describe('/api/assignments/:id/report', () => {
   let app: Express
@@ -539,8 +539,11 @@ describe('/api/assignments/:id/report', () => {
     })
 
     it('should return 403 response if client is not the author of the report', async () => {
-      const assignmentInDb = await AssignmentModel.findById(assignment).populate('report') as unknown as any
-      const author = assignmentInDb!.report!.member
+      const assignmentInDb = (await AssignmentModel.findById(assignment).populate(
+        'report',
+      )) as unknown as any
+
+      const author = assignmentInDb!.report!.member!.toHexString()
 
       client = assigneesOfAssignment()!.find((it) => it!._id !== author)!
 
@@ -563,6 +566,26 @@ describe('/api/assignments/:id/report', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if report is not associated with the assignment', async () => {
+      await AssignmentModel.findByIdAndUpdate(assignment, { report: null })
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 422 response if the report is older than 3 days', async () => {
+      const reportId = (await AssignmentModel.findById(assignment))!.report
+
+      await ReportModel.findByIdAndUpdate(reportId, {
+        submittedAt: subDays(new Date(), 3),
+      })
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
     })
 
     it('should return 400 response if the startKm is greater than the endKm', async () => {
@@ -679,10 +702,10 @@ describe('/api/assignments/:id/report', () => {
       expect(savedReport!.description).toBe(description)
     })
 
-    it('should return 201 response if report is successfully saved', async () => {
+    it('should return 200 response if report is successfully saved', async () => {
       const res = await sendRequest()
 
-      expect(res.status).toBe(201)
+      expect(res.status).toBe(200)
     })
 
     it('should return the updated report', async () => {

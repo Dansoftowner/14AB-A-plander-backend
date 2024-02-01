@@ -175,16 +175,17 @@ export class ReportRoutes extends RoutesProvider {
       asyncErrorHandler((req, res) => controller.getReportPdf(req, res)),
     )
 
-
-    // TODO: update swagger docs
     /**
      * @openapi
      * /api/assignments/{id}/report:
-     *  post:
+     *  patch:
      *    tags:
      *      - Reports
      *    description: |
      *       Allows a member **who earlier submitted** a report to update it.
+     *
+     *       - If the client is not the member who previously submitted the report, the request will not succeed
+     *       - **If the report is older than 3 days**, update requests will be rejected
      *
      *       **Authentication is required** before using this endpoint.
      *    parameters:
@@ -201,7 +202,7 @@ export class ReportRoutes extends RoutesProvider {
      *        schema:
      *         $ref: '#/components/schemas/Report'
      *    responses:
-     *      201:
+     *      200:
      *        description: Insertion proceeded. Returns the information about the submitted report.
      *        content:
      *          application/json:
@@ -212,13 +213,11 @@ export class ReportRoutes extends RoutesProvider {
      *      401:
      *        $ref: '#/components/responses/Unauthorized'
      *      403:
-     *       $ref: '#/components/responses/ReporterIsNotAssignee'
+     *       $ref: '#/components/responses/ReportUpdaterNotAuthor'
      *      404:
      *       $ref: '#/components/responses/NotFound'
-     *      409:
-     *       $ref: '#/components/responses/ReportAlreadyExists'
      *      422:
-     *       $ref: '#/components/responses/AssignmentNotOver'
+     *       $ref: '#/components/responses/ReportCannotBeUpdated'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:

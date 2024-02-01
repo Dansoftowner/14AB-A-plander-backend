@@ -1,17 +1,21 @@
 import ReportModel, { Report } from '../models/report'
-import AssignmentModel from '../models/assignment'
+import AssignmentModel, { Assignment } from '../models/assignment'
 import { Repository } from '../base/repository'
 import { ReportDto } from '../dto/report'
 import {
   AssignmentIsNotOverError,
   AssignmentNotFoundError,
   ReportAlreadyExistsError,
+  ReportCannotBeUpdatedError,
   ReportNotFoundError,
+  ReportUpdaterIsNotAuthorError,
   ReporterIsNotAssigneeError,
 } from '../exception/report-errors'
 import mongoose from 'mongoose'
 import assignment from '../models/assignment'
 import { ClientInfo } from '../utils/jwt'
+import { ReportUpdateDto } from '../dto/report-update'
+import { differenceInDays } from 'date-fns'
 
 export class ReportRepository implements Repository {
   /**
@@ -52,13 +56,40 @@ export class ReportRepository implements Repository {
     return report
   }
 
+  /**
+   * @throws ReportNotFoundError
+   * @throws ReportUpdaterIsNotAuthorError
+   * @throws ReportCannotBeUpdatedError
+   */
   async update(
     associationId: string,
     assignmentId: string,
     memberId: string,
-    payload: ReportDto,
-  ): Promise<Report> {
-    return Promise.reject()
+    payload: ReportUpdateDto,
+  ): Promise<Report | null> {
+    const targetAssignment = await AssignmentModel.findOne({
+      _id: assignmentId,
+      association: associationId,
+    })
+
+    if (!targetAssignment) return null
+    if (!targetAssignment.report) throw new ReportNotFoundError()
+
+    if (!this.isAssignee(targetAssignment, memberId))
+      throw new ReportUpdaterIsNotAuthorError()
+
+    const report = await ReportModel.findById(targetAssignment.report)
+
+    if (!report) throw new ReportNotFoundError()
+    if (!(report.member.toHexString() === memberId))
+      throw new ReportUpdaterIsNotAuthorError()
+
+    if (differenceInDays(new Date(), report.submittedAt) >= 3)
+      throw new ReportCannotBeUpdatedError()
+
+    await report.updateOne({ $set: payload }, { new: true })
+
+    return await ReportModel.findById(report._id)
   }
 
   /**
@@ -98,5 +129,9 @@ export class ReportRepository implements Repository {
     if (assignment && !assignment.report) throw new ReportNotFoundError()
 
     return assignment
+  }
+
+  private isAssignee(assignment: Assignment, assignee: string): boolean {
+    return assignment.assignees.map((it) => it._id.toHexString()).includes(assignee)
   }
 }

@@ -68,7 +68,12 @@ export class ReportService implements Service {
     return await convertHtmlToPdf(html, { format: 'A4' })
   }
 
-  async update(assignmentId: string, payload: ReportUpdateDto): Promise<AssignmentDto> {
+  /**
+   * @throws ReportNotFoundError
+   * @throws ReportUpdaterIsNotAuthorError
+   * @throws ReportCannotBeUpdatedError
+   */
+  async update(assignmentId: string, payload: ReportUpdateDto): Promise<ReportDto> {
     const updated = await this.repository.update(
       this.clientInfo.association,
       assignmentId,
@@ -76,7 +81,7 @@ export class ReportService implements Service {
       payload,
     )
 
-    return plainToInstance(AssignmentDto, updated, {
+    return plainToInstance(ReportDto, updated, {
       excludeExtraneousValues: true,
     })
   }
