@@ -108,7 +108,7 @@ export class ReportService implements Service {
         end: format(assignment.end, 'yyyy.MM.dd HH:mm'),
 
         method: i18n.getResource('hu', 'report', assignment.report.method),
-        isVehicle: assignment.report.vehicle === 'vehicle',
+        isVehicle: assignment.report.method === 'vehicle',
       }
     )
   }

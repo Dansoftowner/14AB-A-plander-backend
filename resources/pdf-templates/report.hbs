@@ -8,7 +8,7 @@
       .container h2 { text-align: center; font-weight: bold; margin-bottom: 5px;} .box {
       width: 100%; border: solid 2px black; border-radius: 5px; padding: 10px; } .box p
       { font-weight: bold; } .box p span { font-weight: normal; } .multiline {
-      white-space: pre-wrap }
+      white-space: pre-wrap; text-align: justify; }
 
     </style>
   </head>
@@ -36,9 +36,19 @@
         <hr />
         <p>Szolgálat módja: <span>{{method}}</span></p>
 
-        {{#if (isVehicle)}}
+        {{#if isVehicle}}
           <p>Szolgálatot ellátó gépkocsi rendszáma:
-            <span>{{report.licensePlateNumber}}</span></p>
+
+            <span>
+              {{#if report.licensePlateNumber}}
+                {{report.licensePlateNumber}}
+              {{else}}
+                -
+              {{/if}}
+            </span>
+
+          </p>
+
           <p>Km óra állása induláskor:
             <span>{{report.startKm}}</span>
             Érkezéskor:
@@ -49,12 +59,11 @@
         <p>
           Szolgálat típusa:
 
-          {{#unless report.externalOrganization}}
+          {{#if report.externalOrganization}}
+            <span>Közös</span>
+          {{else}}
             <span>Önálló (nincs külső szerv)</span>
-            {{#else}}
-              <span>Közös</span>
-            {{/else}}
-          {{/unless}}
+          {{/if}}
         </p>
 
         {{#if report.externalOrganization}}
