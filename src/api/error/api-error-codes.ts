@@ -345,21 +345,21 @@ export enum ApiErrorCode {
    * @openapi
    * components:
    *   responses:
-   *    ReportCannotBeUpdated:
-   *     description: "The report is too old to be updated (errorCode: 'report-cannot-be-updated')."
+   *    ReportCannotBeAltered:
+   *     description: "The report is too old to be altered (errorCode: 'report-cannot-be-altered')."
    *     content:
    *       application/json:
    *         schema:
    *           $ref: '#/components/schemas/Error'
    */
-  REPORT_CANNOT_BE_UPDATED = 'report-cannot-be-updated',
+  REPORT_CANNOT_BE_ALTERED = 'report-cannot-be-altered',
 
   /**
    * @openapi
    * components:
    *   responses:
    *    ReportUpdaterNotAuthor:
-   *     description: "The report is too old to be updated (errorCode: 'report-updater-not-author')."
+   *     description: "The report is too old to be updated/deleted (errorCode: 'report-updater-not-author')."
    *     content:
    *       application/json:
    *         schema:

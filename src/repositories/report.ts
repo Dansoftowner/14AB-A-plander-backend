@@ -6,7 +6,7 @@ import {
   AssignmentIsNotOverError,
   AssignmentNotFoundError,
   ReportAlreadyExistsError,
-  ReportCannotBeUpdatedError,
+  ReportCannotBeAlteredError,
   ReportNotFoundError,
   ReportUpdaterIsNotAuthorError,
   ReporterIsNotAssigneeError,
@@ -85,7 +85,7 @@ export class ReportRepository implements Repository {
       throw new ReportUpdaterIsNotAuthorError()
 
     if (differenceInDays(new Date(), report.submittedAt) >= 3)
-      throw new ReportCannotBeUpdatedError()
+      throw new ReportCannotBeAlteredError()
 
     await report.updateOne({ $set: payload }, { new: true })
 
@@ -107,6 +107,41 @@ export class ReportRepository implements Repository {
     if (!targetAssignment.report) throw new ReportNotFoundError()
 
     return targetAssignment.report as unknown as Report
+  }
+
+  /**
+   * @throws ReportNotFoundError
+   * @throws ReportUpdaterIsNotAuthorError
+   * @throws ReportCannotBeUpdatedError
+   */
+  async delete(
+    associationId: string,
+    assignmentId: string,
+    memberId: string,
+  ): Promise<Report | null> {
+    const assignment = await AssignmentModel.findOne({
+      association: associationId,
+      _id: assignmentId,
+    })
+
+    if (!assignment) return null
+    if (!assignment.report) throw new ReportNotFoundError()
+
+    if (!this.isAssignee(assignment, memberId))
+      throw new ReportUpdaterIsNotAuthorError()
+
+    const report = await ReportModel.findById(assignment.report)
+
+    if (!report) throw new ReportNotFoundError()
+    if (!(report.member.toHexString() === memberId))
+      throw new ReportUpdaterIsNotAuthorError()
+
+    if (differenceInDays(new Date(), report.submittedAt) >= 3)
+      throw new ReportCannotBeAlteredError()
+
+    await report.deleteOne()
+
+    return report
   }
 
   /**

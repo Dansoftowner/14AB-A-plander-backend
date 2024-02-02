@@ -87,6 +87,23 @@ export class ReportService implements Service {
   }
 
   /**
+   * @throws ReportNotFoundError
+   * @throws ReportUpdaterIsNotAuthorError
+   * @throws ReportCannotBeUpdatedError
+   */
+  async delete(assignmentId: string): Promise<ReportDto> {
+    const deleted = await this.repository.delete(
+      this.clientInfo.association,
+      assignmentId,
+      this.clientInfo._id,
+    )
+
+    return plainToInstance(ReportDto, deleted, {
+      excludeExtraneousValues: true,
+    })
+  }
+
+  /**
    * Loads all information needed for the PDF report.
    *
    * @param assignmentId the id of the given assignment

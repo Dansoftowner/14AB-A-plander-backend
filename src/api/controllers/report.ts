@@ -7,7 +7,7 @@ import {
   AssignmentIsNotOverError,
   AssignmentNotFoundError,
   ReportAlreadyExistsError,
-  ReportCannotBeUpdatedError,
+  ReportCannotBeAlteredError,
   ReportNotFoundError,
   ReportUpdaterIsNotAuthorError,
   ReporterIsNotAssigneeError,
@@ -85,12 +85,32 @@ export class ReportController implements Controller {
 
       res.status(200).send(instanceToPlain(result))
     } catch (ex) {
-      if (ex instanceof ReportCannotBeUpdatedError)
-        throw new ApiError(422, ApiErrorCode.REPORT_CANNOT_BE_UPDATED)
+      if (ex instanceof ReportCannotBeAlteredError)
+        throw new ApiError(422, ApiErrorCode.REPORT_CANNOT_BE_ALTERED)
       if (ex instanceof ReportUpdaterIsNotAuthorError)
         throw new ApiError(403, ApiErrorCode.REPORT_UPDATER_NOT_AUTHOR)
       if (ex instanceof ReportNotFoundError)
         throw new ApiError(404, ApiErrorCode.REPORT_DOES_NOT_EXIST)
+      throw ex
+    }
+  }
+
+  async deleteReport(req: Request, res: Response): Promise<void> {
+    const assignmentId = req.params.id
+
+    try {
+      const result = await this.service(req).delete(assignmentId)
+
+      if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+
+      res.status(200).send(instanceToPlain(result))
+    } catch (ex) {
+      if (ex instanceof ReportCannotBeAlteredError)
+        throw new ApiError(423, ApiErrorCode.REPORT_CANNOT_BE_ALTERED)
+      if (ex instanceof ReportNotFoundError)
+        throw new ApiError(404, ApiErrorCode.REPORT_DOES_NOT_EXIST)
+      if (ex instanceof ReportUpdaterIsNotAuthorError)
+        throw new ApiError(403, ApiErrorCode.REPORT_UPDATER_NOT_AUTHOR)
       throw ex
     }
   }

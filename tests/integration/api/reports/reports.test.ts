@@ -77,7 +77,7 @@ describe('/api/assignments/:id/report', () => {
       'report',
     )) as unknown as any
 
-    return assignmentInDb.report.member
+    return assignmentInDb.report.member.toHexString()
   }
 
   describe('GET /:id', () => {
@@ -763,6 +763,72 @@ describe('/api/assignments/:id/report', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(403)
+    })
+
+    it('should return 400 response if id is invalid', async () => {
+      assignmentId = '123'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 404 response if assignment is not found', async () => {
+      assignmentId = new mongoose.Types.ObjectId().toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if assignment is not in the association of the client', async () => {
+      assignmentId = assignments.find(
+        (it) => it.association !== client.association,
+      )!._id
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 404 response if report is not found', async () => {
+      await AssignmentModel.findByIdAndUpdate(assignmentId, { report: null })
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(404)
+    })
+
+    it('should return 423 response if report is older than 3 days', async () => {
+      const assignment = await AssignmentModel.findById(assignmentId)
+      await ReportModel.findByIdAndUpdate(assignment?.report, {
+        submittedAt: subDays(new Date(), 3),
+      })
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(423)
+    })
+
+    it('should delete report from database', async () => {
+      await sendRequest()
+
+      const assignment = await AssignmentModel.findById(assignmentId)
+      const report = await ReportModel.findById(assignment!.report)
+
+      expect(report).toBeNull()
+    })
+
+    it('should return deleted report in response', async () => {
+      const assignment = await AssignmentModel.findById(assignmentId)
+      const report = await ReportModel.findById(assignment!.report)
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(200)
+      expect(res.body).toHaveProperty('_id', report!._id.toHexString())
+      expect(res.body).toHaveProperty('method', report!.method)
+      expect(res.body).toHaveProperty('purpose', report!.purpose)
     })
   })
 })
