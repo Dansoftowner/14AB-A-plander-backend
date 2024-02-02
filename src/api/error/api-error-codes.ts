@@ -319,14 +319,14 @@ export enum ApiErrorCode {
    * @openapi
    * components:
    *   responses:
-   *    AssignmentNotFound:
-   *     description: "The given assignment doesn't exist (errorCode: 'assignment-not-found')."
+   *    AssignmentNotOver:
+   *     description: "The given assignment is not over yet therefore report cannot be submitted for it (errorCode: 'assignment-not-over')."
    *     content:
    *       application/json:
    *         schema:
    *           $ref: '#/components/schemas/Error'
    */
-  ASSIGNMENT_NOT_FOUND = 'assignment-not-found',
+  ASSIGNMENT_NOT_OVER = 'assignment-not-over',
 
   /**
    * @openapi
@@ -340,4 +340,30 @@ export enum ApiErrorCode {
    *           $ref: '#/components/schemas/Error'
    */
   REPORT_DOES_NOT_EXIST = 'report-not-exist',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    ReportCannotBeAltered:
+   *     description: "The report is too old to be altered (errorCode: 'report-cannot-be-altered')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  REPORT_CANNOT_BE_ALTERED = 'report-cannot-be-altered',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
+   *    ReportUpdaterNotAuthor:
+   *     description: "The report is too old to be updated/deleted (errorCode: 'report-updater-not-author')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  REPORT_UPDATER_NOT_AUTHOR = 'report-updater-not-author',
 }

@@ -13,6 +13,8 @@ import { AssociationRepository } from '../repositories/association'
 import { differenceInHours, format } from 'date-fns'
 import { convertHtmlToPdf } from '../utils/pdf'
 import i18n from '../utils/i18n'
+import { AssignmentDto } from '../dto/assignment'
+import { ReportUpdateDto } from '../dto/report-update'
 
 export class ReportService implements Service {
   private clientInfo: ClientInfo
@@ -64,6 +66,41 @@ export class ReportService implements Service {
     })
 
     return await convertHtmlToPdf(html, { format: 'A4' })
+  }
+
+  /**
+   * @throws ReportNotFoundError
+   * @throws ReportUpdaterIsNotAuthorError
+   * @throws ReportCannotBeUpdatedError
+   */
+  async update(assignmentId: string, payload: ReportUpdateDto): Promise<ReportDto> {
+    const updated = await this.repository.update(
+      this.clientInfo.association,
+      assignmentId,
+      this.clientInfo._id,
+      payload,
+    )
+
+    return plainToInstance(ReportDto, updated, {
+      excludeExtraneousValues: true,
+    })
+  }
+
+  /**
+   * @throws ReportNotFoundError
+   * @throws ReportUpdaterIsNotAuthorError
+   * @throws ReportCannotBeUpdatedError
+   */
+  async delete(assignmentId: string): Promise<ReportDto> {
+    const deleted = await this.repository.delete(
+      this.clientInfo.association,
+      assignmentId,
+      this.clientInfo._id,
+    )
+
+    return plainToInstance(ReportDto, deleted, {
+      excludeExtraneousValues: true,
+    })
   }
 
   /**
