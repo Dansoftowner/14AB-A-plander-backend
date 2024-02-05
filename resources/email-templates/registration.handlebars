@@ -1,1 +1,52 @@
-{{registrationUrl}}
+<html>
+
+  <head>
+  </head>
+
+  <body>
+
+    <div style='max-width: 600px; margin: 0 auto; font-family: sans-serif;'>
+
+      <div style='display: flex; background: #f2f2f2; padding: 20px;'>
+        <img
+          src='https://i.imgur.com/uobtylx.png'
+          alt='Company Logo'
+          style='display: inline; min-width: 5vw; width: 3rem;'
+        />
+        <h3
+          style='display: inline; font-size: 2rem; margin: auto 3; align-self: center;'
+        >Plander</h3>
+      </div>
+
+      <div style='background: white; padding: 20px;'>
+
+        <h1 style='margin-top: 0;'>Plander meghívás: {{association.name}}</h1>
+
+        <p>Tisztelt {{name}}!</p>
+
+        <p>Meghívást kapott az alábbi egyesületbe: </p>
+        
+        <div>
+            <ul>
+                <li>Egyesület neve: </li>
+            </ul>
+        </div>
+
+        <a
+          href='{{registrationUrl}}'
+          target='_blank'
+          style='background: #0078D7; color: white; padding: 10px 15px; text-decoration: none; display: inline-block; margin: 20px 0; border-radius: 5px;'
+        >Jelszó helyreállítása</a>
+
+        <p>Ha Ön nem igényelt új jelszót, ezt a levelet nyugodtan figyelmen kívül
+          hagyhatja! A jelszava a régi marad.</p>
+
+        <p style='font-style: italic'>Üdvözlettel,<br />Plander csoport</p>
+
+      </div>
+
+    </div>
+
+  </body>
+
+</html>
