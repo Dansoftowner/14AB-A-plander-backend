@@ -20,26 +20,22 @@
 
       <div style='background: white; padding: 20px;'>
 
-        <h1 style='margin-top: 0;'>Plander meghívás: {{association.name}}</h1>
+        <h1 style='margin-top: 0;'>Meghívás</h1>
 
         <p>Tisztelt {{name}}!</p>
 
-        <p>Meghívást kapott az alábbi egyesületbe: </p>
-        
-        <div>
-            <ul>
-                <li>Egyesület neve: </li>
-            </ul>
-        </div>
+        <p>Meghívást kapott a következő egyesületbe:
+          <span style='font-weight: bold'>{{association.name}}</span>.</p>
+
+        <p>Az alábbi gombra kattintva befejezheti a regisztrációt.</p>
 
         <a
           href='{{registrationUrl}}'
           target='_blank'
           style='background: #0078D7; color: white; padding: 10px 15px; text-decoration: none; display: inline-block; margin: 20px 0; border-radius: 5px;'
-        >Jelszó helyreállítása</a>
+        >Regisztráció</a>
 
-        <p>Ha Ön nem igényelt új jelszót, ezt a levelet nyugodtan figyelmen kívül
-          hagyhatja! A jelszava a régi marad.</p>
+        <p>Ha Ön nem várt ilyen meghívást, ezt a levelet figyelmen kívül hagyhatja!</p>
 
         <p style='font-style: italic'>Üdvözlettel,<br />Plander csoport</p>
 
