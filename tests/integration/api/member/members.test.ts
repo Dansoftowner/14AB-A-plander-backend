@@ -667,15 +667,18 @@ describe('/api/members', () => {
       const res = await sendRequest()
 
       const memberId = res.body._id
+      const association = await AssociationModel.findById(client.association)
 
       const sentEmails = nodemailerMock.getSentMail()
 
       expect(sentEmails).toHaveLength(1)
       expect(sentEmails[0].from).toBe(config.get('smtp.from'))
       expect(sentEmails[0].to).toBe(payload.email)
-      expect(sentEmails[0]['context']).toHaveProperty('registrationUrl')
-      expect(sentEmails[0]['context'].registrationUrl).toContain(memberId)
-      expect(sentEmails[0]['context'].registrationUrl).toMatch(/\/[a-f0-9]{40}/)
+      expect(sentEmails[0].html).toMatch(new RegExp(res.body.name))
+      expect(sentEmails[0].html).toMatch(new RegExp(association!.name))
+      expect(sentEmails[0].html).toMatch(
+        new RegExp(`${config.get('frontend.host')}/register/${memberId}/[a-f0-9]{40}`),
+      )
     })
 
     it('should update invited member data if the president triggers the invite again', async () => {
@@ -713,17 +716,17 @@ describe('/api/members', () => {
       expect(oldRegistrationToken!.token).not.toEqual(newRegistrationToken!.token)
     })
 
-    it('should resend email if president trigger the invite again', async () => {
+    it('should resend email if president triggers the invite again', async () => {
       await sendRequest()
-      await sendRequest()
+      const res = await sendRequest()
+
+      const memberId = res.body._id
 
       const sentEmails = nodemailerMock.getSentMail()
 
       expect(sentEmails).toHaveLength(2)
       expect(sentEmails[1].from).toBe(config.get('smtp.from'))
       expect(sentEmails[1].to).toBe(payload.email)
-      expect(sentEmails[1]['context']).toHaveProperty('registrationUrl')
-      expect(sentEmails[0]['context'].registrationUrl).toMatch(/\/[a-f0-9]{40}/)
     })
   })
 
@@ -1056,9 +1059,14 @@ describe('/api/members', () => {
         expect(sentEmails).toHaveLength(1)
         expect(sentEmails[0].from).toBe(config.get('smtp.from'))
         expect(sentEmails[0].to).toBe(email)
-        expect(sentEmails[0]['context']).toHaveProperty('restorationUrl')
-        expect(sentEmails[0]['context'].restorationUrl).toContain(member._id)
-        expect(sentEmails[0]['context'].restorationUrl).toMatch(/\/[a-f0-9]{40}/)
+        expect(sentEmails[0].html).toMatch(new RegExp(member.name))
+        expect(sentEmails[0].html).toMatch(
+          new RegExp(
+            `${config.get('frontend.host')}/forgotten-password/${
+              member._id
+            }/[a-f0-9]{40}`,
+          ),
+        )
       })
     })
 
