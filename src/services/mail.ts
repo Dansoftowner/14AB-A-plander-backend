@@ -5,6 +5,7 @@ import { readFileSync } from 'fs'
 import nodemailer from 'nodemailer'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import handlebars from 'handlebars'
+import i18next from '../utils/i18n'
 
 export class MailService implements Service {
   private mailTransporter = nodemailer.createTransport({
@@ -30,7 +31,7 @@ export class MailService implements Service {
     return this.mailTransporter.sendMail({
       from: config.get('smtp.from'),
       to: member.email,
-      subject: 'Registration Confirmation', // TODO: i18n
+      subject: i18next.getResource('hu', 'mail', 'registration.subject'),
       html: this.load('registration', {
         registrationUrl: this.assembleRegistrationUrl(member, token),
         association: member.association,
@@ -52,7 +53,7 @@ export class MailService implements Service {
     return this.mailTransporter.sendMail({
       from: config.get('smtp.from'),
       to: member.email,
-      subject: 'Reset password', // TODO: i18n
+      subject: i18next.getResource('hu', 'mail', 'pass-restoration.subject'),
       html: this.load('password-restoration', {
         restorationUrl: this.assembleRestorationUrl(member, token),
         member,
