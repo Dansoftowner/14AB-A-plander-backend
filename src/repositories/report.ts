@@ -22,13 +22,13 @@ export class ReportRepository implements Repository {
    * @throws AssignmentNotFoundError
    * @throws SubmitterIsNotAssigneeError
    */
-  async create(assignmentId: string, payload: ReportDto): Promise<Report> {
+  async create(assignmentId: string, payload: ReportDto): Promise<Report | null> {
     const targetAssignment = await AssignmentModel.findOne({
       _id: assignmentId,
       association: this.clientInfo.association,
     })
 
-    if (!targetAssignment) throw new AssignmentNotFoundError()
+    if (!targetAssignment) return null
     if (targetAssignment.end > new Date()) throw new AssignmentIsNotOverError()
 
     const memberAssignee = targetAssignment.assignees.find(

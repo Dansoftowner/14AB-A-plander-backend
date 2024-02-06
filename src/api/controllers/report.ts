@@ -22,6 +22,7 @@ export class ReportController implements Controller {
 
     try {
       const result = await this.service(req).create(assignmentId, payload)
+      if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
       res.status(201).send(instanceToPlain(result))
     } catch (ex) {
@@ -31,8 +32,6 @@ export class ReportController implements Controller {
         throw new ApiError(409, ApiErrorCode.REPORT_ALREADY_EXISTS)
       if (ex instanceof ReporterIsNotAssigneeError)
         throw new ApiError(403, ApiErrorCode.REPORTER_IS_NOT_ASSIGNEE)
-      if (ex instanceof AssignmentNotFoundError)
-        throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
       throw ex
     }
   }
