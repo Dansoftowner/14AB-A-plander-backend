@@ -1,7 +1,6 @@
-import { Controller } from '../../base/controller'
 import { RoutesProvider } from '../../base/routes-provider'
-import { AssignmentInsertionDto } from '../../dto/assignment-insertion'
-import { AssignmentUpdateDto } from '../../dto/assignment-update'
+import { AssignmentInsertionDto } from '../../dto/assignment/assignment-insertion'
+import { AssignmentUpdateDto } from '../../dto/assignment/assignment-update'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import president from '../../middlewares/president'
@@ -216,7 +215,7 @@ export class AssignmentRoutes extends RoutesProvider {
      *      - Assignments
      *    description: |
      *      Allows **presidents** to delete assignments.
-     * 
+     *
      *      > Note: if there is a report submitted for the assignment, it will be deleted as well.
      *
      *      **Authentication is required** before using this endpoint.

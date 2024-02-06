@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Controller } from '../../base/controller'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
-import { ReportDto } from '../../dto/report'
+import { ReportDto } from '../../dto/report/report'
 import { ReportService } from '../../services/report'
 import {
   AssignmentIsNotOverError,

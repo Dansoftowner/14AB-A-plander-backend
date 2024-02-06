@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { ScalarType } from '../utils/scalar-type'
+import { ScalarType } from '../../utils/scalar-type'
 
 export class MemberPreferencesDto {
   [key: string]: ScalarType | Array<ScalarType>

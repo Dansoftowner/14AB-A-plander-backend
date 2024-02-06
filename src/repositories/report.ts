@@ -1,7 +1,7 @@
 import ReportModel, { Report } from '../models/report'
 import AssignmentModel, { Assignment } from '../models/assignment'
 import { Repository } from '../base/repository'
-import { ReportDto } from '../dto/report'
+import { ReportDto } from '../dto/report/report'
 import {
   AssignmentIsNotOverError,
   AssignmentNotFoundError,
@@ -14,7 +14,7 @@ import {
 import mongoose from 'mongoose'
 import assignment from '../models/assignment'
 import { ClientInfo } from '../utils/jwt'
-import { ReportUpdateDto } from '../dto/report-update'
+import { ReportUpdateDto } from '../dto/report/report-update'
 import { differenceInDays } from 'date-fns'
 
 export class ReportRepository implements Repository {

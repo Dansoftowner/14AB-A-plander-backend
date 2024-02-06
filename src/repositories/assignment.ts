@@ -1,16 +1,16 @@
 import _ from 'lodash'
-import mongoose, { FilterQuery, UpdateQuery } from 'mongoose'
+import mongoose, { FilterQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import AssignmentModel, { Assignment } from '../models/assignment'
 import ReportModel from '../models/report'
 import MemberModel, { Member } from '../models/member'
-import { AssignmentInsertionDto } from '../dto/assignment-insertion'
+import { AssignmentInsertionDto } from '../dto/assignment/assignment-insertion'
 import {
   AssigneeNotFoundError,
   InvalidTimeBoundariesError,
 } from '../exception/assignment-errors'
 import { isIterable, notFalsy } from '../utils/commons'
-import { AssignmentUpdateDto } from '../dto/assignment-update'
+import { AssignmentUpdateDto } from '../dto/assignment/assignment-update'
 
 export interface AssignmentsDbQueryOptions {
   start?: Date

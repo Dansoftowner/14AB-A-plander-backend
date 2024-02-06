@@ -5,11 +5,11 @@ import { sanitizeForRegex as s } from '../utils/sanitize'
 import RegistrationTokenModel from '../models/registration-token'
 import RestorationTokenModel from '../models/restoration-token'
 import _ from 'lodash'
-import { NewCredentialsDto } from '../dto/new-credentials'
-import { MemberUpdateDto } from '../dto/member-update'
-import { MemberRegistrationDto } from '../dto/member-registration'
-import { MemberInviteDto } from '../dto/member-invite'
-import { MemberPreferencesDto } from '../dto/member-preferences'
+import { NewCredentialsDto } from '../dto/member/new-credentials'
+import { MemberUpdateDto } from '../dto/member/member-update'
+import { MemberRegistrationDto } from '../dto/member/member-registration'
+import { MemberInviteDto } from '../dto/member/member-invite'
+import { MemberPreferencesDto } from '../dto/member/member-preferences'
 
 export interface MemberQueryOptions {
   associationId: string

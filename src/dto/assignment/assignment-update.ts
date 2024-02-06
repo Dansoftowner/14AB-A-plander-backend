@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { JoiObjectId } from '../utils/joi'
+import { JoiObjectId } from '../../utils/joi'
 import { Type } from 'class-transformer'
 
 /**

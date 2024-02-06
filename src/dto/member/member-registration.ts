@@ -3,8 +3,8 @@ import {
   fullNamePattern,
   guardNumberPattern,
   removeFlags as rf,
-} from '../utils/common-regex'
-import { JoiPassword, JoiUsername } from '../utils/joi'
+} from '../../utils/common-regex'
+import { JoiPassword, JoiUsername } from '../../utils/joi'
 
 /**
  * @openapi

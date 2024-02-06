@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { JoiObjectId, JoiPassword } from '../utils/joi'
+import { JoiObjectId, JoiPassword } from '../../utils/joi'
 
 /**
  * @openapi

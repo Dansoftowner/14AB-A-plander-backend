@@ -14,15 +14,18 @@ import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { ApiError } from '../error/api-error'
 import { ApiErrorCode } from '../error/api-error-codes'
 import { ClientInfo } from '../../utils/jwt'
-import { MemberInviteDto } from '../../dto/member-invite'
-import { MemberRegistrationDto } from '../../dto/member-registration'
+import { MemberInviteDto } from '../../dto/member/member-invite'
+import { MemberRegistrationDto } from '../../dto/member/member-registration'
 import di from '../../di'
 import { asValue } from 'awilix'
-import { ForgottenPasswordDto, NewPasswordDto } from '../../dto/forgotten-password'
-import { NewCredentialsDto } from '../../dto/new-credentials'
-import { MemberUpdateDto } from '../../dto/member-update'
+import {
+  ForgottenPasswordDto,
+  NewPasswordDto,
+} from '../../dto/member/forgotten-password'
+import { NewCredentialsDto } from '../../dto/member/new-credentials'
+import { MemberUpdateDto } from '../../dto/member/member-update'
 import { ValueReservedError } from '../../exception/value-reserved-error'
-import { MemberPreferencesDto } from '../../dto/member-preferences'
+import { MemberPreferencesDto } from '../../dto/member/member-preferences'
 
 export class MemberController implements Controller {
   async getMembers(req: Request, res: Response) {

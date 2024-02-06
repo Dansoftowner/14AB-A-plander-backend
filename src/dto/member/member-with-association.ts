@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer'
-import { AssociationDto } from './association'
+import { AssociationDto } from '../association/association'
 import { MemberDto } from './member'
 
 /**

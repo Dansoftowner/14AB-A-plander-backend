@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer'
 import { Service } from '../base/service'
-import { AssignmentItemsDto } from '../dto/assignment-items'
+import { AssignmentItemsDto } from '../dto/assignment/assignment-items'
 import { ClientInfo } from '../utils/jwt'
 import { AssignmentsQueryOptions } from '../api/params/assignments-query-params'
 import _ from 'lodash'
@@ -8,9 +8,9 @@ import {
   AssignmentRepository,
   AssignmentsDbQueryOptions,
 } from '../repositories/assignment'
-import { AssignmentDto } from '../dto/assignment'
-import { AssignmentInsertionDto } from '../dto/assignment-insertion'
-import { AssignmentUpdateDto } from '../dto/assignment-update'
+import { AssignmentDto } from '../dto/assignment/assignment'
+import { AssignmentInsertionDto } from '../dto/assignment/assignment-insertion'
+import { AssignmentUpdateDto } from '../dto/assignment/assignment-update'
 
 export class AssignmentService implements Service {
   private clientInfo: ClientInfo

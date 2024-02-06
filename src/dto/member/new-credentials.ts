@@ -1,5 +1,5 @@
 import Joi, { ObjectSchema } from 'joi'
-import { JoiPassword, JoiUsername } from '../utils/joi'
+import { JoiPassword, JoiUsername } from '../../utils/joi'
 
 /**
  * @openapi

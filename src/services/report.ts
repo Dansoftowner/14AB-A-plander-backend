@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 import handlebars from 'handlebars'
 import { Service } from '../base/service'
-import { ReportDto } from '../dto/report'
+import { ReportDto } from '../dto/report/report'
 import { ReportRepository } from '../repositories/report'
 import { ClientInfo } from '../utils/jwt'
 import { readFileSync } from 'fs'
@@ -13,8 +13,8 @@ import { AssociationRepository } from '../repositories/association'
 import { differenceInHours, format } from 'date-fns'
 import { convertHtmlToPdf } from '../utils/pdf'
 import i18n from '../utils/i18n'
-import { AssignmentDto } from '../dto/assignment'
-import { ReportUpdateDto } from '../dto/report-update'
+import { AssignmentDto } from '../dto/assignment/assignment'
+import { ReportUpdateDto } from '../dto/report/report-update'
 
 export class ReportService implements Service {
   private clientInfo: ClientInfo

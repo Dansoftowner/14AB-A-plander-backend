@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer'
-import { DatePaginationInfoDto } from './date-pagination-info'
+import { DatePaginationInfoDto } from '../date-pagination-info'
 import { AssignmentDto } from './assignment'
 
 /**

@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer'
-import { MemberDto } from './member'
+import { MemberDto } from '../member/member'
 
 /**
  * @openapi

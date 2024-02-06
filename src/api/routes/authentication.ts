@@ -2,7 +2,7 @@ import { RoutesProvider } from '../../base/routes-provider'
 import { AuthenticationController } from '../controllers/authentication'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import validate from '../../middlewares/validate'
-import { CredentialsDto } from '../../dto/credentials'
+import { CredentialsDto } from '../../dto/member/credentials'
 import rateLimiter, { loginRateLimiter } from '../../middlewares/rate-limiter'
 
 export class AuthenticationRoutes extends RoutesProvider {

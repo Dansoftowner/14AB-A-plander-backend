@@ -1,11 +1,11 @@
 import { Service } from '../base/service'
-import { AssociationItemsDto } from '../dto/association-items'
+import { AssociationItemsDto } from '../dto/association/association-items'
 import { plainToInstance } from 'class-transformer'
 import {
   AssociationQueryOptions,
   AssociationRepository,
 } from '../repositories/association'
-import { AssociationDto } from '../dto/association'
+import { AssociationDto } from '../dto/association/association'
 import { CommonQueryOptions } from '../api/params/common-query-params'
 
 export default class AssociationService implements Service {

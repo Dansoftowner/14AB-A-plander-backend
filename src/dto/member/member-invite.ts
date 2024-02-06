@@ -3,7 +3,7 @@ import {
   fullNamePattern,
   guardNumberPattern,
   removeFlags as rf,
-} from '../utils/common-regex'
+} from '../../utils/common-regex'
 
 /**
  * @openapi
