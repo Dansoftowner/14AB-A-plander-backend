@@ -151,7 +151,7 @@ export class AssignmentRoutes extends RoutesProvider {
       '/',
       auth,
       president,
-      validate(AssignmentInsertionDto.validationSchema()),
+      validate(AssignmentInsertionDto.validationSchema),
       asyncErrorHandler((req, res) => controller.createAssignment(req, res)),
     )
 
@@ -203,7 +203,7 @@ export class AssignmentRoutes extends RoutesProvider {
       auth,
       validateObjectId,
       president,
-      validate(AssignmentUpdateDto.validationSchema()),
+      validate(AssignmentUpdateDto.validationSchema),
       asyncErrorHandler((req, res) => controller.updateAssignment(req, res)),
     )
 

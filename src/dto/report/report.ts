@@ -108,7 +108,7 @@ export class ReportDto {
   @Expose()
   submitted!: Date
 
-  static validationSchema() {
+  static get validationSchema() {
     return Joi.object({
       method: Joi.string().required().valid('bicycle', 'vehicle', 'pedestrian'),
       purpose: Joi.string().required().min(5).max(255),

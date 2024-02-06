@@ -47,7 +47,7 @@ export class MemberInviteDto {
   idNumber?: string
   phoneNumber?: string
 
-  static validationSchema(): Joi.ObjectSchema<MemberInviteDto> {
+  static get validationSchema(): Joi.ObjectSchema<MemberInviteDto> {
     return Joi.object({
       email: Joi.string().email().required(),
       guardNumber: Joi.string().regex(rf(guardNumberPattern())).optional(),

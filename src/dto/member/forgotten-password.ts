@@ -24,7 +24,7 @@ export class ForgottenPasswordDto {
   associationId!: string
   email!: string
 
-  static validationSchema(): Joi.ObjectSchema<ForgottenPasswordDto> {
+  static get validationSchema(): Joi.ObjectSchema<ForgottenPasswordDto> {
     return Joi.object({
       associationId: JoiObjectId().required(),
       email: Joi.string().email().required(),
@@ -50,7 +50,7 @@ export class ForgottenPasswordDto {
 export class NewPasswordDto {
   password!: string
 
-  static validationSchema(): Joi.ObjectSchema<NewPasswordDto> {
+  static get validationSchema(): Joi.ObjectSchema<NewPasswordDto> {
     return Joi.object({
       password: JoiPassword().required(),
     })

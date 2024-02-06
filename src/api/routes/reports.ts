@@ -72,7 +72,7 @@ export class ReportRoutes extends RoutesProvider {
       '/:id/report',
       auth,
       validateObjectId,
-      validate(ReportDto.validationSchema()),
+      validate(ReportDto.validationSchema),
       asyncErrorHandler((req, res) => controller.createReport(req, res)),
     )
 
@@ -227,7 +227,7 @@ export class ReportRoutes extends RoutesProvider {
       '/:id/report',
       auth,
       validateObjectId,
-      validate(ReportUpdateDto.validationSchema()),
+      validate(ReportUpdateDto.validationSchema),
       asyncErrorHandler((req, res) => controller.updateReport(req, res)),
     )
 

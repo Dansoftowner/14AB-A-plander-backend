@@ -75,7 +75,7 @@ export class ReportUpdateDto {
   description?: string
   submitted!: Date
 
-  static validationSchema() {
+  static get validationSchema() {
     return Joi.object({
       method: Joi.string().valid('bicycle', 'vehicle', 'pedestrian'),
       purpose: Joi.string().min(5).max(255),

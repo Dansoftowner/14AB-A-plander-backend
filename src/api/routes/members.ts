@@ -145,7 +145,7 @@ export class MemberRoutes extends RoutesProvider {
     this.router.patch(
       '/me',
       auth,
-      validate(MemberUpdateDto.validationSchema()),
+      validate(MemberUpdateDto.validationSchema),
       asyncErrorHandler((req, res) => controller.updateMe(req, res)),
     )
 
@@ -199,7 +199,7 @@ export class MemberRoutes extends RoutesProvider {
       '/me/credentials',
       auth,
       password,
-      validate(NewCredentialsDto.validationSchema()),
+      validate(NewCredentialsDto.validationSchema),
       asyncErrorHandler((req, res) => controller.updateCredentials(req, res)),
     )
 
@@ -285,7 +285,7 @@ export class MemberRoutes extends RoutesProvider {
     this.router.patch(
       '/me/preferences',
       auth,
-      validate(MemberPreferencesDto.validationSchema()),
+      validate(MemberPreferencesDto.validationSchema),
       asyncErrorHandler((req, res) => controller.updateMyPreferences(req, res)),
     )
 
@@ -391,7 +391,7 @@ export class MemberRoutes extends RoutesProvider {
       '/:id',
       auth,
       validateObjectId(new ApiError(404, ApiErrorCode.MISSING_RESOURCE)),
-      validate(MemberUpdateDto.validationSchema()),
+      validate(MemberUpdateDto.validationSchema),
       asyncErrorHandler((req, res) => controller.updateMember(req, res)),
     )
 
@@ -609,7 +609,7 @@ export class MemberRoutes extends RoutesProvider {
       '/',
       auth,
       president,
-      validate(MemberInviteDto.validationSchema()),
+      validate(MemberInviteDto.validationSchema),
       asyncErrorHandler((req, res) => controller.inviteMember(req, res)),
     )
 
@@ -717,7 +717,7 @@ export class MemberRoutes extends RoutesProvider {
     this.router.post(
       '/register/:id/:registrationToken',
       validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
-      validate(MemberRegistrationDto.validationSchema()),
+      validate(MemberRegistrationDto.validationSchema),
       asyncErrorHandler((req, res) => controller.registerMember(req, res)),
     )
 
@@ -758,7 +758,7 @@ export class MemberRoutes extends RoutesProvider {
      */
     this.router.post(
       '/forgotten-password',
-      validate(ForgottenPasswordDto.validationSchema()),
+      validate(ForgottenPasswordDto.validationSchema),
       asyncErrorHandler((req, res) => controller.labelForgottenPassword(req, res)),
     )
 
@@ -809,7 +809,7 @@ export class MemberRoutes extends RoutesProvider {
     this.router.post(
       '/forgotten-password/:id/:restorationToken',
       validateObjectId(new ApiError(404, ApiErrorCode.INVALID_URL)),
-      validate(NewPasswordDto.validationSchema()),
+      validate(NewPasswordDto.validationSchema),
       asyncErrorHandler((req, res) => controller.restorePassword(req, res)),
     )
   }

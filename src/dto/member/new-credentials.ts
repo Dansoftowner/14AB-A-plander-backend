@@ -30,7 +30,7 @@ export class NewCredentialsDto {
   username!: string
   password!: string
 
-  static validationSchema(): ObjectSchema<NewCredentialsDto> {
+  static get validationSchema(): ObjectSchema<NewCredentialsDto> {
     return Joi.object({
       email: Joi.string().email(),
       username: JoiUsername(),

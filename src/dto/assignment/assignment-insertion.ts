@@ -48,7 +48,7 @@ export class AssignmentInsertionDto {
   end!: Date
   assignees!: string[]
 
-  static validationSchema() {
+  static get validationSchema() {
     return Joi.object({
       title: Joi.string().min(5).max(255),
       location: Joi.string().min(2).max(255),

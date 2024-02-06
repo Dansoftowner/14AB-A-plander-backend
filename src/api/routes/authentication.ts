@@ -62,7 +62,7 @@ export class AuthenticationRoutes extends RoutesProvider {
     this.router.post(
       '/auth',
       this.loginRateLimiter,
-      validate(CredentialsDto.validationSchema()),
+      validate(CredentialsDto.validationSchema),
       asyncErrorHandler((req, res) => controller.auth(req, res)),
     )
   }
