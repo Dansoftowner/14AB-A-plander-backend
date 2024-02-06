@@ -109,6 +109,15 @@ export class MemberRepository implements Repository {
     )
   }
 
+  /**
+   * Performs all the necessary database operations to invite a new member.
+   *
+   * @param associationId the id of the association the member is invited into
+   * @param invitation the information needed to invite a member
+   * @param registrationToken the token used for identifying the invitation
+   * @returns the invited member's data populated with the association's information;
+   *          null if there is already a member with the same email in the association
+   */
   async invite(
     associationId: string,
     invitation: MemberInviteDto,
@@ -135,7 +144,7 @@ export class MemberRepository implements Repository {
         ...invitation,
       },
       { upsert: true, new: true },
-    )
+    ).populate('association')
 
     await RegistrationTokenModel.findOneAndReplace(
       {

@@ -23,7 +23,7 @@
 - [joi](https://www.npmjs.com/package/joi)
 - [cors](https://www.npmjs.com/package/cors)
 - [nodemailer](https://www.npmjs.com/package/nodemailer)
-- [nodemailer-express-handlebars](https://www.npmjs.com/package/nodemailer-express-handlebars)
+- [handlebars](https://www.npmjs.com/package/handlebars)
 - [date-fns](https://www.npmjs.com/package/date-fns)
 - [puppeteer](https://www.npmjs.com/package/puppeteer)
 
