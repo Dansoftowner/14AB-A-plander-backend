@@ -187,11 +187,7 @@ describe('/api/members', () => {
 
       const registeredMember = res.body.items.find((it) => it.isRegistered)
 
-      expect(_.keys(registeredMember)).not.toContain([
-        'guardNumber',
-        'address',
-        'idNumber',
-      ])
+      expect(_.keys(registeredMember)).not.toContain(['address', 'idNumber'])
     })
 
     it('should not show unregistered members to a regular member', async () => {
