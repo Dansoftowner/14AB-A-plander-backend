@@ -87,10 +87,7 @@ export class AssignmentService implements Service {
 
   private toDbQuery(options: AssignmentsQueryOptions): AssignmentsDbQueryOptions {
     return {
-      associationId: this.clientInfo.association,
-
       ...options,
-
       projection: this.adjustProjection(options.projection).join(' '),
     }
   }

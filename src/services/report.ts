@@ -23,12 +23,7 @@ export class ReportService implements Service {
   ) {}
 
   async create(assignmentId: string, payload: ReportDto): Promise<ReportDto> {
-    const created = await this.reportRepository.create(
-      this.clientInfo.association,
-      assignmentId,
-      this.clientInfo._id,
-      payload,
-    )
+    const created = await this.reportRepository.create(assignmentId, payload)
 
     return plainToInstance(ReportDto, created, {
       excludeExtraneousValues: true,
@@ -74,12 +69,7 @@ export class ReportService implements Service {
    * @throws ReportCannotBeUpdatedError
    */
   async update(assignmentId: string, payload: ReportUpdateDto): Promise<ReportDto> {
-    const updated = await this.reportRepository.update(
-      this.clientInfo.association,
-      assignmentId,
-      this.clientInfo._id,
-      payload,
-    )
+    const updated = await this.reportRepository.update(assignmentId, payload)
 
     return plainToInstance(ReportDto, updated, {
       excludeExtraneousValues: true,
@@ -92,11 +82,7 @@ export class ReportService implements Service {
    * @throws ReportCannotBeUpdatedError
    */
   async delete(assignmentId: string): Promise<ReportDto> {
-    const deleted = await this.reportRepository.delete(
-      this.clientInfo.association,
-      assignmentId,
-      this.clientInfo._id,
-    )
+    const deleted = await this.reportRepository.delete(assignmentId)
 
     return plainToInstance(ReportDto, deleted, {
       excludeExtraneousValues: true,
@@ -111,10 +97,8 @@ export class ReportService implements Service {
    * @throws ReportNotFoundError if the assignment has no report
    */
   private async loadPdfInformation(assignmentId: string): Promise<object> {
-    const assignment = await this.reportRepository.findAssignmentWithReport(
-      this.clientInfo.association,
-      assignmentId,
-    )
+    const assignment =
+      await this.reportRepository.findAssignmentWithReport(assignmentId)
 
     return (
       assignment && {

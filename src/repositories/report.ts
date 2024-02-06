@@ -11,33 +11,28 @@ import {
   ReportUpdaterIsNotAuthorError,
   ReporterIsNotAssigneeError,
 } from '../exception/report-errors'
-import mongoose from 'mongoose'
-import assignment from '../models/assignment'
 import { ClientInfo } from '../utils/jwt'
 import { ReportUpdateDto } from '../dto/report/report-update'
 import { differenceInDays } from 'date-fns'
 
 export class ReportRepository implements Repository {
+  constructor(private clientInfo: ClientInfo) {}
+
   /**
    * @throws AssignmentNotFoundError
    * @throws SubmitterIsNotAssigneeError
    */
-  async create(
-    associationId: string,
-    assignmentId: string,
-    memberId: string,
-    payload: ReportDto,
-  ): Promise<Report> {
+  async create(assignmentId: string, payload: ReportDto): Promise<Report> {
     const targetAssignment = await AssignmentModel.findOne({
       _id: assignmentId,
-      association: associationId,
+      association: this.clientInfo.association,
     })
 
     if (!targetAssignment) throw new AssignmentNotFoundError()
     if (targetAssignment.end > new Date()) throw new AssignmentIsNotOverError()
 
     const memberAssignee = targetAssignment.assignees.find(
-      (it) => it._id.toHexString() === memberId,
+      (it) => it._id.toHexString() === this.clientInfo._id,
     )
 
     if (!memberAssignee) throw new ReporterIsNotAssigneeError()
@@ -45,7 +40,7 @@ export class ReportRepository implements Repository {
 
     const report = new ReportModel({
       ...payload,
-      member: memberId,
+      member: this.clientInfo._id,
     })
 
     targetAssignment.report = report._id
@@ -61,27 +56,22 @@ export class ReportRepository implements Repository {
    * @throws ReportUpdaterIsNotAuthorError
    * @throws ReportCannotBeUpdatedError
    */
-  async update(
-    associationId: string,
-    assignmentId: string,
-    memberId: string,
-    payload: ReportUpdateDto,
-  ): Promise<Report | null> {
+  async update(assignmentId: string, payload: ReportUpdateDto): Promise<Report | null> {
     const targetAssignment = await AssignmentModel.findOne({
       _id: assignmentId,
-      association: associationId,
+      association: this.clientInfo.association,
     })
 
     if (!targetAssignment) return null
     if (!targetAssignment.report) throw new ReportNotFoundError()
 
-    if (!this.isAssignee(targetAssignment, memberId))
+    if (!this.isAssignee(targetAssignment, this.clientInfo._id))
       throw new ReportUpdaterIsNotAuthorError()
 
     const report = await ReportModel.findById(targetAssignment.report)
 
     if (!report) throw new ReportNotFoundError()
-    if (!(report.member.toHexString() === memberId))
+    if (!(report.member.toHexString() === this.clientInfo._id))
       throw new ReportUpdaterIsNotAuthorError()
 
     if (differenceInDays(new Date(), report.submittedAt) >= 3)
@@ -114,26 +104,22 @@ export class ReportRepository implements Repository {
    * @throws ReportUpdaterIsNotAuthorError
    * @throws ReportCannotBeUpdatedError
    */
-  async delete(
-    associationId: string,
-    assignmentId: string,
-    memberId: string,
-  ): Promise<Report | null> {
+  async delete(assignmentId: string): Promise<Report | null> {
     const assignment = await AssignmentModel.findOne({
-      association: associationId,
+      association: this.clientInfo.association,
       _id: assignmentId,
     })
 
     if (!assignment) return null
     if (!assignment.report) throw new ReportNotFoundError()
 
-    if (!this.isAssignee(assignment, memberId))
+    if (!this.isAssignee(assignment, this.clientInfo._id))
       throw new ReportUpdaterIsNotAuthorError()
 
     const report = await ReportModel.findById(assignment.report)
 
     if (!report) throw new ReportNotFoundError()
-    if (!(report.member.toHexString() === memberId))
+    if (!(report.member.toHexString() === this.clientInfo._id))
       throw new ReportUpdaterIsNotAuthorError()
 
     if (differenceInDays(new Date(), report.submittedAt) >= 3)
@@ -150,13 +136,10 @@ export class ReportRepository implements Repository {
    * @param assignmentId the id of the assignment
    * @throws ReportNotFoundError
    */
-  async findAssignmentWithReport(
-    associationId: string,
-    assignmentId: string,
-  ): Promise<any> {
+  async findAssignmentWithReport(assignmentId: string): Promise<any> {
     const assignment = await AssignmentModel.findOne({
       _id: assignmentId,
-      association: associationId,
+      association: this.clientInfo.association,
     })
       .populate('association')
       .populate('report')

@@ -45,12 +45,12 @@ container.register({
   assignmentController: asClass(AssignmentController),
   assignmentRoutes: asClass(AssignmentRoutes),
   assignmentService: asClass(AssignmentService).scoped(),
-  assignmentRepository: asClass(AssignmentRepository),
+  assignmentRepository: asClass(AssignmentRepository).scoped(),
 
   reportController: asClass(ReportController),
   reportRoutes: asClass(ReportRoutes),
   reportService: asClass(ReportService).scoped(),
-  reportRepository: asClass(ReportRepository),
+  reportRepository: asClass(ReportRepository).scoped(),
 
   mailService: asClass(MailService),
 })
