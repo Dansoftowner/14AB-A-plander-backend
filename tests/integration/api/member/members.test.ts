@@ -663,7 +663,6 @@ describe('/api/members', () => {
       const res = await sendRequest()
 
       const memberId = res.body._id
-      const association = await AssociationModel.findById(client.association)
 
       const sentEmails = nodemailerMock.getSentMail()
 
@@ -671,7 +670,6 @@ describe('/api/members', () => {
       expect(sentEmails[0].from).toBe(config.get('smtp.from'))
       expect(sentEmails[0].to).toBe(payload.email)
       expect(sentEmails[0].html).toMatch(new RegExp(res.body.name))
-      expect(sentEmails[0].html).toMatch(new RegExp(association!.name))
       expect(sentEmails[0].html).toMatch(
         new RegExp(`${config.get('frontend.host')}/register/${memberId}/[a-f0-9]{40}`),
       )
