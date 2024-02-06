@@ -15,11 +15,7 @@ export type AuthenticationResult = {
 }
 
 export class AuthenticationService implements Service {
-  private repository: MemberRepository
-
-  constructor({ memberRepository }) {
-    this.repository = memberRepository
-  }
+  constructor(private memberRepository: MemberRepository) {}
 
   async auth(credentials: CredentialsDto): Promise<AuthenticationResult | null> {
     let member: Member | MemberDto | null = await this.retrieveMember(credentials)
@@ -47,8 +43,8 @@ export class AuthenticationService implements Service {
 
   private retrieveMember({ associationId, user }): Promise<Member | null> {
     if (mongoose.Types.ObjectId.isValid(user))
-      return this.repository.findById(user, { associationId })
-    if (isEmail(user)) return this.repository.findByEmail(user, { associationId })
-    return this.repository.findByUsername(user, { associationId })
+      return this.memberRepository.findById(user, { associationId })
+    if (isEmail(user)) return this.memberRepository.findByEmail(user, { associationId })
+    return this.memberRepository.findByUsername(user, { associationId })
   }
 }

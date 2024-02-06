@@ -17,16 +17,13 @@ import { AssignmentDto } from '../dto/assignment/assignment'
 import { ReportUpdateDto } from '../dto/report/report-update'
 
 export class ReportService implements Service {
-  private clientInfo: ClientInfo
-  private repository: ReportRepository
-
-  constructor({ clientInfo, reportRepository }) {
-    this.clientInfo = clientInfo
-    this.repository = reportRepository
-  }
+  constructor(
+    private clientInfo: ClientInfo,
+    private reportRepository: ReportRepository,
+  ) {}
 
   async create(assignmentId: string, payload: ReportDto): Promise<ReportDto> {
-    const created = await this.repository.create(
+    const created = await this.reportRepository.create(
       this.clientInfo.association,
       assignmentId,
       this.clientInfo._id,
@@ -42,7 +39,10 @@ export class ReportService implements Service {
    * @throws ReportNotFoundError if the assignment has no report
    */
   async get(assignmentId: string): Promise<ReportDto | null> {
-    const report = await this.repository.get(this.clientInfo.association, assignmentId)
+    const report = await this.reportRepository.get(
+      this.clientInfo.association,
+      assignmentId,
+    )
 
     return plainToInstance(ReportDto, report, {
       excludeExtraneousValues: true,
@@ -74,7 +74,7 @@ export class ReportService implements Service {
    * @throws ReportCannotBeUpdatedError
    */
   async update(assignmentId: string, payload: ReportUpdateDto): Promise<ReportDto> {
-    const updated = await this.repository.update(
+    const updated = await this.reportRepository.update(
       this.clientInfo.association,
       assignmentId,
       this.clientInfo._id,
@@ -92,7 +92,7 @@ export class ReportService implements Service {
    * @throws ReportCannotBeUpdatedError
    */
   async delete(assignmentId: string): Promise<ReportDto> {
-    const deleted = await this.repository.delete(
+    const deleted = await this.reportRepository.delete(
       this.clientInfo.association,
       assignmentId,
       this.clientInfo._id,
@@ -111,7 +111,7 @@ export class ReportService implements Service {
    * @throws ReportNotFoundError if the assignment has no report
    */
   private async loadPdfInformation(assignmentId: string): Promise<object> {
-    const assignment = await this.repository.findAssignmentWithReport(
+    const assignment = await this.reportRepository.findAssignmentWithReport(
       this.clientInfo.association,
       assignmentId,
     )

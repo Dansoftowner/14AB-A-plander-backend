@@ -9,7 +9,7 @@ import validateObjectId from '../../middlewares/validate-objectid'
 import { ReportController } from '../controllers/report'
 
 export class ReportRoutes extends RoutesProvider {
-  constructor({ reportController }) {
+  constructor(reportController: ReportController) {
     super(reportController)
   }
 

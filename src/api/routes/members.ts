@@ -19,7 +19,7 @@ import { ApiError } from '../error/api-error'
 import { ApiErrorCode } from '../error/api-error-codes'
 
 export class MemberRoutes extends RoutesProvider {
-  constructor({ memberController }) {
+  constructor(memberController: MemberController) {
     super(memberController)
   }
 

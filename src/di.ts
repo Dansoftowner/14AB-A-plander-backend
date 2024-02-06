@@ -22,11 +22,11 @@ import { ReportService } from './services/report'
 import { ReportRepository } from './repositories/report'
 
 const container = createContainer({
-  injectionMode: InjectionMode.PROXY,
+  injectionMode: InjectionMode.CLASSIC,
 })
 
 container.register({
-  app: asClass(App).singleton(),
+  app: asClass(App).proxy().singleton(),
 
   associationRepository: asClass(AssociationRepository),
   associationService: asClass(AssociationService),

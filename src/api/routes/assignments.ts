@@ -9,7 +9,7 @@ import validateObjectId from '../../middlewares/validate-objectid'
 import { AssignmentController } from '../controllers/assignment'
 
 export class AssignmentRoutes extends RoutesProvider {
-  constructor({ assignmentController }) {
+  constructor(assignmentController: AssignmentController) {
     super(assignmentController)
   }
 

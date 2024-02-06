@@ -10,7 +10,7 @@ export class AuthenticationRoutes extends RoutesProvider {
     return process.env.NODE_ENV === 'development' ? rateLimiter : loginRateLimiter
   }
 
-  constructor({ authenticationController }) {
+  constructor(authenticationController: AuthenticationController) {
     super(authenticationController)
   }
 
