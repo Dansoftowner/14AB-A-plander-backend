@@ -78,12 +78,6 @@ export class AssignmentController implements Controller {
   }
 
   private service(req: Request): AssignmentService {
-    if (!req.scope)
-      return di
-        .createScope()
-        .register({ clientInfo: asValue(undefined) })
-        .resolve('assignmentService')
-
     return req.scope!.resolve('assignmentService')
   }
 }
