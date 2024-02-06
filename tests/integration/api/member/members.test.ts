@@ -681,6 +681,19 @@ describe('/api/members', () => {
       )
     })
 
+    it('should use the email address as the invocation in the email if name is not specified', async () => {
+      payload.name = undefined
+
+      const res = await sendRequest()
+
+      const sentEmails = nodemailerMock.getSentMail()
+
+      const invocation = payload.email!.substring(0, payload.email!.indexOf('@'))
+
+      expect(sentEmails).toHaveLength(1)
+      expect(sentEmails[0].html).toMatch(new RegExp(invocation))
+    })
+
     it('should update invited member data if the president triggers the invite again', async () => {
       await sendRequest()
 

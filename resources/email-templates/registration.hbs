@@ -22,7 +22,12 @@
 
         <h1 style='margin-top: 0;'>Meghívás</h1>
 
-        <p>Tisztelt {{member.name}}!</p>
+        <p>Tisztelt
+          {{#if member.name}}
+            {{member.name}}
+          {{else}}
+            {{member.email}}
+          {{/if}}!</p>
 
         <p>Meghívást kapott a következő egyesületbe:
           <span style='font-weight: bold'>{{association.name}}</span>.</p>
