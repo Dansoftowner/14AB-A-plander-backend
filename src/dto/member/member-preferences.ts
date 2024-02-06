@@ -1,10 +1,10 @@
 import Joi from 'joi'
-import { ScalarType } from '../utils/scalar-type'
+import { ScalarType } from '../../utils/scalar-type'
 
 export class MemberPreferencesDto {
   [key: string]: ScalarType | Array<ScalarType>
 
-  static validationSchema(): Joi.ObjectSchema<MemberPreferencesDto> {
+  static get validationSchema(): Joi.ObjectSchema<MemberPreferencesDto> {
     const acceptedTypes = [Joi.string(), Joi.number(), Joi.boolean()].map((it) =>
       it.allow(null),
     )

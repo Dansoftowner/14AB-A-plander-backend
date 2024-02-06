@@ -1,6 +1,5 @@
 import { Expose, Type } from 'class-transformer'
 import Joi from 'joi'
-import { JoiObjectId } from '../utils/joi'
 
 /**
  * @openapi
@@ -17,9 +16,9 @@ import { JoiObjectId } from '../utils/joi'
  *           description: Unique identifier of the report
  *           example: '655f15d623380f3b6a0f7b28'
  *           readOnly: true
- *         member:
+ *         author:
  *           type: string
- *           description: ID of the assignment the report belongs to
+ *           description: ID of the member who submitted the report
  *           example: '652f866cfc13ae3ce86c7ce7'
  *           readOnly: true
  *         method:
@@ -77,7 +76,7 @@ export class ReportDto {
 
   @Expose()
   @Type(() => String)
-  member!: string
+  author!: string
 
   @Expose()
   method!: string
@@ -108,7 +107,7 @@ export class ReportDto {
   @Expose()
   submitted!: Date
 
-  static validationSchema() {
+  static get validationSchema() {
     return Joi.object({
       method: Joi.string().required().valid('bicycle', 'vehicle', 'pedestrian'),
       purpose: Joi.string().required().min(5).max(255),

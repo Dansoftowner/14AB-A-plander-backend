@@ -18,11 +18,11 @@ export class ClientInfo {
 }
 
 export function generateToken(member: Member): string {
-  return jwt.sign(assembleClientInfo(member), config.get('jwt.privateKey'))
+  return jwt.sign(assembleClientInfo(member), config.get('jwt.secret'))
 }
 
 export function verifyToken(token: string): ClientInfo {
-  return decodeClientInfo(jwt.verify(token, config.get('jwt.privateKey')))
+  return decodeClientInfo(jwt.verify(token, config.get('jwt.secret')))
 }
 
 function assembleClientInfo(member: Member): object {

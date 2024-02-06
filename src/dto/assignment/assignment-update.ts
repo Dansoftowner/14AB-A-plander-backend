@@ -1,15 +1,13 @@
 import Joi from 'joi'
-import { JoiObjectId } from '../utils/joi'
+import { JoiObjectId } from '../../utils/joi'
+import { Type } from 'class-transformer'
 
 /**
  * @openapi
  * components:
  *  schemas:
- *   AssignmentInsertion:
+ *   AssignmentUpdate:
  *     type: object
- *     required:
- *       - start
- *       - end
  *     properties:
  *       title:
  *         type: string
@@ -41,19 +39,20 @@ import { JoiObjectId } from '../utils/joi'
  *           format: objectId
  *         example: ['652f85c4fc13ae3d596c7ce8', '652f85c4fc13ae3d596c7cf4']
  */
-export class AssignmentInsertionDto {
-  title!: string
-  location!: string
-  start!: Date
-  end!: Date
-  assignees!: string[]
+export class AssignmentUpdateDto {
+  title?: string
+  location?: string
+  assignees?: string[]
 
-  static validationSchema() {
+  @Type(() => Date) start?: Date
+  @Type(() => Date) end?: Date
+
+  static get validationSchema() {
     return Joi.object({
       title: Joi.string().min(5).max(255),
       location: Joi.string().min(2).max(255),
-      start: Joi.date().required(),
-      end: Joi.date().greater(Joi.ref('start')).required(),
+      start: Joi.date(),
+      end: Joi.date().greater(Joi.ref('start')),
       assignees: Joi.array().items(JoiObjectId()).unique(),
     })
   }

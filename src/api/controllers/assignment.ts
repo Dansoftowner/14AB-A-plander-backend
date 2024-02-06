@@ -7,12 +7,12 @@ import di from '../../di'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { ApiError } from '../error/api-error'
 import { ApiErrorCode } from '../error/api-error-codes'
-import { AssignmentInsertionDto } from '../../dto/assignment-insertion'
+import { AssignmentInsertionDto } from '../../dto/assignment/assignment-insertion'
 import {
   AssigneeNotFoundError,
   InvalidTimeBoundariesError,
 } from '../../exception/assignment-errors'
-import { AssignmentUpdateDto } from '../../dto/assignment-update'
+import { AssignmentUpdateDto } from '../../dto/assignment/assignment-update'
 
 export class AssignmentController implements Controller {
   async getAssignments(req: Request, res: Response) {
@@ -78,12 +78,6 @@ export class AssignmentController implements Controller {
   }
 
   private service(req: Request): AssignmentService {
-    if (!req.scope)
-      return di
-        .createScope()
-        .register({ clientInfo: asValue(undefined) })
-        .resolve('assignmentService')
-
     return req.scope!.resolve('assignmentService')
   }
 }

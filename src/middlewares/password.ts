@@ -5,7 +5,7 @@ import { ApiErrorCode } from '../api/error/api-error-codes'
 import { ApiError } from '../api/error/api-error'
 import auth from './auth'
 import { AuthenticationService } from '../services/authentication'
-import { CredentialsDto } from '../dto/credentials'
+import { CredentialsDto } from '../dto/member/credentials'
 import asyncErrorHandler from './async-error-handler'
 
 /**

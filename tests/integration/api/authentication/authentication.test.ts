@@ -146,9 +146,7 @@ describe('Endpoints related to authentication', () => {
       const recievedToken = res.headers[config.get('jwt.headerName') as string]
 
       expect(res.status).toBe(200)
-      expect(() =>
-        jwt.verify(recievedToken, config.get('jwt.privateKey')),
-      ).not.toThrow()
+      expect(() => jwt.verify(recievedToken, config.get('jwt.secret'))).not.toThrow()
     })
 
     it('should return token if the credentials are correct with the email', async () => {
@@ -159,9 +157,7 @@ describe('Endpoints related to authentication', () => {
       const recievedToken = res.headers[config.get('jwt.headerName') as string]
 
       expect(res.status).toBe(200)
-      expect(() =>
-        jwt.verify(recievedToken, config.get('jwt.privateKey')),
-      ).not.toThrow()
+      expect(() => jwt.verify(recievedToken, config.get('jwt.secret'))).not.toThrow()
     })
 
     it('should return member if the credentials are correct', async () => {

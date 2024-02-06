@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer'
 import Joi from 'joi'
-import { JoiObjectId } from '../utils/joi'
+import { JoiObjectId } from '../../utils/joi'
 
 /**
  * @openapi
@@ -63,8 +63,6 @@ import { JoiObjectId } from '../utils/joi'
  *           description: Description of remarkable events occured.
  */
 export class ReportUpdateDto {
-  _id!: string
-  member!: string
   method!: string
   purpose!: string
   licensePlateNumber?: string
@@ -73,9 +71,8 @@ export class ReportUpdateDto {
   externalOrganization?: string
   externalRepresentative?: string
   description?: string
-  submitted!: Date
 
-  static validationSchema() {
+  static get validationSchema() {
     return Joi.object({
       method: Joi.string().valid('bicycle', 'vehicle', 'pedestrian'),
       purpose: Joi.string().min(5).max(255),

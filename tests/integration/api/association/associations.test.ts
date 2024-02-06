@@ -243,7 +243,7 @@ describe('/api/associations', () => {
         association,
       ))!._id.toHexString()
 
-      token = jwt.sign({ association: associationId }, config.get('jwt.privateKey'))
+      token = jwt.sign({ association: associationId }, config.get('jwt.secret'))
     })
 
     it('should return 401 message if no token provided', async () => {

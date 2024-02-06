@@ -3,7 +3,7 @@ import {
   fullNamePattern,
   guardNumberPattern,
   removeFlags as rf,
-} from '../utils/common-regex'
+} from '../../utils/common-regex'
 
 /**
  * @openapi
@@ -40,7 +40,7 @@ export class MemberUpdateDto {
   phoneNumber?: string
   guardNumber?: string
 
-  static validationSchema(): Joi.ObjectSchema<MemberUpdateDto> {
+  static get validationSchema(): Joi.ObjectSchema<MemberUpdateDto> {
     return Joi.object({
       name: Joi.string().regex(rf(fullNamePattern())).required(),
       address: Joi.string().regex(/[0-9]/).required(),

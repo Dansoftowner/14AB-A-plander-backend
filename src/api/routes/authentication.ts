@@ -2,7 +2,7 @@ import { RoutesProvider } from '../../base/routes-provider'
 import { AuthenticationController } from '../controllers/authentication'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import validate from '../../middlewares/validate'
-import { CredentialsDto } from '../../dto/credentials'
+import { CredentialsDto } from '../../dto/member/credentials'
 import rateLimiter, { loginRateLimiter } from '../../middlewares/rate-limiter'
 
 export class AuthenticationRoutes extends RoutesProvider {
@@ -10,7 +10,7 @@ export class AuthenticationRoutes extends RoutesProvider {
     return process.env.NODE_ENV === 'development' ? rateLimiter : loginRateLimiter
   }
 
-  constructor({ authenticationController }) {
+  constructor(authenticationController: AuthenticationController) {
     super(authenticationController)
   }
 
@@ -62,7 +62,7 @@ export class AuthenticationRoutes extends RoutesProvider {
     this.router.post(
       '/auth',
       this.loginRateLimiter,
-      validate(CredentialsDto.validationSchema()),
+      validate(CredentialsDto.validationSchema),
       asyncErrorHandler((req, res) => controller.auth(req, res)),
     )
   }

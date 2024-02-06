@@ -1,26 +1,28 @@
 import _ from 'lodash'
-import mongoose, { FilterQuery, UpdateQuery } from 'mongoose'
+import mongoose, { FilterQuery } from 'mongoose'
 import { Repository } from '../base/repository'
 import AssignmentModel, { Assignment } from '../models/assignment'
 import ReportModel from '../models/report'
 import MemberModel, { Member } from '../models/member'
-import { AssignmentInsertionDto } from '../dto/assignment-insertion'
+import { AssignmentInsertionDto } from '../dto/assignment/assignment-insertion'
 import {
   AssigneeNotFoundError,
   InvalidTimeBoundariesError,
 } from '../exception/assignment-errors'
 import { isIterable, notFalsy } from '../utils/commons'
-import { AssignmentUpdateDto } from '../dto/assignment-update'
+import { AssignmentUpdateDto } from '../dto/assignment/assignment-update'
+import { ClientInfo } from '../utils/jwt'
 
 export interface AssignmentsDbQueryOptions {
   start?: Date
   end?: Date
   projection?: string
   sort?: string
-  associationId: string | mongoose.Types.ObjectId
 }
 
 export class AssignmentRepository implements Repository {
+  constructor(private clientInfo: ClientInfo) {}
+
   get(options: AssignmentsDbQueryOptions): Promise<Assignment[]> {
     const { projection, sort } = options
     return AssignmentModel.find(this.filterQuery(options))
@@ -32,11 +34,12 @@ export class AssignmentRepository implements Repository {
     id: string | mongoose.Types.ObjectId,
     options: AssignmentsDbQueryOptions,
   ): Promise<Assignment> {
-    const { projection, associationId } = options
+    const { projection } = options
 
-    return AssignmentModel.findOne({ _id: id, association: associationId }).select(
-      projection!,
-    )
+    return AssignmentModel.findOne({
+      _id: id,
+      association: this.clientInfo.association,
+    }).select(projection!)
   }
 
   /**
@@ -49,7 +52,7 @@ export class AssignmentRepository implements Repository {
     const assignment = new AssignmentModel({
       association: associationId,
       ...insertion,
-      assignees: await this.populateAssignees(associationId, insertion.assignees),
+      assignees: await this.populateAssignees(insertion.assignees),
     })
 
     return await assignment.save()
@@ -80,10 +83,7 @@ export class AssignmentRepository implements Repository {
       if (update[prop]) assignment[prop] = update[prop]
 
     if (update.assignees)
-      assignment.assignees = await this.populateAssignees(
-        associationId,
-        update.assignees,
-      )
+      assignment.assignees = await this.populateAssignees(update.assignees)
 
     return await assignment.save()
   }
@@ -102,15 +102,12 @@ export class AssignmentRepository implements Repository {
     return assignment
   }
 
-  private async populateAssignees(
-    associationId: string | mongoose.Types.ObjectId,
-    assignees: string[],
-  ): Promise<any[]> {
+  private async populateAssignees(assignees: string[]): Promise<any[]> {
     const members: Member[] = []
     if (isIterable(assignees))
       for (const assigneeId of assignees) {
         const member = await MemberModel.findOne({
-          association: associationId,
+          association: this.clientInfo.association,
           _id: assigneeId,
         })
         if (!member) throw new AssigneeNotFoundError()
@@ -120,10 +117,10 @@ export class AssignmentRepository implements Repository {
   }
 
   private filterQuery(options: AssignmentsDbQueryOptions): FilterQuery<Assignment> {
-    const { start, end, associationId } = options
+    const { start, end } = options
 
     return {
-      association: associationId,
+      association: this.clientInfo.association,
       start: {
         $gte: start,
         $lte: end,

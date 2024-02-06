@@ -7,7 +7,7 @@
         "level": "debug"
     },
     "jwt": {
-        "privateKey": "",
+        "secret": "",
         "headerName": "x-plander-auth"
     },
     "headers": {

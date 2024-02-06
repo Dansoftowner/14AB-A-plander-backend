@@ -4,19 +4,19 @@ import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import { plainToInstance } from 'class-transformer'
 import { Service } from '../base/service'
-import { MemberItemsDto } from '../dto/member-items'
+import { MemberItemsDto } from '../dto/member/member-items'
 import { MemberQueryOptions, MemberRepository } from '../repositories/member'
 import { ClientInfo } from '../utils/jwt'
 import { CommonQueryOptions } from '../api/params/common-query-params'
-import { MemberDto } from '../dto/member'
-import { MemberInviteDto } from '../dto/member-invite'
+import { MemberDto } from '../dto/member/member'
+import { MemberInviteDto } from '../dto/member/member-invite'
 import { MailService } from './mail'
 import logger from '../logging/logger'
-import { MemberRegistrationDto } from '../dto/member-registration'
-import { ForgottenPasswordDto, NewPasswordDto } from '../dto/forgotten-password'
-import { NewCredentialsDto } from '../dto/new-credentials'
-import { MemberWithAssociationDto } from '../dto/member-with-association'
-import { MemberUpdateDto } from '../dto/member-update'
+import { MemberRegistrationDto } from '../dto/member/member-registration'
+import { ForgottenPasswordDto, NewPasswordDto } from '../dto/member/forgotten-password'
+import { NewCredentialsDto } from '../dto/member/new-credentials'
+import { MemberWithAssociationDto } from '../dto/member/member-with-association'
+import { MemberUpdateDto } from '../dto/member/member-update'
 import {
   EmailReservedError,
   NotPresidentError,
@@ -26,22 +26,17 @@ import { RegisteredMemberAlterError } from '../exception/member-errors'
 import { PresidentDeletionError } from '../exception/member-errors'
 import { NoOtherPresidentError } from '../exception/member-errors'
 import { ValueReservedError } from '../exception/value-reserved-error'
-import { MemberPreferencesDto } from '../dto/member-preferences'
+import { MemberPreferencesDto } from '../dto/member/member-preferences'
 
 export class MemberService implements Service {
-  private clientInfo: ClientInfo
-  private repository: MemberRepository
-
-  private mailService: MailService
-
-  constructor({ clientInfo, memberRepository, mailService }) {
-    this.repository = memberRepository
-    this.clientInfo = clientInfo
-    this.mailService = mailService
-  }
+  constructor(
+    private clientInfo: ClientInfo,
+    private memberRepository: MemberRepository,
+    private mailService: MailService,
+  ) {}
 
   async get(options: CommonQueryOptions): Promise<MemberItemsDto> {
-    const { count, items } = await this.repository.get(this.dbOptions(options))
+    const { count, items } = await this.memberRepository.get(this.dbOptions(options))
 
     const metadata = { offset: options.offset, limit: options.limit, total: count }
 
@@ -56,7 +51,7 @@ export class MemberService implements Service {
   }
 
   async getById(id: string, options: CommonQueryOptions): Promise<MemberDto | null> {
-    const item = await this.repository.findById(id, this.dbOptions(options, id))
+    const item = await this.memberRepository.findById(id, this.dbOptions(options, id))
 
     return plainToInstance(MemberDto, item, {
       excludeExtraneousValues: true,
@@ -73,7 +68,7 @@ export class MemberService implements Service {
       projection: '-preferences',
     }
 
-    let item = await this.repository.findByUsername(username, dbOptions)
+    let item = await this.memberRepository.findByUsername(username, dbOptions)
     if (item)
       item = _.pick(
         item,
@@ -86,7 +81,7 @@ export class MemberService implements Service {
   }
 
   async getInvited(id: string, registrationToken: string): Promise<MemberDto | null> {
-    const item = await this.repository.findByRegistrationToken(
+    const item = await this.memberRepository.findByRegistrationToken(
       id,
       registrationToken,
       bcrypt.compare,
@@ -101,7 +96,7 @@ export class MemberService implements Service {
     const registrationToken = crypto.randomBytes(20).toString('hex')
     const hashedRegistrationToken = await this.hashToken(registrationToken)
 
-    const invitedMember = await this.repository.invite(
+    const invitedMember = await this.memberRepository.invite(
       this.clientInfo.association,
       invitation,
       hashedRegistrationToken,
@@ -131,7 +126,7 @@ export class MemberService implements Service {
     registration.password = await this.hashPassword(registration.password)
 
     try {
-      const updatedMember = await this.repository.register(
+      const updatedMember = await this.memberRepository.register(
         id,
         token,
         registration,
@@ -154,7 +149,7 @@ export class MemberService implements Service {
     const restorationToken = crypto.randomBytes(20).toString('hex')
     const restorationTokenHash = await this.hashToken(restorationToken)
 
-    const member = await this.repository.labelForgottenPassword(
+    const member = await this.memberRepository.labelForgottenPassword(
       association,
       email,
       restorationTokenHash,
@@ -176,7 +171,7 @@ export class MemberService implements Service {
     restorationToken: string,
     { password }: NewPasswordDto,
   ) {
-    return await this.repository.restorePassword(
+    return await this.memberRepository.restorePassword(
       id,
       restorationToken,
       await this.hashPassword(password),
@@ -196,7 +191,7 @@ export class MemberService implements Service {
     if (newCredentials.password)
       newCredentials.password = await this.hashPassword(newCredentials.password)
 
-    const updated = await this.repository.updateCredentials(
+    const updated = await this.memberRepository.updateCredentials(
       this.clientInfo._id,
       newCredentials,
     )
@@ -216,7 +211,7 @@ export class MemberService implements Service {
       if (!this.clientInfo.hasRole('president')) {
         throw new NotPresidentError()
       } else {
-        const target = await this.repository.findById(id, {
+        const target = await this.memberRepository.findById(id, {
           associationId: this.clientInfo.association,
           projection: 'isRegistered',
         })
@@ -225,7 +220,7 @@ export class MemberService implements Service {
       }
 
     try {
-      const updatedMember = await this.repository.update(
+      const updatedMember = await this.memberRepository.update(
         id,
         this.clientInfo.association,
         newContent,
@@ -251,11 +246,11 @@ export class MemberService implements Service {
       // the president wants to delete himself
 
       const areThereOtherPresidents =
-        (await this.repository.countPresidents(this.clientInfo.association)) > 1
+        (await this.memberRepository.countPresidents(this.clientInfo.association)) > 1
 
       if (!areThereOtherPresidents) throw new NoOtherPresidentError()
     } else {
-      const isPresident = await this.repository.isPresident(
+      const isPresident = await this.memberRepository.isPresident(
         id,
         this.clientInfo.association,
       )
@@ -263,23 +258,26 @@ export class MemberService implements Service {
       if (isPresident) throw new PresidentDeletionError()
     }
 
-    const deleted = await this.repository.delete(id, this.clientInfo.association)
+    const deleted = await this.memberRepository.delete(id, this.clientInfo.association)
 
     return plainToInstance(MemberDto, deleted, { excludeExtraneousValues: true })
   }
 
   async getPreferences() {
-    const prefs = await this.repository.getPreferences(this.clientInfo._id)
+    const prefs = await this.memberRepository.getPreferences(this.clientInfo._id)
     if (prefs !== null) return prefs ?? {}
     return null
   }
 
   async updatePreferences(preferences: MemberPreferencesDto) {
-    return await this.repository.updatePreferences(this.clientInfo._id, preferences)
+    return await this.memberRepository.updatePreferences(
+      this.clientInfo._id,
+      preferences,
+    )
   }
 
   async transferRoles(memberId: string, copy: boolean) {
-    const updatedMember = await this.repository.transferRoles(
+    const updatedMember = await this.memberRepository.transferRoles(
       this.clientInfo.association,
       this.clientInfo._id,
       memberId,
@@ -296,7 +294,7 @@ export class MemberService implements Service {
    */
   private async requireUniqueUsername(username: string | undefined) {
     if (username) {
-      const alreadyExists = await this.repository.existsWithUsername(
+      const alreadyExists = await this.memberRepository.existsWithUsername(
         username,
         this.clientInfo.association,
       )
@@ -312,7 +310,7 @@ export class MemberService implements Service {
    */
   private async requireUniqueEmail(email: string | undefined) {
     if (email) {
-      const alreadyExists = await this.repository.existsWithEmail(
+      const alreadyExists = await this.memberRepository.existsWithEmail(
         email,
         this.clientInfo.association,
       )

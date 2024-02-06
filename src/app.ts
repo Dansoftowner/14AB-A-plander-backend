@@ -29,7 +29,7 @@ export class App {
   }
 
   private requireCrucialConfig() {
-    ;['mongo.uri', 'jwt.privateKey', 'frontend.host'].forEach((it) => {
+    ;['mongo.uri', 'jwt.secret', 'frontend.host'].forEach((it) => {
       if (!(config.has(it) && config.get(it)))
         throw new Error(`FATAL ERROR: ${it} config is not set.`)
     })

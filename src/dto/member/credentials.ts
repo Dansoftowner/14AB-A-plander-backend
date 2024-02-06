@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { JoiObjectId } from '../utils/joi'
+import { JoiObjectId } from '../../utils/joi'
 
 /**
  * @openapi
@@ -30,7 +30,7 @@ export class CredentialsDto {
   user!: string
   password!: string
 
-  static validationSchema(): Joi.ObjectSchema<CredentialsDto> {
+  static get validationSchema(): Joi.ObjectSchema<CredentialsDto> {
     return Joi.object({
       associationId: JoiObjectId().required(),
       user: Joi.string().required(),

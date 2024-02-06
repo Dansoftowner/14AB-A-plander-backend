@@ -38,7 +38,7 @@ describe('auth middleware', () => {
     return req
   }
 
-  const generateToken = (secret: string = config.get('jwt.privateKey')) => {
+  const generateToken = (secret: string = config.get('jwt.secret')) => {
     return jwt.sign(mockMember, secret)
   }
 

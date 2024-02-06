@@ -9,20 +9,19 @@ import { instanceToPlain } from 'class-transformer'
 import { ClientInfo } from '../../utils/jwt'
 
 export default class AssociationController implements Controller {
-  private service: AssociationService
-
-  constructor({ associationService }) {
-    this.service = associationService
-  }
+  constructor(private associationService: AssociationService) {}
 
   async getAssociations(req: Request, res: Response) {
-    const result = await this.service.get(resolveOptions(req))
+    const result = await this.associationService.get(resolveOptions(req))
 
     res.json(instanceToPlain(result))
   }
 
   async getAssociationById(req: Request, res: Response) {
-    const item = await this.service.getById(req.params.id, resolveOptions(req))
+    const item = await this.associationService.getById(
+      req.params.id,
+      resolveOptions(req),
+    )
 
     if (!item) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 

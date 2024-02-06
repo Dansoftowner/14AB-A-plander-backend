@@ -77,7 +77,7 @@ describe('/api/assignments/:id/report', () => {
       'report',
     )) as unknown as any
 
-    return assignmentInDb.report.member.toHexString()
+    return assignmentInDb.report.author.toHexString()
   }
 
   describe('GET /:id', () => {
@@ -447,7 +447,7 @@ describe('/api/assignments/:id/report', () => {
       const savedReport = await ReportModel.findOne({ _id: assignmentInDb!.report })
 
       expect(savedReport).not.toBeNull()
-      expect(savedReport!.member.toHexString()).toBe(client._id)
+      expect(savedReport!.author.toHexString()).toBe(client._id)
       expect(savedReport!.method).toBe(method)
       expect(savedReport!.purpose).toBe(purpose)
       expect(savedReport!.licensePlateNumber).toBe(licensePlateNumber)
@@ -472,7 +472,7 @@ describe('/api/assignments/:id/report', () => {
 
       expect(res.body).toBeDefined()
       expect(res.body).toHaveProperty('_id', savedReport!._id.toHexString())
-      expect(res.body).toHaveProperty('member', client._id)
+      expect(res.body).toHaveProperty('author', client._id)
       expect(res.body).toHaveProperty('method', method)
       expect(res.body).toHaveProperty('purpose', purpose)
       expect(res.body).toHaveProperty('licensePlateNumber', licensePlateNumber)
@@ -724,7 +724,7 @@ describe('/api/assignments/:id/report', () => {
 
       expect(res.body).toBeDefined()
       expect(res.body).toHaveProperty('_id', savedReport!._id.toHexString())
-      expect(res.body).toHaveProperty('member', client._id)
+      expect(res.body).toHaveProperty('author', client._id)
       expect(res.body).toHaveProperty('method', method)
       expect(res.body).toHaveProperty('purpose', purpose)
       expect(res.body).toHaveProperty('licensePlateNumber', licensePlateNumber)

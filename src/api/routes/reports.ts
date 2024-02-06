@@ -1,7 +1,7 @@
 import { Controller } from '../../base/controller'
 import { RoutesProvider } from '../../base/routes-provider'
-import { ReportDto } from '../../dto/report'
-import { ReportUpdateDto } from '../../dto/report-update'
+import { ReportDto } from '../../dto/report/report'
+import { ReportUpdateDto } from '../../dto/report/report-update'
 import asyncErrorHandler from '../../middlewares/async-error-handler'
 import auth from '../../middlewares/auth'
 import validate from '../../middlewares/validate'
@@ -9,7 +9,7 @@ import validateObjectId from '../../middlewares/validate-objectid'
 import { ReportController } from '../controllers/report'
 
 export class ReportRoutes extends RoutesProvider {
-  constructor({ reportController }) {
+  constructor(reportController: ReportController) {
     super(reportController)
   }
 
@@ -72,7 +72,7 @@ export class ReportRoutes extends RoutesProvider {
       '/:id/report',
       auth,
       validateObjectId,
-      validate(ReportDto.validationSchema()),
+      validate(ReportDto.validationSchema),
       asyncErrorHandler((req, res) => controller.createReport(req, res)),
     )
 
@@ -227,7 +227,7 @@ export class ReportRoutes extends RoutesProvider {
       '/:id/report',
       auth,
       validateObjectId,
-      validate(ReportUpdateDto.validationSchema()),
+      validate(ReportUpdateDto.validationSchema),
       asyncErrorHandler((req, res) => controller.updateReport(req, res)),
     )
 

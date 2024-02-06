@@ -1,5 +1,5 @@
 import { Expose, Type } from 'class-transformer'
-import { PaginationInfoDto } from './pagination-info'
+import { PaginationInfoDto } from '../pagination-info'
 import { AssociationDto } from './association'
 
 /**

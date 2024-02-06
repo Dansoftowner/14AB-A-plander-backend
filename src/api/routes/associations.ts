@@ -5,7 +5,7 @@ import validateObjectId from '../../middlewares/validate-objectid'
 import AssociationController from '../controllers/association'
 
 export default class AssocationRoutes extends RoutesProvider {
-  constructor({ associationController }) {
+  constructor(associationController: AssociationController) {
     super(associationController)
   }
 

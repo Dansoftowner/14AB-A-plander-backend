@@ -22,11 +22,11 @@ import { ReportService } from './services/report'
 import { ReportRepository } from './repositories/report'
 
 const container = createContainer({
-  injectionMode: InjectionMode.PROXY,
+  injectionMode: InjectionMode.CLASSIC,
 })
 
 container.register({
-  app: asClass(App).singleton(),
+  app: asClass(App).proxy().singleton(),
 
   associationRepository: asClass(AssociationRepository),
   associationService: asClass(AssociationService),
@@ -45,12 +45,12 @@ container.register({
   assignmentController: asClass(AssignmentController),
   assignmentRoutes: asClass(AssignmentRoutes),
   assignmentService: asClass(AssignmentService).scoped(),
-  assignmentRepository: asClass(AssignmentRepository),
+  assignmentRepository: asClass(AssignmentRepository).scoped(),
 
   reportController: asClass(ReportController),
   reportRoutes: asClass(ReportRoutes),
   reportService: asClass(ReportService).scoped(),
-  reportRepository: asClass(ReportRepository),
+  reportRepository: asClass(ReportRepository).scoped(),
 
   mailService: asClass(MailService),
 })

@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer'
 import handlebars from 'handlebars'
 import { Service } from '../base/service'
-import { ReportDto } from '../dto/report'
+import { ReportDto } from '../dto/report/report'
 import { ReportRepository } from '../repositories/report'
 import { ClientInfo } from '../utils/jwt'
 import { readFileSync } from 'fs'
@@ -13,25 +13,17 @@ import { AssociationRepository } from '../repositories/association'
 import { differenceInHours, format } from 'date-fns'
 import { convertHtmlToPdf } from '../utils/pdf'
 import i18n from '../utils/i18n'
-import { AssignmentDto } from '../dto/assignment'
-import { ReportUpdateDto } from '../dto/report-update'
+import { AssignmentDto } from '../dto/assignment/assignment'
+import { ReportUpdateDto } from '../dto/report/report-update'
 
 export class ReportService implements Service {
-  private clientInfo: ClientInfo
-  private repository: ReportRepository
-
-  constructor({ clientInfo, reportRepository }) {
-    this.clientInfo = clientInfo
-    this.repository = reportRepository
-  }
+  constructor(
+    private clientInfo: ClientInfo,
+    private reportRepository: ReportRepository,
+  ) {}
 
   async create(assignmentId: string, payload: ReportDto): Promise<ReportDto> {
-    const created = await this.repository.create(
-      this.clientInfo.association,
-      assignmentId,
-      this.clientInfo._id,
-      payload,
-    )
+    const created = await this.reportRepository.create(assignmentId, payload)
 
     return plainToInstance(ReportDto, created, {
       excludeExtraneousValues: true,
@@ -42,7 +34,10 @@ export class ReportService implements Service {
    * @throws ReportNotFoundError if the assignment has no report
    */
   async get(assignmentId: string): Promise<ReportDto | null> {
-    const report = await this.repository.get(this.clientInfo.association, assignmentId)
+    const report = await this.reportRepository.get(
+      this.clientInfo.association,
+      assignmentId,
+    )
 
     return plainToInstance(ReportDto, report, {
       excludeExtraneousValues: true,
@@ -74,12 +69,7 @@ export class ReportService implements Service {
    * @throws ReportCannotBeUpdatedError
    */
   async update(assignmentId: string, payload: ReportUpdateDto): Promise<ReportDto> {
-    const updated = await this.repository.update(
-      this.clientInfo.association,
-      assignmentId,
-      this.clientInfo._id,
-      payload,
-    )
+    const updated = await this.reportRepository.update(assignmentId, payload)
 
     return plainToInstance(ReportDto, updated, {
       excludeExtraneousValues: true,
@@ -92,11 +82,7 @@ export class ReportService implements Service {
    * @throws ReportCannotBeUpdatedError
    */
   async delete(assignmentId: string): Promise<ReportDto> {
-    const deleted = await this.repository.delete(
-      this.clientInfo.association,
-      assignmentId,
-      this.clientInfo._id,
-    )
+    const deleted = await this.reportRepository.delete(assignmentId)
 
     return plainToInstance(ReportDto, deleted, {
       excludeExtraneousValues: true,
@@ -111,10 +97,8 @@ export class ReportService implements Service {
    * @throws ReportNotFoundError if the assignment has no report
    */
   private async loadPdfInformation(assignmentId: string): Promise<object> {
-    const assignment = await this.repository.findAssignmentWithReport(
-      this.clientInfo.association,
-      assignmentId,
-    )
+    const assignment =
+      await this.reportRepository.findAssignmentWithReport(assignmentId)
 
     return (
       assignment && {
