@@ -40,7 +40,7 @@ export class ReportRepository implements Repository {
 
     const report = new ReportModel({
       ...payload,
-      member: this.clientInfo._id,
+      author: this.clientInfo._id,
     })
 
     targetAssignment.report = report._id
@@ -71,7 +71,7 @@ export class ReportRepository implements Repository {
     const report = await ReportModel.findById(targetAssignment.report)
 
     if (!report) throw new ReportNotFoundError()
-    if (!(report.member.toHexString() === this.clientInfo._id))
+    if (!(report.author.toHexString() === this.clientInfo._id))
       throw new ReportUpdaterIsNotAuthorError()
 
     if (differenceInDays(new Date(), report.submittedAt) >= 3)
@@ -119,7 +119,7 @@ export class ReportRepository implements Repository {
     const report = await ReportModel.findById(assignment.report)
 
     if (!report) throw new ReportNotFoundError()
-    if (!(report.member.toHexString() === this.clientInfo._id))
+    if (!(report.author.toHexString() === this.clientInfo._id))
       throw new ReportUpdaterIsNotAuthorError()
 
     if (differenceInDays(new Date(), report.submittedAt) >= 3)

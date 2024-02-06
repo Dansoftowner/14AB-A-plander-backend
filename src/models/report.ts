@@ -4,7 +4,7 @@ type DutyMethod = 'vehicle' | 'bicycle' | 'pedestrian'
 
 export interface Report {
   _id: Types.ObjectId
-  member: Types.ObjectId
+  author: Types.ObjectId
   method: DutyMethod
   purpose: string
   licensePlateNumber: string | null
@@ -17,7 +17,7 @@ export interface Report {
 }
 
 const reportSchema = new Schema<Report>({
-  member: {
+  author: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'Member',

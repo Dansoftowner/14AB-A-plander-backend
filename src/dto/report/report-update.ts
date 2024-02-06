@@ -63,8 +63,6 @@ import { JoiObjectId } from '../../utils/joi'
  *           description: Description of remarkable events occured.
  */
 export class ReportUpdateDto {
-  _id!: string
-  member!: string
   method!: string
   purpose!: string
   licensePlateNumber?: string
@@ -73,7 +71,6 @@ export class ReportUpdateDto {
   externalOrganization?: string
   externalRepresentative?: string
   description?: string
-  submitted!: Date
 
   static get validationSchema() {
     return Joi.object({
