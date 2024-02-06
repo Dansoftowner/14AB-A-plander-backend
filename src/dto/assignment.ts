@@ -41,7 +41,10 @@ import { MemberDto } from './member'
  *                  type: string
  *                  description: 'The full name of the member'
  *                  example: 'Reizinger Szabolcs'
- *
+ *        report:
+ *          type: string
+ *          description: 'Unique identifier of the report submitted for the assignment'
+ *          example: '653104dbfc13ae1d116c812e'
  */
 export class AssignmentDto {
   @Expose()
@@ -65,4 +68,8 @@ export class AssignmentDto {
   @Expose()
   @Type(() => MemberDto)
   assignees!: MemberDto[]
+
+  @Expose()
+  @Type(() => String)
+  report!: string
 }

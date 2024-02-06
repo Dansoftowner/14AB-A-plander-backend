@@ -134,7 +134,7 @@ describe('/api/assignments', () => {
       const res = await sendRequest()
 
       expect(_.keys(res.body.items[0]).sort()).toEqual(
-        ['_id', 'title', 'start', 'end'].sort(),
+        ['_id', 'title', 'start', 'end', 'report'].sort(),
       )
     })
 
@@ -144,7 +144,7 @@ describe('/api/assignments', () => {
       const res = await sendRequest()
 
       expect(_.keys(res.body.items[0]).sort()).toEqual(
-        ['_id', 'title', 'start', 'end', 'location', 'assignees'].sort(),
+        ['_id', 'title', 'start', 'end', 'location', 'assignees', 'report'].sort(),
       )
     })
 
@@ -225,7 +225,7 @@ describe('/api/assignments', () => {
 
       const res = await sendRequest()
 
-      expect(_.keys(res.body)).toEqual(['_id', 'title', 'start', 'end'])
+      expect(_.keys(res.body)).toEqual(['_id', 'title', 'start', 'end', 'report'])
     })
 
     it('should project all fields in full projection mode', async () => {
@@ -234,7 +234,7 @@ describe('/api/assignments', () => {
       const res = await sendRequest()
 
       expect(_.keys(res.body).sort()).toEqual(
-        ['_id', 'title', 'start', 'end', 'location', 'assignees'].sort(),
+        ['_id', 'title', 'start', 'end', 'location', 'assignees', 'report'].sort(),
       )
     })
   })

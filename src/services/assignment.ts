@@ -92,7 +92,7 @@ export class AssignmentService implements Service {
   }
 
   private adjustProjection(projection: 'lite' | 'full'): string[] {
-    const visibleFields = ['_id', 'title', 'start', 'end']
+    const visibleFields = ['_id', 'title', 'start', 'end', 'report']
 
     if (projection === 'full') visibleFields.push('location', 'assignees')
 
