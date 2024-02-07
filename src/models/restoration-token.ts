@@ -10,6 +10,7 @@ const restorationTokenSchema = new Schema<RestorationToken>({
   memberId: {
     type: Schema.Types.ObjectId,
     required: true,
+    unique: true,
     ref: 'Member',
   },
   token: {
@@ -23,7 +24,7 @@ const restorationTokenSchema = new Schema<RestorationToken>({
   },
 })
 
-restorationTokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: 24 * 60 * 60 })
+restorationTokenSchema.index({ createdAt: 1 }, { expires: '24h' })
 
 export default mongoose.model(
   'RestorationToken',

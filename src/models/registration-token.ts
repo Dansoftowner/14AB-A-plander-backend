@@ -10,6 +10,7 @@ const registrationTokenSchema = new Schema<RegistrationToken>({
   memberId: {
     type: Schema.Types.ObjectId,
     required: true,
+    unique: true,
     ref: 'Member',
   },
   token: {
