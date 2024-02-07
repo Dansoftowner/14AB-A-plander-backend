@@ -3,6 +3,7 @@ import mongoose, { Schema, Types } from 'mongoose'
 export interface RegistrationToken {
   memberId: Types.ObjectId
   token: string
+  createdAt: Date
 }
 
 const registrationTokenSchema = new Schema<RegistrationToken>({
@@ -15,7 +16,14 @@ const registrationTokenSchema = new Schema<RegistrationToken>({
     type: String,
     required: true,
   },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
 })
+
+registrationTokenSchema.index({ createdAt: 1 }, { expires: '72h' })
 
 export default mongoose.model(
   'RegistrationToken',
