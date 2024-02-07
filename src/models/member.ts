@@ -38,6 +38,8 @@ const memberSchema = new Schema<Member>({
   username: {
     type: String,
     index: true,
+    minlength: 5,
+    maxlength: 20,
     required: function () {
       return this.isRegistered
     },
