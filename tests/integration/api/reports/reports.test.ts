@@ -140,6 +140,7 @@ describe('/api/assignments/:id/report', () => {
 
       expect(res.body).toBeDefined()
       expect(res.body).toHaveProperty('_id', report?._id?.toHexString())
+      expect(res.body).toHaveProperty('submittedAt')
     })
   })
 

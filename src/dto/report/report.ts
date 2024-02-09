@@ -68,6 +68,12 @@ import Joi from 'joi'
  *           minLength: 5
  *           maxLength: 1240
  *           description: Description of remarkable events occured.
+ *         submittedAt:
+ *            type: string
+ *            format: date-time
+ *            readOnly: true
+ *            description: The time when the report was submitted.
+ *            example: '2024-02-09T08:49:10.132Z'
  */
 export class ReportDto {
   @Expose()
@@ -105,7 +111,7 @@ export class ReportDto {
   description?: string
 
   @Expose()
-  submitted!: Date
+  submittedAt!: Date
 
   static get validationSchema() {
     return Joi.object({
