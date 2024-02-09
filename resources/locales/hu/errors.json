@@ -22,5 +22,6 @@
     "assignment-not-over": "A szolgálat még nem járt le, így jelentés nem küldhető!",
     "report-not-exist": "A szolgálathoz még nem készült jelentés!",
     "report-cannot-be-altered": "3 napnál régebbi jelentést nem lehet módosítani!",
-    "report-updater-not-author": "A jelentést csak az módosíthatja/törölheti, aki beküldte!"
+    "report-updater-not-author": "A jelentést csak az módosíthatja/törölheti, aki beküldte!",
+    "past-assignment-insert": "Nem lehet egy olyan beosztást felvenni, ami a múltban van!"
 }

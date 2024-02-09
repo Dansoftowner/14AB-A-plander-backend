@@ -122,6 +122,8 @@ export class AssignmentRoutes extends RoutesProvider {
      *    description: |
      *       Allows **presidents** to insert new assignments to the association.
      *
+     *       - Inserting assignments in **the past** is **forbidden**.
+     *
      *       **Authentication is required** before using this endpoint.
      *    requestBody:
      *      required: true
@@ -142,6 +144,8 @@ export class AssignmentRoutes extends RoutesProvider {
      *        $ref: '#/components/responses/Unauthorized'
      *      403:
      *       $ref: '#/components/responses/NotPresident'
+     *      422:
+     *       $ref: '#/components/responses/PastAssignmentInsert'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:

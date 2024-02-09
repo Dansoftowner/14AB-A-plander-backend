@@ -10,7 +10,7 @@ import assignments from '../../dummy-data/assignments.json'
 import members from '../../dummy-data/members.json'
 import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
 import ReportModel from '../../../../src/models/report'
-import { add, endOfMonth, startOfMonth } from 'date-fns'
+import { add, addDays, addHours, endOfMonth, startOfMonth, subDays } from 'date-fns'
 
 describe('/api/assignments', () => {
   let app: Express
@@ -255,8 +255,8 @@ describe('/api/assignments', () => {
 
     beforeEach(() => {
       title = 'Test Assignment'
-      start = '2022-01-01T12:00:00.000Z'
-      end = '2022-01-01T13:00:00.000Z'
+      start = addDays(new Date(), 2).toISOString()
+      end = addHours(start, 1).toISOString()
       location = 'Test Location'
       assignees = membersOfAssociation()
         .map((it) => it._id)
@@ -332,6 +332,15 @@ describe('/api/assignments', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(400)
+    })
+
+    it('should return 422 response if the assignment is in the past', async () => {
+      start = subDays(new Date(), 1).toISOString()
+      end = addHours(start, 1).toISOString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
     })
 
     it('should save assignment into database', async () => {

@@ -46,6 +46,7 @@ export class AssignmentService implements Service {
 
   /**
    * @throws AssigneeNotFound
+   * @throws InsertionInThePastError
    */
   async create(insertion: AssignmentInsertionDto): Promise<AssignmentDto> {
     const item = await this.assignmentRepository.insert(

@@ -1,5 +1,6 @@
 import Joi from 'joi'
 import { JoiObjectId } from '../../utils/joi'
+import { Type } from 'class-transformer'
 
 /**
  * @openapi
@@ -44,8 +45,8 @@ import { JoiObjectId } from '../../utils/joi'
 export class AssignmentInsertionDto {
   title!: string
   location!: string
-  start!: Date
-  end!: Date
+  @Type(() => Date) start!: Date
+  @Type(() => Date) end!: Date
   assignees!: string[]
 
   static get validationSchema() {
