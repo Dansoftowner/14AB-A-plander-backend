@@ -516,6 +516,23 @@ describe('/api/assignments', () => {
       expect(res.status).toBe(422)
     })
 
+    it('should return 423 response if assignment is older than 3 days', async () => {
+      const assignment = await new AssignmentModel({
+        association: client.association,
+        end: subDays(new Date(), 3),
+      }).save({ validateBeforeSave: false })
+
+      id = assignment._id.toHexString()
+      title = 'New Title'
+      location = 'New Location'
+      start = new Date().toISOString()
+      end = add(start, { hours: 2 }).toISOString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(423)
+    })
+
     it('should update the assignment with the provided fields', async () => {
       title = 'New Title'
       location = 'New Location'
