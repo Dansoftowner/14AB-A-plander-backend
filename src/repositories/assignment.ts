@@ -113,6 +113,7 @@ export class AssignmentRepository implements Repository {
         const member = await MemberModel.findOne({
           association: this.clientInfo.association,
           _id: assigneeId,
+          isRegistered: true,
         })
         if (!member) throw new AssigneeNotFoundError()
         members.push(_.pick(member, ['_id', 'name']))

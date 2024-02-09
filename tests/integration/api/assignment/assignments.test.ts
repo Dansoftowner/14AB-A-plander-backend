@@ -334,6 +334,21 @@ describe('/api/assignments', () => {
       expect(res.status).toBe(400)
     })
 
+    it('should return 400 response if an unregistered assignee is referenced', async () => {
+      const assignee = await new MemberModel({
+        association: client.association,
+        isRegistered: false,
+      }).save({
+        validateBeforeSave: false,
+      })
+
+      assignees = [assignee!._id.toHexString()]
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
     it('should return 422 response if the assignment is in the past', async () => {
       start = subDays(new Date(), 1).toISOString()
       end = addHours(start, 1).toISOString()
@@ -444,6 +459,47 @@ describe('/api/assignments', () => {
     it('should return 400 response if start is greater than the end', async () => {
       start = '2022-01-02T12:00:00.000Z'
       end = '2022-01-02T11:00:00.000Z'
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the assignees contains invalid id', async () => {
+      assignees = ['123']
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the assignees contains duplicate id', async () => {
+      const assignee = membersOfAssociation()[0]
+      assignees = new Array(2).fill(assignee._id)
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the assignees contains id of a member not in the association', async () => {
+      const assignee = members.find((it) => it.association !== client.association)
+      assignees = [assignee!._id]
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if an unregistered assignee is referenced', async () => {
+      const assignee = await new MemberModel({
+        association: client.association,
+        isRegistered: false,
+      }).save({
+        validateBeforeSave: false,
+      })
+
+      assignees = [assignee!._id.toHexString()]
 
       const res = await sendRequest()
 
