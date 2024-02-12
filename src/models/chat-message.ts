@@ -33,6 +33,6 @@ const messageSchema = new Schema<ChatMessage>({
   },
 })
 
-messageSchema.index({ timestamp: 1 }, { expires: '30d' })
+messageSchema.index({ timestamp: -1 }, { expires: '30d' })
 
 export default mongoose.model('ChatMessage', messageSchema, 'chatMessages')
