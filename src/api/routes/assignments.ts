@@ -168,6 +168,8 @@ export class AssignmentRoutes extends RoutesProvider {
      *    description: |
      *       Allows **presidents** to update assignments.
      *
+     *       - Assignments **older than 3 days cannot be updated**.
+     *
      *       **Authentication is required** before using this endpoint.
      *    parameters:
      *      - in: path
@@ -222,6 +224,7 @@ export class AssignmentRoutes extends RoutesProvider {
      *    description: |
      *      Allows **presidents** to delete assignments.
      *
+     *      - Assignments **older than 3 days cannot be deleted**.
      *      > Note: if there is a report submitted for the assignment, it will be deleted as well.
      *
      *      **Authentication is required** before using this endpoint.
