@@ -405,7 +405,7 @@ describe('/api/assignments', () => {
         association: client.association,
         start: addDays(new Date(), 1),
         end: add(new Date(), { days: 1, hours: 1 }),
-        assignees: [membersOfAssociation()[0]],
+        assignees: [membersOfAssociation()[0]._id],
       }).save({ validateBeforeSave: false })
 
       id = assignment._id.toHexString()
@@ -413,6 +413,7 @@ describe('/api/assignments', () => {
       location = 'New Location'
       start = new Date().toISOString()
       end = add(start, { hours: 2 }).toISOString()
+      assignees = [membersOfAssociation()[1]._id]
     })
 
     it('should return 401 response if client is not logged in', async () => {
@@ -539,7 +540,6 @@ describe('/api/assignments', () => {
 
     it('should update the assignment with the provided fields', async () => {
       const res = await sendRequest()
-      console.log(res.body)
 
       const assignment = await AssignmentModel.findById(id)
 
@@ -595,8 +595,15 @@ describe('/api/assignments', () => {
         .set(config.get('jwt.headerName'), await generateToken())
     }
 
-    beforeEach(() => {
-      id = assignmentsOfAssociation()[0]._id
+    beforeEach(async () => {
+      const assignment = await new AssignmentModel({
+        association: client.association,
+        start: addDays(new Date(), 1),
+        end: add(new Date(), { days: 1, hours: 1 }),
+        assignees: [membersOfAssociation()[0]._id],
+      }).save({ validateBeforeSave: false })
+
+      id = assignment._id.toHexString()
     })
 
     it('should return 401 response if client is not logged in', async () => {
