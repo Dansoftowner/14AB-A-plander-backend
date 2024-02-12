@@ -345,6 +345,19 @@ export enum ApiErrorCode {
    * @openapi
    * components:
    *   responses:
+   *    AssignmentCannotBeAltered:
+   *     description: "The assignment is too old to be altered (errorCode: 'assignment-cannot-be-altered')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  ASSIGNMENT_CANNOT_BE_ALTERED = 'assignment-cannot-be-altered',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
    *    ReportDoesNotExist:
    *     description: "The assignment doesn't have a report yet (errorCode: 'report-does-not-exist')."
    *     content:

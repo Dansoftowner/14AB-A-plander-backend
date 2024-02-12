@@ -13,3 +13,8 @@ export class InvalidTimeBoundariesError extends Error {}
  * Thrown when the client wants to insert an assignment that's in the past.
  */
 export class InsertionInThePastError extends Error {}
+
+/**
+ * Thrown when the client wants to update/delete an assignment that is too old (usually 3 days).
+ */
+export class AssignmentCannotBeAlteredError extends Error {}

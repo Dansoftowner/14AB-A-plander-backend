@@ -168,6 +168,8 @@ export class AssignmentRoutes extends RoutesProvider {
      *    description: |
      *       Allows **presidents** to update assignments.
      *
+     *       - Assignments **older than 3 days cannot be updated**.
+     *
      *       **Authentication is required** before using this endpoint.
      *    parameters:
      *      - in: path
@@ -197,6 +199,8 @@ export class AssignmentRoutes extends RoutesProvider {
      *       $ref: '#/components/responses/NotPresident'
      *      422:
      *       $ref: '#/components/responses/InvalidAssignmentBoundaries'
+     *      423:
+     *       $ref: '#/components/responses/AssignmentCannotBeAltered'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:
@@ -220,6 +224,7 @@ export class AssignmentRoutes extends RoutesProvider {
      *    description: |
      *      Allows **presidents** to delete assignments.
      *
+     *      - Assignments **older than 3 days cannot be deleted**.
      *      > Note: if there is a report submitted for the assignment, it will be deleted as well.
      *
      *      **Authentication is required** before using this endpoint.
@@ -245,6 +250,8 @@ export class AssignmentRoutes extends RoutesProvider {
      *       $ref: '#/components/responses/NotPresident'
      *      404:
      *        $ref: '#/components/responses/NotFound'
+     *      423:
+     *        $ref: '#/components/responses/AssignmentCannotBeAltered'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:

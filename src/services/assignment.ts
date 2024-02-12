@@ -63,6 +63,7 @@ export class AssignmentService implements Service {
   /**
    * @throws AssigneeNotFound
    * @throws InvalidTimeBoundariesError
+   * @throws AssignmentCannotBeAlteredError
    */
   async update(id: string, update: AssignmentUpdateDto) {
     const item = await this.assignmentRepository.update(

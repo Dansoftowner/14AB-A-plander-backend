@@ -10,6 +10,7 @@ import { ApiErrorCode } from '../error/api-error-codes'
 import { AssignmentInsertionDto } from '../../dto/assignment/assignment-insertion'
 import {
   AssigneeNotFoundError,
+  AssignmentCannotBeAlteredError,
   InsertionInThePastError,
   InvalidTimeBoundariesError,
 } from '../../exception/assignment-errors'
@@ -66,6 +67,8 @@ export class AssignmentController implements Controller {
         throw new ApiError(400, ApiErrorCode.ASSIGNEE_NOT_FOUND)
       if (e instanceof InvalidTimeBoundariesError)
         throw new ApiError(422, ApiErrorCode.INVALID_ASSIGNMENT_BOUNDARIES)
+      if (e instanceof AssignmentCannotBeAlteredError)
+        throw new ApiError(423, ApiErrorCode.ASSIGNMENT_CANNOT_BE_ALTERED)
       throw e
     }
   }
@@ -73,11 +76,17 @@ export class AssignmentController implements Controller {
   async deleteAssignment(req: Request, res: Response) {
     const id = req.params.id
 
-    const result = await this.service(req).delete(id)
+    try {
+      const result = await this.service(req).delete(id)
 
-    if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
+      if (!result) throw new ApiError(404, ApiErrorCode.MISSING_RESOURCE)
 
-    res.status(200).send(instanceToPlain(result))
+      res.status(200).send(instanceToPlain(result))
+    } catch (e) {
+      if (e instanceof AssignmentCannotBeAlteredError)
+        throw new ApiError(423, ApiErrorCode.ASSIGNMENT_CANNOT_BE_ALTERED)
+      throw e;
+    }
   }
 
   private service(req: Request): AssignmentService {
