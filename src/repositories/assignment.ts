@@ -81,8 +81,7 @@ export class AssignmentRepository implements Repository {
 
     if (!assignment) return null
 
-    if (assignment.end < subDays(new Date(), 3))
-      throw new AssignmentCannotBeAlteredError()
+    if (this.isLocked(assignment)) throw new AssignmentCannotBeAlteredError()
 
     this.ensureTimeBoundariesIntegrity(
       notFalsy(update.start, assignment.start),
@@ -107,6 +106,9 @@ export class AssignmentRepository implements Repository {
       _id: id,
     })
 
+    if (assignment && this.isLocked(assignment))
+      throw new AssignmentCannotBeAlteredError()
+
     await ReportModel.findByIdAndDelete(assignment?.report)
 
     return assignment
@@ -125,6 +127,10 @@ export class AssignmentRepository implements Repository {
         members.push(_.pick(member, ['_id', 'name']))
       }
     return members
+  }
+
+  private isLocked(assignment: Assignment): boolean {
+    return assignment.end < subDays(new Date(), 3)
   }
 
   private filterQuery(options: AssignmentsDbQueryOptions): FilterQuery<Assignment> {
