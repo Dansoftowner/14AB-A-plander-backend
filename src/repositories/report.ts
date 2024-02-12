@@ -125,6 +125,7 @@ export class ReportRepository implements Repository {
     if (differenceInDays(new Date(), report.submittedAt) >= 3)
       throw new ReportCannotBeAlteredError()
 
+    await assignment.updateOne({ report: null })
     await report.deleteOne()
 
     return report

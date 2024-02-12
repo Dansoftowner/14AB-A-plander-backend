@@ -820,6 +820,14 @@ describe('/api/assignments/:id/report', () => {
       expect(report).toBeNull()
     })
 
+    it('should remove the report reference from the assignment', async () => {
+      await sendRequest()
+
+      const assignment = await AssignmentModel.findById(assignmentId)
+
+      expect(assignment!.report).toBeNull()
+    })
+
     it('should return deleted report in response', async () => {
       const assignment = await AssignmentModel.findById(assignmentId)
       const report = await ReportModel.findById(assignment!.report)

@@ -10,7 +10,7 @@ import assignments from '../../dummy-data/assignments.json'
 import members from '../../dummy-data/members.json'
 import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
 import ReportModel from '../../../../src/models/report'
-import { add, endOfMonth, startOfMonth } from 'date-fns'
+import { add, addDays, addHours, endOfMonth, startOfMonth, subDays } from 'date-fns'
 
 describe('/api/assignments', () => {
   let app: Express
@@ -255,8 +255,8 @@ describe('/api/assignments', () => {
 
     beforeEach(() => {
       title = 'Test Assignment'
-      start = '2022-01-01T12:00:00.000Z'
-      end = '2022-01-01T13:00:00.000Z'
+      start = addDays(new Date(), 2).toISOString()
+      end = addHours(start, 1).toISOString()
       location = 'Test Location'
       assignees = membersOfAssociation()
         .map((it) => it._id)
@@ -332,6 +332,30 @@ describe('/api/assignments', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if an unregistered assignee is referenced', async () => {
+      const assignee = await new MemberModel({
+        association: client.association,
+        isRegistered: false,
+      }).save({
+        validateBeforeSave: false,
+      })
+
+      assignees = [assignee!._id.toHexString()]
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 422 response if the assignment is in the past', async () => {
+      start = subDays(new Date(), 1).toISOString()
+      end = addHours(start, 1).toISOString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(422)
     })
 
     it('should save assignment into database', async () => {
@@ -441,6 +465,47 @@ describe('/api/assignments', () => {
       expect(res.status).toBe(400)
     })
 
+    it('should return 400 response if the assignees contains invalid id', async () => {
+      assignees = ['123']
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the assignees contains duplicate id', async () => {
+      const assignee = membersOfAssociation()[0]
+      assignees = new Array(2).fill(assignee._id)
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if the assignees contains id of a member not in the association', async () => {
+      const assignee = members.find((it) => it.association !== client.association)
+      assignees = [assignee!._id]
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it('should return 400 response if an unregistered assignee is referenced', async () => {
+      const assignee = await new MemberModel({
+        association: client.association,
+        isRegistered: false,
+      }).save({
+        validateBeforeSave: false,
+      })
+
+      assignees = [assignee!._id.toHexString()]
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
     it('should return 422 response if start is greater than the end stored in database', async () => {
       start = add(assignments.find((it) => it._id === id)!.end, {
         hours: 1,
@@ -449,6 +514,23 @@ describe('/api/assignments', () => {
       const res = await sendRequest()
 
       expect(res.status).toBe(422)
+    })
+
+    it('should return 423 response if assignment is older than 3 days', async () => {
+      const assignment = await new AssignmentModel({
+        association: client.association,
+        end: subDays(new Date(), 3),
+      }).save({ validateBeforeSave: false })
+
+      id = assignment._id.toHexString()
+      title = 'New Title'
+      location = 'New Location'
+      start = new Date().toISOString()
+      end = add(start, { hours: 2 }).toISOString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(423)
     })
 
     it('should update the assignment with the provided fields', async () => {

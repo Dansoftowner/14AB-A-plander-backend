@@ -8,3 +8,8 @@ export class AssigneeNotFoundError extends Error {}
  * to an invalid value (start > end or end < start).
  */
 export class InvalidTimeBoundariesError extends Error {}
+
+/**
+ * Thrown when the client wants to insert an assignment that's in the past.
+ */
+export class InsertionInThePastError extends Error {}

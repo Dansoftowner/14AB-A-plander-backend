@@ -8,7 +8,7 @@ export interface Assignment {
   start: Date
   end: Date
   assignees: Array<{ _id: Types.ObjectId; name: string }>
-  report: Types.ObjectId
+  report: Types.ObjectId | null
 }
 
 const assignmentSchema = new Schema<Assignment>({

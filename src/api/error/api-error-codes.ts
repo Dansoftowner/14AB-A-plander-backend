@@ -293,6 +293,19 @@ export enum ApiErrorCode {
    * @openapi
    * components:
    *   responses:
+   *    PastAssignmentInsert:
+   *     description: "Cannot insert an assignment that is in the past (errorCode: 'past-assignment-insert')."
+   *     content:
+   *       application/json:
+   *         schema:
+   *           $ref: '#/components/schemas/Error'
+   */
+  PAST_ASSIGNMENT_INSERT = 'past-assignment-insert',
+
+  /**
+   * @openapi
+   * components:
+   *   responses:
    *    ReportAlreadyExists:
    *     description: "Cannot submit a report for an assignment that already has a report (errorCode: 'report-already-exists')."
    *     content:

@@ -7,6 +7,7 @@ import MemberModel, { Member } from '../models/member'
 import { AssignmentInsertionDto } from '../dto/assignment/assignment-insertion'
 import {
   AssigneeNotFoundError,
+  InsertionInThePastError,
   InvalidTimeBoundariesError,
 } from '../exception/assignment-errors'
 import { isIterable, notFalsy } from '../utils/commons'
@@ -43,12 +44,15 @@ export class AssignmentRepository implements Repository {
   }
 
   /**
-   * @throws AssigneeNotFound
+   * @throws AssigneeNotFoundError
+   * @throws InsertionInThePastError
    */
   async insert(
     associationId: string | mongoose.Types.ObjectId,
     insertion: AssignmentInsertionDto,
   ): Promise<Assignment> {
+    if (insertion.end < new Date()) throw new InsertionInThePastError()
+
     const assignment = new AssignmentModel({
       association: associationId,
       ...insertion,
@@ -109,6 +113,7 @@ export class AssignmentRepository implements Repository {
         const member = await MemberModel.findOne({
           association: this.clientInfo.association,
           _id: assigneeId,
+          isRegistered: true,
         })
         if (!member) throw new AssigneeNotFoundError()
         members.push(_.pick(member, ['_id', 'name']))
