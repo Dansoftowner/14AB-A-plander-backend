@@ -10,6 +10,7 @@ import { ApiErrorCode } from '../error/api-error-codes'
 import { AssignmentInsertionDto } from '../../dto/assignment/assignment-insertion'
 import {
   AssigneeNotFoundError,
+  AssignmentCannotBeAlteredError,
   InsertionInThePastError,
   InvalidTimeBoundariesError,
 } from '../../exception/assignment-errors'
@@ -66,6 +67,8 @@ export class AssignmentController implements Controller {
         throw new ApiError(400, ApiErrorCode.ASSIGNEE_NOT_FOUND)
       if (e instanceof InvalidTimeBoundariesError)
         throw new ApiError(422, ApiErrorCode.INVALID_ASSIGNMENT_BOUNDARIES)
+      if (e instanceof AssignmentCannotBeAlteredError)
+        throw new ApiError(423, ApiErrorCode.ASSIGNMENT_CANNOT_BE_ALTERED)
       throw e
     }
   }

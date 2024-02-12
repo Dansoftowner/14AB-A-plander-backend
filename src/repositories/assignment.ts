@@ -7,12 +7,14 @@ import MemberModel, { Member } from '../models/member'
 import { AssignmentInsertionDto } from '../dto/assignment/assignment-insertion'
 import {
   AssigneeNotFoundError,
+  AssignmentCannotBeAlteredError,
   InsertionInThePastError,
   InvalidTimeBoundariesError,
 } from '../exception/assignment-errors'
 import { isIterable, notFalsy } from '../utils/commons'
 import { AssignmentUpdateDto } from '../dto/assignment/assignment-update'
 import { ClientInfo } from '../utils/jwt'
+import { subDays } from 'date-fns'
 
 export interface AssignmentsDbQueryOptions {
   start?: Date
@@ -65,6 +67,7 @@ export class AssignmentRepository implements Repository {
   /**
    * @throws AssigneeNotFound
    * @throws InvalidTimeBoundariesError
+   * @throws AssignmentCannotBeAlteredError
    */
   async update(
     associationId: string | mongoose.Types.ObjectId,
@@ -77,6 +80,9 @@ export class AssignmentRepository implements Repository {
     })
 
     if (!assignment) return null
+
+    if (assignment.end < subDays(new Date(), 3))
+      throw new AssignmentCannotBeAlteredError()
 
     this.ensureTimeBoundariesIntegrity(
       notFalsy(update.start, assignment.start),

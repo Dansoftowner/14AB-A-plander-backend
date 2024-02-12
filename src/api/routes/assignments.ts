@@ -197,6 +197,8 @@ export class AssignmentRoutes extends RoutesProvider {
      *       $ref: '#/components/responses/NotPresident'
      *      422:
      *       $ref: '#/components/responses/InvalidAssignmentBoundaries'
+     *      423:
+     *       $ref: '#/components/responses/AssignmentCannotBeAltered'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:
