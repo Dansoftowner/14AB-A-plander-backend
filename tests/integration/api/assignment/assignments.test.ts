@@ -400,12 +400,19 @@ describe('/api/assignments', () => {
         .set(config.get('jwt.headerName'), await generateToken())
     }
 
-    beforeEach(() => {
-      id = assignmentsOfAssociation()[0]._id
-    })
+    beforeEach(async () => {
+      const assignment = await new AssignmentModel({
+        association: client.association,
+        start: addDays(new Date(), 1),
+        end: add(new Date(), { days: 1, hours: 1 }),
+        assignees: [membersOfAssociation()[0]],
+      }).save({ validateBeforeSave: false })
 
-    afterEach(() => {
-      title = start = end = location = assignees = undefined
+      id = assignment._id.toHexString()
+      title = 'New Title'
+      location = 'New Location'
+      start = new Date().toISOString()
+      end = add(start, { hours: 2 }).toISOString()
     })
 
     it('should return 401 response if client is not logged in', async () => {
@@ -507,7 +514,8 @@ describe('/api/assignments', () => {
     })
 
     it('should return 422 response if start is greater than the end stored in database', async () => {
-      start = add(assignments.find((it) => it._id === id)!.end, {
+      end = undefined
+      start = add((await AssignmentModel.findById(id))!.end, {
         hours: 1,
       }).toISOString()
 
@@ -523,10 +531,6 @@ describe('/api/assignments', () => {
       }).save({ validateBeforeSave: false })
 
       id = assignment._id.toHexString()
-      title = 'New Title'
-      location = 'New Location'
-      start = new Date().toISOString()
-      end = add(start, { hours: 2 }).toISOString()
 
       const res = await sendRequest()
 
@@ -534,12 +538,8 @@ describe('/api/assignments', () => {
     })
 
     it('should update the assignment with the provided fields', async () => {
-      title = 'New Title'
-      location = 'New Location'
-      start = new Date().toISOString()
-      end = add(start, { hours: 2 }).toISOString()
-
-      await sendRequest()
+      const res = await sendRequest()
+      console.log(res.body)
 
       const assignment = await AssignmentModel.findById(id)
 
