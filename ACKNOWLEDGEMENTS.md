@@ -39,3 +39,4 @@
 - [supertest](https://www.npmjs.com/package/supertest)
 - [nodemailer-mock](https://www.npmjs.com/package/nodemailer-mock)
 - [pdf.js-extract](https://www.npmjs.com/package/pdf.js-extract)
+- [socket.io-client](https://www.npmjs.com/package/socket.io-client)
