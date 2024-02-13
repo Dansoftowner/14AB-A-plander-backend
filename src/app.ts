@@ -95,7 +95,7 @@ export class App {
     return cors({
       origin: process.env.NODE_ENV === 'development' || config.get('frontend.host'),
       credentials: true,
-      exposedHeaders: [config.get('jwt.headerName')],
+      exposedHeaders: [config.get('jwt.headerName'), 'Content-Disposition'],
     })
   }
 }

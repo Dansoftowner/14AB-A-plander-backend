@@ -60,6 +60,9 @@ const assignmentSchema = new Schema<Assignment>({
   },
 })
 
-assignmentSchema.index({ report: 1 }, { unique: true, sparse: true })
+assignmentSchema.index(
+  { report: 1 },
+  { unique: true, partialFilterExpression: { report: { $type: 'string' } } },
+)
 
 export default mongoose.model('Assignment', assignmentSchema, 'assignments')
