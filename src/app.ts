@@ -11,7 +11,7 @@ import logger from './logging/logger'
 import swaggerSpec from './swagger'
 import i18n from './middlewares/i18n'
 import rateLimiter from './middlewares/rate-limiter'
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 
@@ -21,7 +21,7 @@ import { Server } from 'socket.io'
 export class App {
   readonly expressApp: Express = express()
   readonly httpServer = createServer(this.expressApp)
-  readonly io = new Server(this.httpServer)
+  readonly io = this.createSocketServer(this.httpServer)
 
   constructor(opts) {
     this.requireCrucialConfig()
@@ -48,7 +48,7 @@ export class App {
 
   private initializeMiddlewares() {
     this.expressApp.use(express.static('public'))
-    this.expressApp.use(this.buildCorsMiddleware())
+    this.expressApp.use(cors(this.corsConfig))
     this.expressApp.use(helmet())
     if (config.get('logging.isHttpEnabled')) this.expressApp.use(morgan('tiny'))
     this.expressApp.use('/api', i18n)
@@ -91,11 +91,17 @@ export class App {
     this.expressApp.use(errorMiddleware)
   }
 
-  private buildCorsMiddleware() {
-    return cors({
+  private get corsConfig(): CorsOptions {
+    return {
       origin: process.env.NODE_ENV === 'development' || config.get('frontend.host'),
       credentials: true,
       exposedHeaders: [config.get('jwt.headerName'), 'Content-Disposition'],
+    }
+  }
+
+  private createSocketServer(httpServer: import('http').Server) {
+    return new Server(httpServer, {
+      cors: this.corsConfig,
     })
   }
 }
