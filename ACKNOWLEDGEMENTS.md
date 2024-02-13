@@ -26,6 +26,7 @@
 - [handlebars](https://www.npmjs.com/package/handlebars)
 - [date-fns](https://www.npmjs.com/package/date-fns)
 - [puppeteer](https://www.npmjs.com/package/puppeteer)
+- [socket.io](https://www.npmjs.com/package/socket.io)
 
 ## Fejlesztési
 
