@@ -14,6 +14,7 @@ import rateLimiter from './middlewares/rate-limiter'
 import cors, { CorsOptions } from 'cors'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import { socketAuth } from './middlewares/auth'
 
 /**
  * Responsible for assembling the express application.
@@ -53,6 +54,7 @@ export class App {
     if (config.get('logging.isHttpEnabled')) this.expressApp.use(morgan('tiny'))
     this.expressApp.use('/api', i18n)
     this.expressApp.use('/api', express.json())
+    this.io.use(socketAuth)
   }
 
   private initializeRoutes(opts) {
@@ -99,7 +101,7 @@ export class App {
     }
   }
 
-  private createSocketServer(httpServer: import('http').Server) {
+  private createSocketServer(httpServer: import('http').Server): Server {
     return new Server(httpServer, {
       cors: this.corsConfig,
     })
