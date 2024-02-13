@@ -12,12 +12,16 @@ import swaggerSpec from './swagger'
 import i18n from './middlewares/i18n'
 import rateLimiter from './middlewares/rate-limiter'
 import cors from 'cors'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
 
 /**
  * Responsible for assembling the express application.
  */
 export class App {
   readonly expressApp: Express = express()
+  readonly httpServer = createServer(this.expressApp)
+  readonly io = new Server(this.httpServer)
 
   constructor(opts) {
     this.requireCrucialConfig()
