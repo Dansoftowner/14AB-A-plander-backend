@@ -94,8 +94,8 @@ describe('Chatting', () => {
 
     socketA.emit('send-message', 'abc')
     await waitFor(socketB, 'recieve-message').then((it: any) => {
-      expect(it.name).toBe(memberA.name)
-      expect(it.memberId).toBe(memberA._id)
+      expect(it.sender.name).toBe(memberA.name)
+      expect(it.sender._id).toBe(memberA._id)
 
       expect(isAfter(it.timestamp, subSeconds(new Date(), 3))).toBe(true)
       expect(isBefore(it!.timestamp, new Date())).toBe(true)
@@ -135,7 +135,8 @@ describe('Chatting', () => {
     const message = await ChatMessageModel.findOne()
 
     expect(message).not.toBeNull()
-    expect(message!.sender.toHexString()).toBe(memberA._id)
+    expect(message!.sender._id.toHexString()).toBe(memberA._id)
+    expect(message!.sender.name).toBe(memberA.name)
     expect(message!.association.toHexString()).toBe(memberA.association)
     expect(message!.timestamp > subSeconds(new Date(), 3)).toBe(true)
     expect(message!.timestamp < new Date()).toBe(true)

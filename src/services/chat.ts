@@ -14,26 +14,14 @@ export class ChatService {
   }
 
   /**
-   * Encapsulates the business logic for sending a chat message. 
+   * Encapsulates the business logic for sending a chat message.
    */
   private async sendMessage(socket: Socket, message: string) {
     socket.broadcast
       .to(socket.associationId)
-      .emit('recieve-message', this.assembleMessageTransferObject(socket, message))
+      .emit('recieve-message', this.assembleMessageDto(socket, message))
 
     await this.chatRepository.insert(this.assembleMessageDto(socket, message))
-  }
-
-  /**
-   * Assembles the message object that will be sent over the sockets.
-   */
-  private assembleMessageTransferObject(socket: Socket, message: string) {
-    return {
-      memberId: socket.memberId,
-      name: socket.name,
-      timestamp: new Date(),
-      content: message,
-    }
   }
 
   /**
@@ -42,7 +30,10 @@ export class ChatService {
   private assembleMessageDto(socket: Socket, message: string): ChatMessageDto {
     return plainToInstance(ChatMessageDto, {
       association: socket.associationId,
-      sender: socket.memberId,
+      sender: {
+        _id: socket.memberId,
+        name: socket.name,
+      },
       timestamp: new Date(),
       content: message,
     })

@@ -1,12 +1,21 @@
-import mongoose, { Schema, Types } from 'mongoose'
+import mongoose, { Schema, SchemaType, Types } from 'mongoose'
 
 export interface ChatMessage {
   _id: Types.ObjectId
   association: Types.ObjectId
-  sender: Types.ObjectId
+  sender: { _id: Types.ObjectId; name: string }
   timestamp: Date
   content: string
 }
+
+const senderSchema = new Schema({
+  _id: {
+    type: Types.ObjectId,
+    required: true,
+    ref: 'Member',
+  },
+  name: String,
+})
 
 const messageSchema = new Schema<ChatMessage>({
   association: {
@@ -16,9 +25,8 @@ const messageSchema = new Schema<ChatMessage>({
     ref: 'Association',
   },
   sender: {
-    type: Schema.Types.ObjectId,
+    type: senderSchema,
     required: true,
-    ref: 'Member',
   },
   timestamp: {
     type: Date,
