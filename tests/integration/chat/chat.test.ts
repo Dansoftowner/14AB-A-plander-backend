@@ -4,8 +4,10 @@ import { App } from '../../../src/app'
 import { AddressInfo } from 'net'
 import mongoose from 'mongoose'
 import MemberModel, { Member } from '../../../src/models/member'
+import ChatMessageModel, { ChatMessage } from '../../../src/models/chat-message'
 import members from '../dummy-data/members.json'
 import io from 'socket.io-client'
+import { isAfter, isBefore, subSeconds } from 'date-fns'
 
 function waitFor(socket, event) {
   return new Promise((resolve) => {
@@ -23,6 +25,10 @@ describe('Chatting', () => {
     server = app.httpServer
     ioServer = app.io
 
+    // init chat service
+    container.resolve('chatService')
+
+    await ChatMessageModel.deleteMany({})
     await MemberModel.deleteMany({})
     await new Promise<void>((resolve) => {
       server.on('listening', () => {
@@ -40,6 +46,7 @@ describe('Chatting', () => {
 
   afterEach(async () => {
     await MemberModel.deleteMany({})
+    await ChatMessageModel.deleteMany({})
   })
 
   afterAll(async () => {
@@ -58,13 +65,15 @@ describe('Chatting', () => {
     return io(connectionURI, { auth: { token: await generateToken(member) } })
   }
 
+  const membersOfAssociation = (association) =>
+    members.filter((it) => it.association == association)
+
   it('should not allow unauthorized clients to connect', async () => {
     const socket = await connect(null)
 
-    let error = false
-    await waitFor(socket, 'connect_error').then(() => (error = true))
+    await waitFor(socket, 'connect_error')
 
-    expect(error).toBe(true)
+    expect(socket.connected).toBe(false)
   })
 
   it('should let authorized clients to connect', async () => {
@@ -74,5 +83,62 @@ describe('Chatting', () => {
     await waitFor(socket, 'connect')
 
     expect(socket.connected).toBe(true)
+  })
+
+  it('should send message to other members in the association', async () => {
+    const memberA = members[0]
+    const memberB = membersOfAssociation(memberA.association)[1]
+
+    const socketA = await connect(memberA)
+    const socketB = await connect(memberB)
+
+    socketA.emit('send-message', 'abc')
+    await waitFor(socketB, 'recieve-message').then((it: any) => {
+      expect(it.name).toBe(memberA.name)
+      expect(it.memberId).toBe(memberA._id)
+
+      expect(isAfter(it.timestamp, subSeconds(new Date(), 3))).toBe(true)
+      expect(isBefore(it!.timestamp, new Date())).toBe(true)
+      expect(it.content).toBe('abc')
+    })
+  })
+
+  it('should not send message to other members in other associations', async () => {
+    const memberA = members[0]
+    const memberB = members.find((it) => it.association !== memberA.association)
+
+    const socketA = await connect(memberA)
+    const socketB = await connect(memberB)
+
+    const spy = jest.fn()
+    socketB.on('recieve-message', spy)
+    socketA.emit('send-message', 'abc')
+
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(spy).not.toHaveBeenCalled()
+        resolve()
+      }, 1000)
+    })
+  })
+
+  it('should save message into database', async () => {
+    const memberA = members[0]
+    const memberB = membersOfAssociation(memberA.association)[1]
+
+    const socketA = await connect(memberA)
+    const socketB = await connect(memberB)
+
+    socketA.emit('send-message', 'abc')
+    await waitFor(socketB, 'recieve-message')
+
+    const message = await ChatMessageModel.findOne()
+
+    expect(message).not.toBeNull()
+    expect(message!.sender.toHexString()).toBe(memberA._id)
+    expect(message!.association.toHexString()).toBe(memberA.association)
+    expect(message!.timestamp > subSeconds(new Date(), 3)).toBe(true)
+    expect(message!.timestamp < new Date()).toBe(true)
+    expect(message!.content).toBe('abc')
   })
 })

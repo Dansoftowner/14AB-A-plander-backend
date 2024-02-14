@@ -5,6 +5,7 @@ import container from './di'
 import { App } from './app'
 
 const { httpServer } = container.resolve('app') as App
+container.resolve('chatService')
 
 const port = process.env.PORT || 7577
 

@@ -20,6 +20,8 @@ import { ReportController } from './api/controllers/report'
 import { ReportRoutes } from './api/routes/reports'
 import { ReportService } from './services/report'
 import { ReportRepository } from './repositories/report'
+import { ChatService } from './services/chat'
+import { ChatRepository } from './repositories/chat'
 
 const container = createContainer({
   injectionMode: InjectionMode.CLASSIC,
@@ -27,6 +29,7 @@ const container = createContainer({
 
 container.register({
   app: asClass(App).proxy().singleton(),
+  io: asFunction(() => container.resolve('app').io),
 
   associationRepository: asClass(AssociationRepository),
   associationService: asClass(AssociationService),
@@ -53,6 +56,9 @@ container.register({
   reportRepository: asClass(ReportRepository).scoped(),
 
   mailService: asClass(MailService),
+
+  chatRepository: asClass(ChatRepository),
+  chatService: asClass(ChatService).singleton(),
 })
 
 export default container
