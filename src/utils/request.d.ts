@@ -6,6 +6,7 @@ type PlanderRequest = {
 }
 
 type PlanderSocket = {
+  name: string
   associationId: string
   memberId: string
 }
@@ -13,7 +14,7 @@ type PlanderSocket = {
 declare global {
   namespace Express {
     export interface Request extends PlanderRequest {}
-  }  
+  }
 }
 
 declare module 'socket.io' {

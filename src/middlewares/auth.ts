@@ -35,6 +35,7 @@ export const socketAuth = async (socket: Socket, next: Function) => {
 
     const jwtPayload = decodeJwt(token)
 
+    socket.name = jwtPayload.name
     socket.associationId = jwtPayload.association
     socket.memberId = jwtPayload._id
 
