@@ -33,6 +33,10 @@ const options: swaggerJsdoc.Options = {
         name: 'Reports',
         description: 'Endpoints related to fetching & altering reports.',
       },
+      {
+        name: 'Chats',
+        description: 'Endpoints related to fetching chats.',
+      },
     ],
     components: {
       securitySchemes: {

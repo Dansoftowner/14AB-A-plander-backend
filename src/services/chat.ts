@@ -1,9 +1,9 @@
 import { Server, Socket } from 'socket.io'
 import { ChatRepository } from '../repositories/chat'
-import mongoose from 'mongoose'
-import { ChatMessage } from '../models/chat-message'
 import { ChatMessageDto } from '../dto/chat-message/chat-message'
 import { plainToInstance } from 'class-transformer'
+import { ChatMessageQueryOptions } from '../api/params/chat-messages-query-params'
+import { ChatItemsDto } from '../dto/chat-message/chat-items'
 
 export class ChatService {
   constructor(
@@ -11,6 +11,23 @@ export class ChatService {
     private readonly chatRepository: ChatRepository,
   ) {
     this.init()
+  }
+
+  async get(association: string, options: ChatMessageQueryOptions): Promise<any> {
+    const items = await this.chatRepository.get(association, options)
+    const metadata = { offset: options.offset, limit: options.limit }
+
+    return plainToInstance(
+      ChatItemsDto,
+      {
+        metadata,
+        items,
+      },
+      {
+        excludeExtraneousValues: true,
+        enableImplicitConversion: true,
+      },
+    )
   }
 
   /**
@@ -21,7 +38,7 @@ export class ChatService {
       .to(socket.associationId)
       .emit('recieve-message', this.assembleMessageDto(socket, message))
 
-    await this.chatRepository.insert(this.assembleMessageDto(socket, message))
+    await this.chatRepository.insert(socket.associationId, this.assembleMessageDto(socket, message))
   }
 
   /**
@@ -29,7 +46,6 @@ export class ChatService {
    */
   private assembleMessageDto(socket: Socket, message: string): ChatMessageDto {
     return plainToInstance(ChatMessageDto, {
-      association: socket.associationId,
       sender: {
         _id: socket.memberId,
         name: socket.name,
