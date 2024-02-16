@@ -211,19 +211,6 @@ export enum ApiErrorCode {
    * @openapi
    * components:
    *   responses:
-   *    EmailNotFound:
-   *     description: "The provided email does not exist (errorCode: 'email-not-found')."
-   *     content:
-   *       application/json:
-   *         schema:
-   *           $ref: '#/components/schemas/Error'
-   */
-  EMAIL_NOT_FOUND = 'email-not-found',
-
-  /**
-   * @openapi
-   * components:
-   *   responses:
    *    RegisteredMemberAlter:
    *     description: "The given member cannot be altered since it's registered (errorCode: 'registered-member-alter')."
    *     content:

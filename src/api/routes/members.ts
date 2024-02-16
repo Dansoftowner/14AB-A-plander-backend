@@ -749,8 +749,6 @@ export class MemberRoutes extends RoutesProvider {
      *            **No content returned.**
      *      400:
      *        $ref: '#/components/responses/InvalidPayload'
-     *      422:
-     *        $ref: '#/components/responses/EmailNotFound'
      *      429:
      *        $ref: '#/components/responses/SurpassedRateLimit'
      *      5XX:

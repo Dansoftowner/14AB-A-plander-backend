@@ -1009,12 +1009,12 @@ describe('/api/members', () => {
         expect(res.status).toBe(400)
       })
 
-      it('should return 422 response if email is not registered', async () => {
+      it('should return 202 response even if email is not registered', async () => {
         email = 'not-registered@not-registered.com'
 
         const res = await sendRequest()
 
-        expect(res.status).toBe(422)
+        expect(res.status).toBe(202)
       })
 
       it('should return 202 response if request is valid', async () => {

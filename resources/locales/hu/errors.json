@@ -14,7 +14,6 @@
     "invalid-url": "Érvénytelen URL!",
     "current-pass-required": "Ehhez a művelethez a jelenlegi jelszó megadása kötelező!",
     "current-pass-invalid": "A megadott jelszó nem egyezik meg a jelenlegi jelszóval!",
-    "email-not-found": "A megadott e-mail címmel nincs regisztrált tag.",
     "assignee-not-found": "A megadott azonosítóval nincs regisztrált tag az egyesületben.",
     "invalid-assignment-boundaries": "A kezdőidő kisebb kell legyen mint a befejezőidő!",
     "report-already-exists": "A megadott beosztáshoz már létezik jelentés!",
