@@ -34,11 +34,17 @@ export class ChatService {
    * Encapsulates the business logic for sending a chat message.
    */
   private async sendMessage(socket: Socket, message: string) {
+    if (message.trim().length == 0) return
+    if (message.length > 1024) return
+
     socket.broadcast
       .to(socket.associationId)
       .emit('recieve-message', this.assembleMessageDto(socket, message))
 
-    await this.chatRepository.insert(socket.associationId, this.assembleMessageDto(socket, message))
+    await this.chatRepository.insert(
+      socket.associationId,
+      this.assembleMessageDto(socket, message),
+    )
   }
 
   /**

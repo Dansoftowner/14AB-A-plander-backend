@@ -103,6 +103,44 @@ describe('Chatting', () => {
     })
   })
 
+  it("should not send message if it's empty", async () => {
+    const memberA = members[0]
+    const memberB = membersOfAssociation(memberA.association)[1]
+
+    const socketA = await connect(memberA)
+    const socketB = await connect(memberB)
+
+    const spy = jest.fn()
+    socketB.on('recieve-message', spy)
+    socketA.emit('send-message', '  ')
+
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(spy).not.toHaveBeenCalled()
+        resolve()
+      }, 1000)
+    })
+  })
+
+  it("should not send message if it's over 1024 characters", async () => {
+    const memberA = members[0]
+    const memberB = membersOfAssociation(memberA.association)[1]
+
+    const socketA = await connect(memberA)
+    const socketB = await connect(memberB)
+
+    const spy = jest.fn()
+    socketB.on('recieve-message', spy)
+    socketA.emit('send-message', 'a'.repeat(1025))
+
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(spy).not.toHaveBeenCalled()
+        resolve()
+      }, 1000)
+    })
+  })
+
   it('should not send message to other members in other associations', async () => {
     const memberA = members[0]
     const memberB = members.find((it) => it.association !== memberA.association)
