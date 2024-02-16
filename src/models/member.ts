@@ -33,6 +33,7 @@ const memberSchema = new Schema<Member>({
     type: String,
     required: true,
     index: true,
+    trim: true,
     validate: [isEmail, 'The given string is not a valid email address'],
   },
   username: {
@@ -40,6 +41,7 @@ const memberSchema = new Schema<Member>({
     index: true,
     minlength: 5,
     maxlength: 20,
+    trim: true,
     required: function () {
       return this.isRegistered
     },
@@ -53,6 +55,7 @@ const memberSchema = new Schema<Member>({
   name: {
     type: String,
     minlength: 5,
+    trim: true,
     validate: [isFullName, 'The given string is not a valid full name'],
     required: function () {
       return this.isRegistered
@@ -62,6 +65,7 @@ const memberSchema = new Schema<Member>({
     type: String,
     minlength: 5,
     validate: /[0-9]/,
+    trim: true,
     required: function () {
       return this.isRegistered
     },
@@ -69,6 +73,7 @@ const memberSchema = new Schema<Member>({
   idNumber: {
     type: String,
     index: true,
+    trim: true,
     required: function () {
       return this.isRegistered
     },
@@ -76,12 +81,14 @@ const memberSchema = new Schema<Member>({
   phoneNumber: {
     type: String,
     minlength: 1,
+    trim: true,
     required: function () {
       return this.isRegistered
     },
   },
   guardNumber: {
     type: String,
+    trim: true,
     validate: [
       isGuardNumber,
       'The guard number should follow this format: 00/0000/000000',

@@ -32,11 +32,13 @@ const reportSchema = new Schema<Report>({
     required: true,
     minlength: 5,
     maxlength: 255,
+    trim: true
   },
   licensePlateNumber: {
     type: String,
     minlength: 5,
     maxlength: 255,
+    trim: true
   },
   startKm: {
     type: Number,
@@ -62,11 +64,13 @@ const reportSchema = new Schema<Report>({
     type: String,
     minlength: 5,
     maxlength: 255,
+    trim: true,
   },
   externalRepresentative: {
     type: String,
     minlength: 5,
     maxlength: 255,
+    trim: true,
     validate: [
       function (this: Report) {
         return this.externalOrganization

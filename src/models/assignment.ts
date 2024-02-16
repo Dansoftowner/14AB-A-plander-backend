@@ -16,11 +16,13 @@ const assignmentSchema = new Schema<Assignment>({
     type: String,
     minlength: 5,
     maxlength: 255,
+    trim: true
   },
   location: {
     type: String,
     minlength: 2,
     maxlength: 255,
+    trim: true
   },
   association: {
     type: Schema.Types.ObjectId,
