@@ -3,14 +3,14 @@ import request from 'supertest'
 import _ from 'lodash'
 import config from 'config'
 import mongoose from 'mongoose'
-import MemberModel, { Member } from '../../../../src/models/member'
-import container from '../../../../src/di'
-import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
-import assignments from '../../dummy-data/assignments.json'
-import members from '../../dummy-data/members.json'
-import reports from '../../dummy-data/reports.json'
-import AssignmentModel, { Assignment } from '../../../../src/models/assignment'
-import ReportModel from '../../../../src/models/report'
+import MemberModel, { Member } from '../../../src/models/member'
+import container from '../../../src/di'
+import { rateLimiterStore } from '../../../src/middlewares/rate-limiter'
+import assignments from '../dummy-data/assignments.json'
+import members from '../dummy-data/members.json'
+import reports from '../dummy-data/reports.json'
+import AssignmentModel, { Assignment } from '../../../src/models/assignment'
+import ReportModel from '../../../src/models/report'
 import { PDFExtract } from 'pdf.js-extract'
 import { addHours, subDays } from 'date-fns'
 
@@ -25,7 +25,7 @@ describe('/api/assignments/:id/report', () => {
 
   const generateToken = async () => {
     if (!client) return ''
-    const { generateToken: gen } = await import('../../../../src/utils/jwt')
+    const { generateToken: gen } = await import('../../../src/utils/jwt')
     return gen(client as unknown as Member)
   }
 

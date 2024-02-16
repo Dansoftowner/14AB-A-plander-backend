@@ -3,10 +3,10 @@ import request from 'supertest'
 import _ from 'lodash'
 import config from 'config'
 import jwt from 'jsonwebtoken'
-import associationModel, { Association } from '../../../../src/models/association'
-import container from '../../../../src/di'
+import associationModel, { Association } from '../../../src/models/association'
+import container from '../../../src/di'
 import mongoose from 'mongoose'
-import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
+import { rateLimiterStore } from '../../../src/middlewares/rate-limiter'
 
 describe('/api/associations', () => {
   let app: Express

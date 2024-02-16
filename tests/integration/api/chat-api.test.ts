@@ -1,12 +1,12 @@
 import { Express } from 'express'
 import request from 'supertest'
 import config from 'config'
-import container from '../../../../src/di'
-import MemberModel, { Member } from '../../../../src/models/member'
-import ChatMessageModel from '../../../../src/models/chat-message'
-import members from '../../dummy-data/members.json'
-import rawChatMessages from '../../dummy-data/chat-messages.json'
-import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
+import container from '../../../src/di'
+import MemberModel, { Member } from '../../../src/models/member'
+import ChatMessageModel from '../../../src/models/chat-message'
+import members from '../dummy-data/members.json'
+import rawChatMessages from '../dummy-data/chat-messages.json'
+import { rateLimiterStore } from '../../../src/middlewares/rate-limiter'
 import mongoose from 'mongoose'
 import { addSeconds } from 'date-fns'
 
@@ -16,7 +16,7 @@ describe('/api/chats', () => {
 
   const generateToken = async () => {
     if (!client) return ''
-    const { generateToken: gen } = await import('../../../../src/utils/jwt')
+    const { generateToken: gen } = await import('../../../src/utils/jwt')
     return gen(client as unknown as Member)
   }
 
