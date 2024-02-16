@@ -24,17 +24,6 @@
         "content": "١٢٣"
     },
     {
-        "_id": "65310f87fc13ae1b326c8fd0",
-        "association": "652f7b95fc13ae3ce86c7ce6",
-        "sender": {
-            "_id": "652f85c4fc13ae3d596c7ce5",
-            "name": "Márton Varga"
-        },
-        "timestamp": {
-            "$date": "2022-09-04T12:23:38.000Z"
-        }
-    },
-    {
         "_id": "65310f87fc13ae1b326c8fd2",
         "association": "652f7b95fc13ae3ce86c7cdf",
         "sender": {
@@ -921,17 +910,6 @@
             "$date": "2022-10-01T13:53:56.000Z"
         },
         "content": "¡™£¢∞§¶•ªº–≠"
-    },
-    {
-        "_id": "65310f87fc13ae1b326c9066",
-        "association": "652f7b95fc13ae3ce86c7ce3",
-        "sender": {
-            "_id": "652f85c4fc13ae3d596c7ce4",
-            "name": "Eszter Horváth"
-        },
-        "timestamp": {
-            "$date": "2023-02-03T17:13:50.000Z"
-        }
     },
     {
         "_id": "65310f87fc13ae1b326c9068",
