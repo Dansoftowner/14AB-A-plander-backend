@@ -22,6 +22,8 @@ import { ReportService } from './services/report'
 import { ReportRepository } from './repositories/report'
 import { ChatService } from './services/chat'
 import { ChatRepository } from './repositories/chat'
+import { ChatMessageRoutes } from './api/routes/chat-messages'
+import { ChatMessageController } from './api/controllers/chat-message'
 
 const container = createContainer({
   injectionMode: InjectionMode.CLASSIC,
@@ -59,6 +61,8 @@ container.register({
 
   chatRepository: asClass(ChatRepository),
   chatService: asClass(ChatService).singleton(),
+  chatMessageRoutes: asClass(ChatMessageRoutes),
+  chatMessageController: asClass(ChatMessageController),
 })
 
 export default container
