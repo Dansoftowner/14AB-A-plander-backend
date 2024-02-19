@@ -7,13 +7,13 @@ import config from 'config'
 import mongoose from 'mongoose'
 import nodemailer from 'nodemailer'
 import { NodemailerMock } from 'nodemailer-mock'
-import MemberModel, { Member } from '../../../../src/models/member'
-import container from '../../../../src/di'
-import { rateLimiterStore } from '../../../../src/middlewares/rate-limiter'
-import RegistrationTokenModel from '../../../../src/models/registration-token'
-import RestorationTokenModel from '../../../../src/models/restoration-token'
-import members from '../../dummy-data/members.json'
-import AssociationModel from '../../../../src/models/association'
+import MemberModel, { Member } from '../../../src/models/member'
+import container from '../../../src/di'
+import { rateLimiterStore } from '../../../src/middlewares/rate-limiter'
+import RegistrationTokenModel from '../../../src/models/registration-token'
+import RestorationTokenModel from '../../../src/models/restoration-token'
+import members from '../dummy-data/members.json'
+import AssociationModel from '../../../src/models/association'
 
 const { mock: nodemailerMock } = nodemailer as unknown as NodemailerMock
 
@@ -36,7 +36,7 @@ describe('/api/members', () => {
 
   const generateToken = async () => {
     if (!client) return ''
-    const { generateToken: gen } = await import('../../../../src/utils/jwt')
+    const { generateToken: gen } = await import('../../../src/utils/jwt')
     return gen(client as unknown as Member)
   }
 
@@ -1009,12 +1009,12 @@ describe('/api/members', () => {
         expect(res.status).toBe(400)
       })
 
-      it('should return 422 response if email is not registered', async () => {
+      it('should return 202 response even if email is not registered', async () => {
         email = 'not-registered@not-registered.com'
 
         const res = await sendRequest()
 
-        expect(res.status).toBe(422)
+        expect(res.status).toBe(202)
       })
 
       it('should return 202 response if request is valid', async () => {

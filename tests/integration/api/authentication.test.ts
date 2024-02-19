@@ -4,14 +4,14 @@ import _ from 'lodash'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import config from 'config'
-import associationModel, { Association } from '../../../../src/models/association'
-import memberModel, { Member } from '../../../../src/models/member'
-import container from '../../../../src/di'
+import associationModel, { Association } from '../../../src/models/association'
+import memberModel, { Member } from '../../../src/models/member'
+import container from '../../../src/di'
 import mongoose from 'mongoose'
 import {
   loginRateLimiterStore,
   rateLimiterStore,
-} from '../../../../src/middlewares/rate-limiter'
+} from '../../../src/middlewares/rate-limiter'
 
 describe('Endpoints related to authentication', () => {
   let app: Express

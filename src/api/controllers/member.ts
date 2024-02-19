@@ -26,6 +26,7 @@ import { NewCredentialsDto } from '../../dto/member/new-credentials'
 import { MemberUpdateDto } from '../../dto/member/member-update'
 import { ValueReservedError } from '../../exception/value-reserved-error'
 import { MemberPreferencesDto } from '../../dto/member/member-preferences'
+import logger from '../../logging/logger'
 
 export class MemberController implements Controller {
   async getMembers(req: Request, res: Response) {
@@ -104,7 +105,9 @@ export class MemberController implements Controller {
     const payload = plainToInstance(ForgottenPasswordDto, req.body)
 
     const foundMember = await this.service(req).labelForgottenPassword(payload)
-    if (!foundMember) throw new ApiError(422, ApiErrorCode.EMAIL_NOT_FOUND)
+    logger.debug(
+      `Password reset requested, email is ${foundMember ? '' : 'un'}registered.`,
+    )
 
     res.status(202).send()
   }

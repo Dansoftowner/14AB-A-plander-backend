@@ -1,11 +1,11 @@
 import { Server } from 'http'
-import container from '../../../src/di'
-import { App } from '../../../src/app'
+import container from '../../src/di'
+import { App } from '../../src/app'
 import { AddressInfo } from 'net'
 import mongoose from 'mongoose'
-import MemberModel, { Member } from '../../../src/models/member'
-import ChatMessageModel, { ChatMessage } from '../../../src/models/chat-message'
-import members from '../dummy-data/members.json'
+import MemberModel, { Member } from '../../src/models/member'
+import ChatMessageModel, { ChatMessage } from '../../src/models/chat-message'
+import members from './dummy-data/members.json'
 import io from 'socket.io-client'
 import { isAfter, isBefore, subSeconds } from 'date-fns'
 
@@ -57,7 +57,7 @@ describe('Chatting', () => {
 
   const generateToken = async (member) => {
     if (!member) return ''
-    const { generateToken: gen } = await import('../../../src/utils/jwt')
+    const { generateToken: gen } = await import('../../src/utils/jwt')
     return gen(member)
   }
 
