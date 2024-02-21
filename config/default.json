@@ -1,0 +1,32 @@
+{
+    "logging": {
+        "isEnabled": true,
+        "dir": "logs",
+        "isFileEnabled": true,
+        "isHttpEnabled": true,
+        "level": "debug"
+    },
+    "jwt": {
+        "secret": "",
+        "headerName": "x-plander-auth"
+    },
+    "headers": {
+        "currentPass": "x-current-pass"
+    },
+    "crypto": {
+        "bcryptRounds": 10
+    },
+    "smtp": {
+        "host": "",
+        "port": 25,
+        "secure": false,
+        "auth": {
+            "user": "",
+            "pass": ""
+        },
+        "from": ""
+    },
+    "frontend": {
+        "host": ""
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "logging": {
+        "isEnabled": true,
+        "isFileEnabled": false,
+        "isHttpEnabled": false,
+        "level": "error"
+    },
+    "mongo": {
+        "uri": "mongodb://127.0.0.1/plander_tests"
+    },
+    "jwt": {
+        "secret": "plander_test"
+    },
+    "crypto": {
+        "bcryptRounds": 1
+    },
+    "frontend": {
+        "host": "http://localhost"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "logging": {
+        "level": "info"
+    },
+    "smtp": {
+        "host": "smtp-relay.brevo.com",
+        "port": 587,
+        "from": "plander@no-reply.hu"
+    }
+}

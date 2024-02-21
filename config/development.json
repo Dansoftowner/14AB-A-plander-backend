@@ -1,0 +1,13 @@
+{
+    "mongo": {
+        "uri": "mongodb://127.0.0.1/plander_dev"
+    },
+    "jwt": {
+        "secret": "plander_dev"
+    },
+    "smtp": {
+        "host": "sandbox.smtp.mailtrap.io",
+        "port": 2525,
+        "from": "plander-dev@plander.com"
+    }
+}

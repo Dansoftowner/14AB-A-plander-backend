@@ -16,5 +16,9 @@
   "git.autofetch": true,
   "git.autofetchPeriod": 180,
   "gitmoji.showEmojiCode": true,
-  "gitmoji.outputType": "code"
+  "gitmoji.outputType": "code",
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "i18n-ally.localesPaths": [
+    "resources/locales"
+  ]
 }

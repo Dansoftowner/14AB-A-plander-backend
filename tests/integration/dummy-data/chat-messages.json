@@ -1,0 +1,1178 @@
+[
+    {
+        "_id": "65310f87fc13ae1b326c8fcc",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cea",
+            "name": "Krisztina Szilágyi"
+        },
+        "timestamp": {
+            "$date": "2023-11-07T18:59:37.000Z"
+        },
+        "content": "‫test‫"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fce",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce0",
+            "name": "Zsófia Nagy"
+        },
+        "timestamp": {
+            "$date": "2022-12-29T03:39:36.000Z"
+        },
+        "content": "١٢٣"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fd2",
+        "association": "652f7b95fc13ae3ce86c7cdf",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce8",
+            "name": "Anita Papp"
+        },
+        "timestamp": {
+            "$date": "2023-06-26T14:48:09.000Z"
+        },
+        "content": "̗̺͖̹̯͓Ṯ̤͍̥͇͈h̲́e͏͓̼̗̙̼̣͔ ͇̜̱̠͓͍ͅN͕͠e̗̱z̘̝̜̺͙p̤̺̹͍̯͚e̠̻̠͜r̨̤͍̺̖͔̖̖d̠̟̭̬̝͟i̦͖̩͓͔̤a̠̗̬͉̙n͚͜ ̻̞̰͚ͅh̵͉i̳̞v̢͇ḙ͎͟-҉̭̩̼͔m̤̭̫i͕͇̝̦n̗͙ḍ̟ ̯̲͕͞ǫ̟̯̰̲͙̻̝f ̪̰̰̗̖̭̘͘c̦͍̲̞͍̩̙ḥ͚a̮͎̟̙͜ơ̩̹͎s̤.̝̝ ҉Z̡̖̜͖̰̣͉̜a͖̰͙̬͡l̲̫̳͍̩g̡̟̼̱͚̞̬ͅo̗͜.̟"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fd4",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce6",
+            "name": "Judit Balázs"
+        },
+        "timestamp": {
+            "$date": "2023-10-25T23:59:48.000Z"
+        },
+        "content": "¸˛Ç◊ı˜Â¯˘¿"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fd6",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d00",
+            "name": "Katalin Szűcs"
+        },
+        "timestamp": {
+            "$date": "2023-05-06T06:01:24.000Z"
+        },
+        "content": "null"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fd8",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf0",
+            "name": "Beáta Simon"
+        },
+        "timestamp": {
+            "$date": "2023-01-31T07:17:54.000Z"
+        },
+        "content": "-$1.00"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fda",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce5",
+            "name": "Márton Varga"
+        },
+        "timestamp": {
+            "$date": "2023-10-24T08:09:32.000Z"
+        },
+        "content": "\""
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fdc",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce1",
+            "name": "Gábor Tóth"
+        },
+        "timestamp": {
+            "$date": "2022-01-04T16:25:21.000Z"
+        },
+        "content": "👾 🙇 💁 🙅 🙆 🙋 🙎 🙍 "
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fde",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce6",
+            "name": "Judit Balázs"
+        },
+        "timestamp": {
+            "$date": "2022-07-16T00:01:24.000Z"
+        },
+        "content": ",./;'[]\\-="
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fe0",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce6",
+            "name": "Judit Balázs"
+        },
+        "timestamp": {
+            "$date": "2023-06-10T00:03:21.000Z"
+        },
+        "content": "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fe2",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cdf",
+            "name": "András Kovács"
+        },
+        "timestamp": {
+            "$date": "2022-10-28T14:54:25.000Z"
+        },
+        "content": "'"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fe4",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d05",
+            "name": "András Török"
+        },
+        "timestamp": {
+            "$date": "2022-12-07T12:02:40.000Z"
+        },
+        "content": "¡™£¢∞§¶•ªº–≠"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fe6",
+        "association": "652f7b95fc13ae3ce86c7cdf",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ced",
+            "name": "Gergő Szűcs"
+        },
+        "timestamp": {
+            "$date": "2023-07-19T23:38:47.000Z"
+        },
+        "content": "-1.00"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fe8",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d03",
+            "name": "Gábor Simon"
+        },
+        "timestamp": {
+            "$date": "2023-10-19T01:01:45.000Z"
+        },
+        "content": "‫test‫"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fea",
+        "association": "652f7b95fc13ae3ce86c7ce5",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ced",
+            "name": "Németh Csaba"
+        },
+        "timestamp": {
+            "$date": "2023-11-17T08:10:46.000Z"
+        },
+        "content": "\"'\"'\"''''\""
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fec",
+        "association": "652f7b95fc13ae3ce86c7ce5",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d04",
+            "name": "Zsófia Nagy"
+        },
+        "timestamp": {
+            "$date": "2022-03-23T01:40:46.000Z"
+        },
+        "content": "ﾟ･✿ヾ╲(｡◕‿◕｡)╱✿･ﾟ"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8fee",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ce8",
+            "name": "Próba Béla"
+        },
+        "timestamp": {
+            "$date": "2022-06-09T13:40:01.000Z"
+        },
+        "content": "1E2"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8ff0",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce1",
+            "name": "Gábor Tóth"
+        },
+        "timestamp": {
+            "$date": "2022-09-23T23:56:04.000Z"
+        },
+        "content": "-1E2"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8ff2",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ced",
+            "name": "Németh Csaba"
+        },
+        "timestamp": {
+            "$date": "2023-12-01T14:32:18.000Z"
+        },
+        "content": "‪‪test‪"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8ff4",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf7",
+            "name": "Bálint Tóth"
+        },
+        "timestamp": {
+            "$date": "2023-06-14T13:28:49.000Z"
+        },
+        "content": ",。・:*:・゜’( ☻ ω ☻ )。・:*:・゜’"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8ff6",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ced",
+            "name": "Gergő Szűcs"
+        },
+        "timestamp": {
+            "$date": "2023-09-26T02:52:09.000Z"
+        },
+        "content": "1.00"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8ff8",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d06",
+            "name": "Krisztina Farkas"
+        },
+        "timestamp": {
+            "$date": "2023-12-21T02:17:36.000Z"
+        },
+        "content": "-1/2"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8ffa",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cfb",
+            "name": "Gergely Papp"
+        },
+        "timestamp": {
+            "$date": "2022-05-15T18:09:32.000Z"
+        },
+        "content": "../../../../../../../../../../../etc/hosts"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8ffc",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d06",
+            "name": "Krisztina Farkas"
+        },
+        "timestamp": {
+            "$date": "2023-08-24T15:19:59.000Z"
+        },
+        "content": "-1E2"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c8ffe",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce2",
+            "name": "Katalin Farkas"
+        },
+        "timestamp": {
+            "$date": "2022-09-08T11:47:15.000Z"
+        },
+        "content": "⁦test⁧"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9000",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d06",
+            "name": "Krisztina Farkas"
+        },
+        "timestamp": {
+            "$date": "2022-11-26T22:31:04.000Z"
+        },
+        "content": "__ﾛ(,_,*)"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9002",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cea",
+            "name": "Krisztina Szilágyi"
+        },
+        "timestamp": {
+            "$date": "2023-05-31T04:51:37.000Z"
+        },
+        "content": "(╯°□°）╯︵ ┻━┻)  "
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9004",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf3",
+            "name": "Gergely Farkas"
+        },
+        "timestamp": {
+            "$date": "2022-03-13T21:31:12.000Z"
+        },
+        "content": "⁰⁴⁵₀₁₂"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9006",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cee",
+            "name": "Orsolya Lakatos"
+        },
+        "timestamp": {
+            "$date": "2022-11-24T19:47:11.000Z"
+        },
+        "content": "‫test‫"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9008",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d04",
+            "name": "Zsófia Nagy"
+        },
+        "timestamp": {
+            "$date": "2022-03-06T01:51:19.000Z"
+        },
+        "content": "🚾 🆒 🆓 🆕 🆖 🆗 🆙 🏧"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c900a",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf3",
+            "name": "Gergely Farkas"
+        },
+        "timestamp": {
+            "$date": "2022-02-08T01:15:38.000Z"
+        },
+        "content": "/dev/null; touch /tmp/blns.fail ; echo"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c900c",
+        "association": "652f7b95fc13ae3ce86c7ce5",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce5",
+            "name": "Márton Varga"
+        },
+        "timestamp": {
+            "$date": "2022-07-04T06:43:49.000Z"
+        },
+        "content": "田中さんにあげて下さい"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c900e",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce7",
+            "name": "Tamás Kiss"
+        },
+        "timestamp": {
+            "$date": "2022-03-31T01:55:36.000Z"
+        },
+        "content": "̦H̬̤̗̤͝e͜ ̜̥̝̻͍̟́w̕h̖̯͓o̝͙̖͎̱̮ ҉̺̙̞̟͈W̷̼̭a̺̪͍į͈͕̭͙̯̜t̶̼̮s̘͙͖̕ ̠̫̠B̻͍͙͉̳ͅe̵h̵̬͇̫͙i̹͓̳̳̮͎̫̕n͟d̴̪̜̖ ̰͉̩͇͙̲͞ͅT͖̼͓̪͢h͏͓̮̻e̬̝̟ͅ ̤̹̝W͙̞̝͔͇͝ͅa͏͓͔̹̼̣l̴͔̰̤̟͔ḽ̫.͕"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9010",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce8",
+            "name": "Anita Papp"
+        },
+        "timestamp": {
+            "$date": "2022-12-18T21:15:37.000Z"
+        },
+        "content": "1E02"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9012",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf2",
+            "name": "Nóra Török"
+        },
+        "timestamp": {
+            "$date": "2022-02-28T15:38:20.000Z"
+        },
+        "content": "👾 🙇 💁 🙅 🙆 🙋 🙎 🙍 "
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9014",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ced",
+            "name": "Gergő Szűcs"
+        },
+        "timestamp": {
+            "$date": "2022-11-22T09:20:04.000Z"
+        },
+        "content": "-1E02"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9016",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cfc",
+            "name": "Dóra Molnár"
+        },
+        "timestamp": {
+            "$date": "2022-03-03T21:02:28.000Z"
+        },
+        "content": "1"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9018",
+        "association": "652f7b95fc13ae3ce86c7cdf",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7cee",
+            "name": "Fehér Attila"
+        },
+        "timestamp": {
+            "$date": "2022-04-07T05:33:31.000Z"
+        },
+        "content": "👩🏽"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c901a",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d04",
+            "name": "Zsófia Nagy"
+        },
+        "timestamp": {
+            "$date": "2022-12-28T08:30:53.000Z"
+        },
+        "content": "⁰⁴⁵"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c901c",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf5",
+            "name": "Levente Kovács"
+        },
+        "timestamp": {
+            "$date": "2023-06-20T09:50:29.000Z"
+        },
+        "content": "❤️ 💔 💌 💕 💞 💓 💗 💖 💘 💝 💟 💜 💛 💚 💙"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c901e",
+        "association": "652f7b95fc13ae3ce86c7cdf",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf3",
+            "name": "Gergely Farkas"
+        },
+        "timestamp": {
+            "$date": "2022-08-08T13:08:22.000Z"
+        },
+        "content": "œ∑´®†¥¨ˆøπ“‘"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9020",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce6",
+            "name": "Judit Balázs"
+        },
+        "timestamp": {
+            "$date": "2023-02-28T10:13:34.000Z"
+        },
+        "content": "1/2"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9022",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cee",
+            "name": "Orsolya Lakatos"
+        },
+        "timestamp": {
+            "$date": "2022-06-08T13:16:42.000Z"
+        },
+        "content": "0/0"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9024",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d03",
+            "name": "Gábor Simon"
+        },
+        "timestamp": {
+            "$date": "2023-02-03T04:40:19.000Z"
+        },
+        "content": "-$1.00"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9026",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cfa",
+            "name": "Anna Kiss"
+        },
+        "timestamp": {
+            "$date": "2022-05-18T04:57:10.000Z"
+        },
+        "content": "﻿"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9028",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d06",
+            "name": "Krisztina Farkas"
+        },
+        "timestamp": {
+            "$date": "2022-01-29T11:54:01.000Z"
+        },
+        "content": "0/0"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c902a",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d01",
+            "name": "Péter Lakatos"
+        },
+        "timestamp": {
+            "$date": "2022-02-19T21:38:52.000Z"
+        },
+        "content": "-1"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c902c",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce7",
+            "name": "Tamás Kiss"
+        },
+        "timestamp": {
+            "$date": "2023-04-05T01:38:51.000Z"
+        },
+        "content": "-1E02"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c902e",
+        "association": "652f7b95fc13ae3ce86c7cdf",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cec",
+            "name": "Réka Fekete"
+        },
+        "timestamp": {
+            "$date": "2023-03-19T08:06:14.000Z"
+        },
+        "content": "社會科學院語學研究所"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9030",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cfe",
+            "name": "Viktória Kovács"
+        },
+        "timestamp": {
+            "$date": "2023-02-04T15:31:47.000Z"
+        },
+        "content": "__ﾛ(,_,*)"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9032",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce7",
+            "name": "Tamás Kiss"
+        },
+        "timestamp": {
+            "$date": "2022-09-29T14:47:27.000Z"
+        },
+        "content": "١٢٣"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9034",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf6",
+            "name": "Emese Szabó"
+        },
+        "timestamp": {
+            "$date": "2023-04-27T21:12:47.000Z"
+        },
+        "content": "$1.00"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9036",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ceb",
+            "name": "Dávid Kovács"
+        },
+        "timestamp": {
+            "$date": "2022-05-10T20:18:52.000Z"
+        },
+        "content": "test⁠test‫"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9038",
+        "association": "652f7b95fc13ae3ce86c7cdf",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf9",
+            "name": "Attila Balázs"
+        },
+        "timestamp": {
+            "$date": "2023-09-24T13:24:43.000Z"
+        },
+        "content": "(ﾉಥ益ಥ）ﾉ﻿ ┻━┻"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c903a",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cdf",
+            "name": "András Kovács"
+        },
+        "timestamp": {
+            "$date": "2023-06-01T14:24:42.000Z"
+        },
+        "content": "$1.00"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c903c",
+        "association": "652f7b95fc13ae3ce86c7ce5",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ceb",
+            "name": "Váczi Károly"
+        },
+        "timestamp": {
+            "$date": "2023-10-02T03:27:01.000Z"
+        },
+        "content": "1E02"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c903e",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce6",
+            "name": "Judit Balázs"
+        },
+        "timestamp": {
+            "$date": "2022-10-14T01:36:21.000Z"
+        },
+        "content": "　"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9040",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf5",
+            "name": "Levente Kovács"
+        },
+        "timestamp": {
+            "$date": "2022-01-20T16:25:08.000Z"
+        },
+        "content": "¡™£¢∞§¶•ªº–≠"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9042",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf5",
+            "name": "Levente Kovács"
+        },
+        "timestamp": {
+            "$date": "2023-05-14T12:46:59.000Z"
+        },
+        "content": "1.00"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9044",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce0",
+            "name": "Zsófia Nagy"
+        },
+        "timestamp": {
+            "$date": "2023-08-13T11:43:56.000Z"
+        },
+        "content": "‪‪test‪"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9046",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf8",
+            "name": "Júlia Varga"
+        },
+        "timestamp": {
+            "$date": "2022-04-14T07:24:17.000Z"
+        },
+        "content": "﻿"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9048",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cef",
+            "name": "Máté Pintér"
+        },
+        "timestamp": {
+            "$date": "2023-10-21T13:02:20.000Z"
+        },
+        "content": "-1E2"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c904a",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cdf",
+            "name": "András Kovács"
+        },
+        "timestamp": {
+            "$date": "2022-10-11T10:33:52.000Z"
+        },
+        "content": "1E02"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c904c",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ceb",
+            "name": "Váczi Károly"
+        },
+        "timestamp": {
+            "$date": "2022-11-03T10:47:17.000Z"
+        },
+        "content": "␢"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c904e",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ced",
+            "name": "Németh Csaba"
+        },
+        "timestamp": {
+            "$date": "2023-11-21T03:37:56.000Z"
+        },
+        "content": "../../../../../../../../../../../etc/passwd%00"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9050",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cfb",
+            "name": "Gergely Papp"
+        },
+        "timestamp": {
+            "$date": "2023-09-05T16:19:39.000Z"
+        },
+        "content": "̦H̬̤̗̤͝e͜ ̜̥̝̻͍̟́w̕h̖̯͓o̝͙̖͎̱̮ ҉̺̙̞̟͈W̷̼̭a̺̪͍į͈͕̭͙̯̜t̶̼̮s̘͙͖̕ ̠̫̠B̻͍͙͉̳ͅe̵h̵̬͇̫͙i̹͓̳̳̮͎̫̕n͟d̴̪̜̖ ̰͉̩͇͙̲͞ͅT͖̼͓̪͢h͏͓̮̻e̬̝̟ͅ ̤̹̝W͙̞̝͔͇͝ͅa͏͓͔̹̼̣l̴͔̰̤̟͔ḽ̫.͕"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9052",
+        "association": "652f7b95fc13ae3ce86c7ce5",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cdf",
+            "name": "András Kovács"
+        },
+        "timestamp": {
+            "$date": "2022-10-01T10:54:22.000Z"
+        },
+        "content": "\"''''\"'\""
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9054",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7cec",
+            "name": "Madarász István"
+        },
+        "timestamp": {
+            "$date": "2022-03-08T12:55:38.000Z"
+        },
+        "content": "Œ„´‰ˇÁ¨ˆØ∏”’"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9056",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cfe",
+            "name": "Viktória Kovács"
+        },
+        "timestamp": {
+            "$date": "2023-01-31T04:33:31.000Z"
+        },
+        "content": "｀ｨ(´∀｀∩"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9058",
+        "association": "652f7b95fc13ae3ce86c7cdf",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ce8",
+            "name": "Próba Béla"
+        },
+        "timestamp": {
+            "$date": "2022-08-27T07:59:33.000Z"
+        },
+        "content": "🚾 🆒 🆓 🆕 🆖 🆗 🆙 🏧"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c905a",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7cea",
+            "name": "Vidos Tibor"
+        },
+        "timestamp": {
+            "$date": "2022-12-25T17:43:35.000Z"
+        },
+        "content": "<script>alert('hi')</script>"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c905c",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ce7",
+            "name": "Horváth Csaba"
+        },
+        "timestamp": {
+            "$date": "2023-02-18T10:55:10.000Z"
+        },
+        "content": "(｡◕ ∀ ◕｡)"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c905e",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d01",
+            "name": "Péter Lakatos"
+        },
+        "timestamp": {
+            "$date": "2022-09-04T11:36:27.000Z"
+        },
+        "content": ",。・:*:・゜’( ☻ ω ☻ )。・:*:・゜’"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9060",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce0",
+            "name": "Zsófia Nagy"
+        },
+        "timestamp": {
+            "$date": "2023-10-25T13:54:54.000Z"
+        },
+        "content": "test⁠test‫"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9062",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf6",
+            "name": "Emese Szabó"
+        },
+        "timestamp": {
+            "$date": "2023-07-22T19:35:56.000Z"
+        },
+        "content": "<img src=x onerror=alert('hi') />"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9064",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf0",
+            "name": "Beáta Simon"
+        },
+        "timestamp": {
+            "$date": "2022-10-01T13:53:56.000Z"
+        },
+        "content": "¡™£¢∞§¶•ªº–≠"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9068",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ceb",
+            "name": "Dávid Kovács"
+        },
+        "timestamp": {
+            "$date": "2022-12-05T11:44:23.000Z"
+        },
+        "content": "⁰⁴⁵₀₁₂"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c906a",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d04",
+            "name": "Zsófia Nagy"
+        },
+        "timestamp": {
+            "$date": "2023-07-11T10:14:01.000Z"
+        },
+        "content": "בְּרֵאשִׁית, בָּרָא אֱלֹהִים, אֵת הַשָּׁמַיִם, וְאֵת הָאָרֶץ"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c906c",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d01",
+            "name": "Péter Lakatos"
+        },
+        "timestamp": {
+            "$date": "2022-12-08T10:55:55.000Z"
+        },
+        "content": "部落格"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c906e",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf6",
+            "name": "Emese Szabó"
+        },
+        "timestamp": {
+            "$date": "2022-07-24T23:17:54.000Z"
+        },
+        "content": "1"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9070",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d03",
+            "name": "Gábor Simon"
+        },
+        "timestamp": {
+            "$date": "2022-04-20T13:17:37.000Z"
+        },
+        "content": "​"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9072",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf1",
+            "name": "Zoltán Nagy"
+        },
+        "timestamp": {
+            "$date": "2023-04-01T22:24:35.000Z"
+        },
+        "content": "1"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9074",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ce8",
+            "name": "Próba Béla"
+        },
+        "timestamp": {
+            "$date": "2023-09-16T07:14:49.000Z"
+        },
+        "content": "/dev/null; touch /tmp/blns.fail ; echo"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9076",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cee",
+            "name": "Orsolya Lakatos"
+        },
+        "timestamp": {
+            "$date": "2023-10-12T17:46:23.000Z"
+        },
+        "content": "ヽ༼ຈل͜ຈ༽ﾉ ヽ༼ຈل͜ຈ༽ﾉ "
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9078",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cf6",
+            "name": "Emese Szabó"
+        },
+        "timestamp": {
+            "$date": "2022-06-01T02:41:21.000Z"
+        },
+        "content": "␡"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c907a",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7ceb",
+            "name": "Váczi Károly"
+        },
+        "timestamp": {
+            "$date": "2023-01-22T17:12:03.000Z"
+        },
+        "content": "<img src=x onerror=alert('hi') />"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c907c",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7cec",
+            "name": "Madarász István"
+        },
+        "timestamp": {
+            "$date": "2023-11-11T14:47:59.000Z"
+        },
+        "content": "null"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c907e",
+        "association": "652f7b95fc13ae3ce86c7ce4",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cfe",
+            "name": "Viktória Kovács"
+        },
+        "timestamp": {
+            "$date": "2022-12-16T15:26:21.000Z"
+        },
+        "content": "../../../../../../../../../../../etc/hosts"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9080",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce0",
+            "name": "Zsófia Nagy"
+        },
+        "timestamp": {
+            "$date": "2022-04-20T06:44:54.000Z"
+        },
+        "content": ",./;'[]\\-="
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9082",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7d03",
+            "name": "Gábor Simon"
+        },
+        "timestamp": {
+            "$date": "2023-01-20T21:26:49.000Z"
+        },
+        "content": "🚾 🆒 🆓 🆕 🆖 🆗 🆙 🏧"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9084",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce0",
+            "name": "Zsófia Nagy"
+        },
+        "timestamp": {
+            "$date": "2022-11-01T18:44:47.000Z"
+        },
+        "content": "・(￣∀￣)・:*:"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9086",
+        "association": "652f7b95fc13ae3ce86c7ce5",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cef",
+            "name": "Máté Pintér"
+        },
+        "timestamp": {
+            "$date": "2023-10-31T04:53:54.000Z"
+        },
+        "content": "👾 🙇 💁 🙅 🙆 🙋 🙎 🙍 "
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9088",
+        "association": "652f7b95fc13ae3ce86c7ce2",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cfe",
+            "name": "Viktória Kovács"
+        },
+        "timestamp": {
+            "$date": "2023-10-05T11:05:38.000Z"
+        },
+        "content": "パーティーへ行かないか"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c908a",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ceb",
+            "name": "Dávid Kovács"
+        },
+        "timestamp": {
+            "$date": "2022-09-21T08:08:03.000Z"
+        },
+        "content": "⁦test⁧"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c908c",
+        "association": "652f7b95fc13ae3ce86c7ce1",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cdf",
+            "name": "András Kovács"
+        },
+        "timestamp": {
+            "$date": "2022-03-17T20:43:58.000Z"
+        },
+        "content": "(╯°□°）╯︵ ┻━┻)  "
+    },
+    {
+        "_id": "65310f87fc13ae1b326c908e",
+        "association": "652f7b95fc13ae3ce86c7ce0",
+        "sender": {
+            "_id": "652f866cfc13ae3ce86c7cec",
+            "name": "Madarász István"
+        },
+        "timestamp": {
+            "$date": "2022-07-24T04:51:56.000Z"
+        },
+        "content": ",./;'[]\\-="
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9090",
+        "association": "652f7b95fc13ae3ce86c7ce3",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7cec",
+            "name": "Réka Fekete"
+        },
+        "timestamp": {
+            "$date": "2023-02-16T07:24:23.000Z"
+        },
+        "content": "() { _; } >_[$($())] { touch /tmp/blns.shellshock2.fail; }"
+    },
+    {
+        "_id": "65310f87fc13ae1b326c9092",
+        "association": "652f7b95fc13ae3ce86c7ce6",
+        "sender": {
+            "_id": "652f85c4fc13ae3d596c7ce7",
+            "name": "Tamás Kiss"
+        },
+        "timestamp": {
+            "$date": "2023-05-23T05:24:57.000Z"
+        },
+        "content": "田中さんにあげて下さい"
+    }
+]
