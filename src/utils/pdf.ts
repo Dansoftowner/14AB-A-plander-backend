@@ -1,6 +1,5 @@
 import puppeteer, { PDFOptions } from 'puppeteer'
 import { Readable } from 'stream'
-import os from 'os'
 
 export async function convertHtmlToPdf(html: string, options: PDFOptions | undefined): Promise<Readable> {
   const browser = await puppeteer.launch({ 
@@ -9,7 +8,6 @@ export async function convertHtmlToPdf(html: string, options: PDFOptions | undef
     args: ['--no-sandbox'] 
   })
 
-  os.platform() 
   const page = await browser.newPage()
 
   await page.setContent(html, { waitUntil: 'domcontentloaded' })
