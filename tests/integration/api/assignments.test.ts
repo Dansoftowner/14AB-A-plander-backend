@@ -411,7 +411,7 @@ describe('/api/assignments', () => {
       id = assignment._id.toHexString()
       title = 'New Title'
       location = 'New Location'
-      start = new Date().toISOString()
+      start = addDays(new Date(), 1).toISOString()
       end = add(start, { hours: 2 }).toISOString()
       assignees = [membersOfAssociation()[1]._id]
     })
@@ -465,8 +465,17 @@ describe('/api/assignments', () => {
     })
 
     it('should return 400 response if start is greater than the end', async () => {
-      start = '2022-01-02T12:00:00.000Z'
-      end = '2022-01-02T11:00:00.000Z'
+      end = new Date().toISOString()
+      start = addHours(end, 1).toISOString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(400)
+    })
+
+    it("should return 400 response if it's time is in the past", async () => {
+      start = subDays(new Date(), 1).toISOString()
+      end = addHours(start, 1).toISOString()
 
       const res = await sendRequest()
 
