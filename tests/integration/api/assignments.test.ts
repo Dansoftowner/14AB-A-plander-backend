@@ -638,9 +638,23 @@ describe('/api/assignments', () => {
       expect(res.status).toBe(400)
     })
 
-    it('should delete the assignment', async () => {
-      await sendRequest()
+    it('should return 423 response if assignment is older than 3 days', async () => {
+      const assignment = await new AssignmentModel({
+        association: client.association,
+        end: subDays(new Date(), 3),
+      }).save({ validateBeforeSave: false })
 
+      id = assignment._id.toHexString()
+
+      const res = await sendRequest()
+
+      expect(res.status).toBe(423)
+      expect(await AssignmentModel.findById(id)).not.toBeNull()
+    })
+
+    it('should delete the assignment', async () => {
+      const r = await sendRequest()
+console.log(r.body)
       const assignment = await AssignmentModel.findById(id)
 
       expect(assignment).toBeNull()
