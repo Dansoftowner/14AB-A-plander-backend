@@ -7,6 +7,7 @@ const options: swaggerJsdoc.Options = {
     info: {
       title: 'Plander API docs',
       version: '0.0.1',
+      description: '![Plander Database Diagram](/images/plander-db-diagram.png)',
     },
     tags: [
       {
