@@ -85,9 +85,9 @@ export class ReportUpdateDto {
         .min(5)
         .max(255)
         .when('externalOrganization', {
-          is: Joi.exist(),
+          is: Joi.exist().not(null),
           then: Joi.required(),
-          otherwise: Joi.allow(),
+          otherwise: Joi.forbidden(),
         }),
       description: Joi.string().min(5).max(1240).allow(null),
     })
