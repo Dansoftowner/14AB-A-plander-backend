@@ -654,7 +654,7 @@ describe('/api/assignments', () => {
 
     it('should delete the assignment', async () => {
       const r = await sendRequest()
-console.log(r.body)
+
       const assignment = await AssignmentModel.findById(id)
 
       expect(assignment).toBeNull()
