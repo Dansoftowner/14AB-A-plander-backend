@@ -76,11 +76,12 @@ export class ReportUpdateDto {
     return Joi.object({
       method: Joi.string().valid('bicycle', 'vehicle', 'pedestrian'),
       purpose: Joi.string().min(5).max(255),
-      licensePlateNumber: Joi.string().min(5).max(255),
-      startKm: Joi.number().min(0),
-      endKm: Joi.number().min(0).greater(Joi.ref('startKm')),
-      externalOrganization: Joi.string().min(5).max(255),
+      licensePlateNumber: Joi.string().min(5).max(255).allow(null),
+      startKm: Joi.number().min(0).allow(null),
+      endKm: Joi.number().min(0).greater(Joi.ref('startKm')).allow(null),
+      externalOrganization: Joi.string().min(5).max(255).allow(null),
       externalRepresentative: Joi.string()
+        .allow(null)
         .min(5)
         .max(255)
         .when('externalOrganization', {
@@ -88,7 +89,7 @@ export class ReportUpdateDto {
           then: Joi.required(),
           otherwise: Joi.allow(),
         }),
-      description: Joi.string().min(5).max(1240),
+      description: Joi.string().min(5).max(1240).allow(null),
     })
   }
 }

@@ -19,6 +19,7 @@
     "report-already-exists": "Cannot submit report for an assignment that already has a report!",
     "reporter-is-not-assignee": "Cannot create a report for an assignment that the client is not an assignee of!",
     "assignment-not-over": "The given assignment is not over yet therefore report cannot be submitted for it!",
+    "assignment-cannot-be-altered": "The given assignment is too old (older than 3 days) to be updated!",
     "report-not-exist": "The assignment doesn't have a report yet!",
     "report-cannot-be-altered": "The report is too old (older than 3 days) to be updated!",
     "report-updater-not-author": "The report can only be modified/deleted by the one who submitted it!",

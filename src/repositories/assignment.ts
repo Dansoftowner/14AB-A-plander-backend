@@ -101,7 +101,7 @@ export class AssignmentRepository implements Repository {
     associationId: string | mongoose.Types.ObjectId,
     id: string | mongoose.Types.ObjectId,
   ): Promise<Assignment | null> {
-    const assignment = await AssignmentModel.findOneAndDelete({
+    const assignment = await AssignmentModel.findOne({
       association: associationId,
       _id: id,
     })
@@ -109,6 +109,7 @@ export class AssignmentRepository implements Repository {
     if (assignment && this.isLocked(assignment))
       throw new AssignmentCannotBeAlteredError()
 
+    await assignment?.deleteOne()
     await ReportModel.findByIdAndDelete(assignment?.report)
 
     return assignment

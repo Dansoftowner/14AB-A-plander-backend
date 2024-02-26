@@ -170,7 +170,6 @@ describe('/api/members', () => {
         'address',
         'email',
         'guardNumber',
-        'idNumber',
         'isRegistered',
         'name',
         'phoneNumber',
@@ -319,7 +318,7 @@ describe('/api/members', () => {
 
       expect(res.status).toBe(200)
       expect(res.body).toMatchObject(
-        _.omit(member, ['association', 'password', 'preferences']),
+        _.omit(member, ['association', 'password', 'preferences', 'idNumber']),
       )
     })
 
@@ -349,7 +348,6 @@ describe('/api/members', () => {
         'address',
         'email',
         'guardNumber',
-        'idNumber',
         'isRegistered',
         'name',
         'phoneNumber',
@@ -484,7 +482,7 @@ describe('/api/members', () => {
 
       expect(res.status).toBe(200)
       expect(res.body).toMatchObject(
-        _.omit(member, ['association', 'password', 'preferences']),
+        _.omit(member, ['association', 'password', 'preferences', 'idNumber']),
       )
     })
 
@@ -514,7 +512,6 @@ describe('/api/members', () => {
         'address',
         'email',
         'guardNumber',
-        'idNumber',
         'isRegistered',
         'name',
         'phoneNumber',
@@ -551,7 +548,6 @@ describe('/api/members', () => {
       guardNUmber: string | undefined
       name: string | undefined
       address: string | undefined
-      idNumber: string | undefined
       phoneNumber: string | undefined
     }
 
@@ -568,7 +564,6 @@ describe('/api/members', () => {
         guardNUmber: undefined,
         name: undefined,
         address: undefined,
-        idNumber: undefined,
         phoneNumber: undefined,
       }
       nodemailerMock.reset()
