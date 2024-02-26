@@ -28,6 +28,10 @@ npm run start
 
 ### Tesztek futtatása
 
+A tesztek futtatása előtt fontos, hogy fusson egy lokális mongodb szerver.
+A MongoDB Community Server letőlthető [itt](https://www.mongodb.com/try/download/community). 
+
+
 ```
 npm run test
 ```

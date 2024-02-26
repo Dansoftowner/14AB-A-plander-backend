@@ -358,11 +358,15 @@ export class MemberService implements Service {
 
     if (projection === 'full') visibleFields.push('guardNumber')
 
+    const isSelf = this.clientInfo._id == requestedId
     const isPermittedForMore =
-      projection == 'full' &&
-      (this.clientInfo.hasRole('president') || this.clientInfo._id == requestedId)
+      projection == 'full' && (this.clientInfo.hasRole('president') || isSelf)
 
-    if (isPermittedForMore) visibleFields.push('address', 'idNumber')
+    if (isPermittedForMore) {
+      visibleFields.push('address')
+
+      if (isSelf) visibleFields.push('idNumber')
+    }
 
     return visibleFields
   }

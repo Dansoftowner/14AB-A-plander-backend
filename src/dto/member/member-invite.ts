@@ -44,7 +44,6 @@ export class MemberInviteDto {
   guardNumber?: string
   name?: string
   address?: string
-  idNumber?: string
   phoneNumber?: string
 
   static get validationSchema(): Joi.ObjectSchema<MemberInviteDto> {
@@ -53,7 +52,6 @@ export class MemberInviteDto {
       guardNumber: Joi.string().regex(rf(guardNumberPattern())).optional(),
       name: Joi.string().regex(rf(fullNamePattern())).optional(),
       address: Joi.string().regex(/[0-9]/).optional(),
-      idNumber: Joi.string().optional(),
       phoneNumber: Joi.string().min(1).optional(),
     })
   }
