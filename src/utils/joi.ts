@@ -9,5 +9,5 @@ export function JoiPassword(): Joi.StringSchema<string> {
 }
 
 export function JoiUsername(): Joi.StringSchema<string> {
-  return Joi.string().alphanum().min(5).max(20)
+  return Joi.string().alphanum().allow('.').min(5).max(20)
 }
