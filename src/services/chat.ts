@@ -4,6 +4,7 @@ import { ChatMessageDto } from '../dto/chat-message/chat-message'
 import { plainToInstance } from 'class-transformer'
 import { ChatMessageQueryOptions } from '../api/params/chat-messages-query-params'
 import { ChatItemsDto } from '../dto/chat-message/chat-items'
+import { sanitize } from 'express-xss-sanitizer'
 
 export class ChatService {
   constructor(
@@ -34,6 +35,8 @@ export class ChatService {
    * Encapsulates the business logic for sending a chat message.
    */
   private async sendMessage(socket: Socket, message: string) {
+    message = sanitize(message)
+
     if (message.trim().length == 0) return
     if (message.length > 1024) return
 
