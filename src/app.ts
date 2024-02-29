@@ -15,6 +15,7 @@ import cors, { CorsOptions } from 'cors'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { socketAuth } from './middlewares/auth'
+import { xss } from 'express-xss-sanitizer'
 
 /**
  * Responsible for assembling the express application.
@@ -54,6 +55,7 @@ export class App {
     if (config.get('logging.isHttpEnabled')) this.expressApp.use(morgan('tiny'))
     this.expressApp.use('/api', i18n)
     this.expressApp.use('/api', express.json())
+    this.expressApp.use('/api', xss())
     this.io.use(socketAuth)
   }
 
