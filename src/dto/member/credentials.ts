@@ -1,5 +1,7 @@
 import Joi from 'joi'
 import { JoiObjectId } from '../../utils/joi'
+import { Transform } from 'class-transformer'
+import { isEmail } from '../../utils/common-regex'
 
 /**
  * @openapi
@@ -27,6 +29,10 @@ import { JoiObjectId } from '../../utils/joi'
  */
 export class CredentialsDto {
   associationId!: string
+  @Transform(({ value }) => {
+    if (isEmail(value)) value = value.toLowerCase()
+    return value.trim()
+  })
   user!: string
   password!: string
 

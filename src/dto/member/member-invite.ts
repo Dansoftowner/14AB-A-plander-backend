@@ -4,6 +4,7 @@ import {
   guardNumberPattern,
   removeFlags as rf,
 } from '../../utils/common-regex'
+import { Transform } from 'class-transformer'
 
 /**
  * @openapi
@@ -40,6 +41,7 @@ import {
  *        - email
  */
 export class MemberInviteDto {
+  @Transform(({ value }) => value.toLowerCase())
   email!: string
   guardNumber?: string
   name?: string

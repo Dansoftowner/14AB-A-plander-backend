@@ -1268,7 +1268,7 @@ describe('/api/members', () => {
 
         const memberInDb = await MemberModel.findById(client._id)
 
-        expect(memberInDb).toHaveProperty('email', email)
+        expect(memberInDb).toHaveProperty('email', email?.toLowerCase())
       })
 
       it('should update username in database', async () => {
@@ -1296,7 +1296,7 @@ describe('/api/members', () => {
 
         const memberInDb = await MemberModel.findById(client._id)
 
-        expect(memberInDb).toHaveProperty('email', email)
+        expect(memberInDb).toHaveProperty('email', email?.toLowerCase())
         expect(memberInDb).toHaveProperty('username', username)
         expect(bcrypt.compareSync(password!, memberInDb!.password!)).toBe(true)
       })

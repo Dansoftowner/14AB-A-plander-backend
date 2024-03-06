@@ -34,6 +34,7 @@ const memberSchema = new Schema<Member>({
     required: true,
     index: true,
     trim: true,
+    lowercase: true,
     validate: [isEmail, 'The given string is not a valid email address'],
   },
   username: {

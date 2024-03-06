@@ -1,5 +1,6 @@
 import Joi from 'joi'
 import { JoiObjectId, JoiPassword } from '../../utils/joi'
+import { Transform } from 'class-transformer'
 
 /**
  * @openapi
@@ -22,6 +23,7 @@ import { JoiObjectId, JoiPassword } from '../../utils/joi'
  */
 export class ForgottenPasswordDto {
   associationId!: string
+  @Transform(({ value }) => value.trim().toLowerCase())
   email!: string
 
   static get validationSchema(): Joi.ObjectSchema<ForgottenPasswordDto> {
